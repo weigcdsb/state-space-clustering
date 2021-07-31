@@ -34,10 +34,10 @@ Z = zeros(nG, N);
 THETA{1} = THETA0; 
 
 % start from single cluster
-Z(1,:) = ones(1, N);
+% Z(1,:) = ones(1, N);
 
 % start from each full clusters
-% Z(1,:) = 1:N;
+Z(1,:) = 1:N;
 
 for g = 2:nG
     
@@ -95,13 +95,14 @@ end
 
 %% plot
 for l= [1 linspace(10, nG, nG/10)]
-    figure(l)
+    clusTrace = figure;
     subplot(1, 2, 1)
     clusterPlot(Y, z_true)
     title('true')
     subplot(1, 2, 2)
     clusterPlot(Y, Z(l,:))
     title("k = " + l + ", nCluster =", length(unique(Z(l,:))))
+    saveas(clusTrace, l+".png")
 end
 
 
@@ -115,4 +116,23 @@ for l= [2 linspace(10, nG, nG/10)]
     end
 end
 
+
+subplot(1,3,1)
+hold on
+plot(theta1_true, 'k', 'LineWidth', 2)
+plot(THETA{nG}(Z(nG, 1), :))
+hold off
+title('\theta_1')
+subplot(1,3,2)
+hold on
+plot(theta2_true, 'k', 'LineWidth', 2)
+plot(THETA{nG}(Z(nG, 1+n1_true), :))
+hold off
+title('\theta_2')
+subplot(1,3,3)
+hold on
+plot(theta3_true, 'k', 'LineWidth', 2)
+plot(THETA{nG}(Z(nG, 1+n1_true+n2_true), :))
+hold off
+title('\theta_3')
 

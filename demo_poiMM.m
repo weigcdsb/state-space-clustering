@@ -26,6 +26,22 @@ Y = [Y1; Y2; Y3];
 z_true = repelem(1:3, [n1_true n2_true n3_true]);
 
 % clusterPlot(Y, z_true)
+subplot(1,3,1)
+hold on
+plot(theta1_true, 'k', 'LineWidth', 2)
+hold off
+title('\theta_1')
+subplot(1,3,2)
+hold on
+plot(theta2_true, 'k', 'LineWidth', 2)
+hold off
+title('\theta_2')
+subplot(1,3,3)
+hold on
+plot(theta3_true, 'k', 'LineWidth', 2)
+hold off
+title('\theta_3')
+
 
 %% begin to do MCMC
 % prior
@@ -93,16 +109,36 @@ end
 
 %% plot
 for l= 1:nG
-    figure(l)
+%     figure(l)
+    clusTrace = figure;
     subplot(1, 2, 1)
     clusterPlot(Y, z_true)
     title('true')
     subplot(1, 2, 2)
     clusterPlot(Y, Z(l,:))
     title("k = " + l + ", nCluster =", length(unique(Z(l,:))))
+    saveas(clusTrace, l+".png")
 end
 
 
+subplot(1,3,1)
+hold on
+plot(theta1_true, 'k', 'LineWidth', 2)
+plot(THETA(nG, :, Z(nG,1)))
+hold off
+title('\theta_1')
+subplot(1,3,2)
+hold on
+plot(theta2_true, 'k', 'LineWidth', 2)
+plot(THETA(nG, :, Z(nG,1 + n1_true)))
+hold off
+title('\theta_2')
+subplot(1,3,3)
+hold on
+plot(theta3_true, 'k', 'LineWidth', 2)
+plot(THETA(nG, :, Z(nG,1 + n1_true + n2_true)))
+hold off
+title('\theta_3')
 
 
 
