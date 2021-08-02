@@ -25,19 +25,19 @@ z_true = repelem(1:3, [n1_true n2_true n3_true]);
 
 % clusterPlot(Y, z_true)
 %%
-alphaDP = 1;
+alphaDP = 0.01;
 nG = 50;
 theta0 = log(mean(mean(Y(:, 1:20))));
-THETA0 = ppasmoo_poissexp(Y,X,theta0,1,1,1e-4);
+[THETA0, W0] = ppasmoo_poissexp(Y,X,theta0,1,1,1e-4);
 
 Z = zeros(nG, N);
 THETA{1} = THETA0; 
 
 % start from single cluster
-% Z(1,:) = ones(1, N);
+Z(1,:) = ones(1, N);
 
 % start from each full clusters
-Z(1,:) = 1:N;
+% Z(1,:) = 1:N;
 
 for g = 2:nG
     
@@ -70,6 +70,7 @@ for g = 2:nG
             THETA_tmp(k, :) = mvnrnd(theta_tmp',W_tmp);
         else
             THETA_tmp(k, :) = theta0 + detrend(cumsum(randn(round(T),1)*sqrt(1e-4)));
+%             THETA_tmp(k, :) = mvnrnd(THETA0',W0);
         end
         
     end
@@ -102,7 +103,7 @@ for l= [1 linspace(10, nG, nG/10)]
     subplot(1, 2, 2)
     clusterPlot(Y, Z(l,:))
     title("k = " + l + ", nCluster =", length(unique(Z(l,:))))
-    saveas(clusTrace, l+".png")
+%     saveas(clusTrace, l+".png")
 end
 
 
