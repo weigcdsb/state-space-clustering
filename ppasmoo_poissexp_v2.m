@@ -43,10 +43,12 @@ for i=2:length(n)
     
     [~, msgid] = lastwarn;
     if strcmp(msgid,'MATLAB:illConditionedMatrix')
+        disp('error');
+        lastwarn('')
         return;
     end
 end
-lastwarn('')
+% lastwarn('')
 
 
 % Backward-Pass (RTS)
