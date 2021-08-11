@@ -1,15 +1,15 @@
 addpath(genpath('D:\github\state-space-clustering'));
 
 %% simulation
-rng(1)
+rng(2)
 n = 10;
 nClus = 3;
-p = 3;
+p = 2;
 T = 1000;
 
-Lab = repelem(1:3, n);
+Lab = repelem(1:nClus, n);
 d = ones(n*nClus,1)*0.5;
-C_all = reshape(normrnd(6*1e-3,1e-3,n*nClus*p,1), [], p);
+C_all = reshape(normrnd(1e-2,1e-3,n*nClus*p,1), [], p);
 C_trans = zeros(n*nClus, p*nClus);
 for k = 1:length(Lab)
     C_trans(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = C_all(k,:);
@@ -20,9 +20,9 @@ X2 = zeros(p, T);
 X3 = zeros(p, T);
 
 Q0 = eye(p)*1e-3;
-mu1 = [1 0.9 0.8];
-mu2 = [0.7 0.6 0.5];
-mu3 = [0.4 0.3 0.2];
+mu1 = [1 0.5]*20;
+mu2 = [0.5 1]*15;
+mu3 = [1 0.2]*10;
 X1(:,1) = mvnrnd(mu1,Q0);
 X2(:,1) = mvnrnd(mu2,Q0);
 X3(:,1) = mvnrnd(mu3,Q0);
@@ -41,9 +41,9 @@ Q = blkdiag(Q1, Q2, Q3);
 A_in = reshape(normrnd(0,1e-3,p*p*nClus,1), [], p, nClus);
 A = blkdiag(A_in(:,:,1), A_in(:,:,2), A_in(:,:,3));
 A((p+1):2*p, 1:p) = reshape(normrnd(1e-3,5*1e-4,p*p,1), [], p);
-A(1:p, (p+1):2*p) = reshape(normrnd(1e-3,5*1e-4,p*p,1), [], p);
-A((2*p+1):3*p, (p+1):2*p) = reshape(normrnd(-2*1e-4,5*1e-4,p*p,1), [], p);
-A((p+1):2*p, (2*p+1):3*p) = reshape(normrnd(-2*1e-4,5*1e-4,p*p,1), [], p);
+A(1:p, (p+1):2*p) = reshape(normrnd(3*1e-3,5*1e-4,p*p,1), [], p);
+A((2*p+1):3*p, 1:p) = reshape(normrnd(1e-3,5*1e-4,p*p,1), [], p);
+A(1:p, (2*p+1):3*p) = reshape(normrnd(3*1e-5,6*1e-4,p*p,1), [], p);
 Aplot = A;
 A(eye(size(A)) > 0) = 1;
 
@@ -56,13 +56,15 @@ ylabel('receiving')
 
 % let's generate lambda
 logLam = zeros(n*nClus, T);
+logLam(:,1) = d + C_trans*X(:,1);
+
 for t=2:T
     X(:, t) = mvnrnd(A*X(:, t-1) + b, Q)';
     logLam(:, t) = d + C_trans*X(:,t);
 end
 
 figure(2)
-imagesc(logLam)
+imagesc(exp(logLam))
 colorbar()
 
 Y = poissrnd(exp(logLam));
@@ -75,6 +77,12 @@ clusterPlot(Y, Lab)
 
 figure(5)
 plot(X')
+
+plot(X(1:p,:)')
+plot(X(p+1:2*p,:)')
+plot(X(2*p+1:3*p,:)')
+
+
 
 %% fitting
 % assume now observe Y and Z
@@ -137,7 +145,7 @@ nu0 = p+2;
 
 % Please do all the things blockwise,...
 % to transfer smoothly to clustering problem
-for g = 2:ng
+for g = 2:10
     
     % (1) update latent vectors x_t^{(j)}: PASS
     % cannot do blockwise, because of interaction...
@@ -151,11 +159,10 @@ for g = 2:ng
     end
     
     [Xs,Ws,~] = ppasmoo_poissexp_v2(Y,C_trans_tmp,d_fit(:,g-1),...
-        x0_fit(:,g-1),Q0Filt,A_fit(:,:,g-1),b_fit(:,g-1),Q_fit(:,:,g-1));
-    X_fit(:,:,g) = mvnrnd(Xs',round(Ws, 8))';
+        x0_fit(:,g-1),Q0Filt*1e3,A_fit(:,:,g-1),b_fit(:,g-1),Q_fit(:,:,g-1));
+    X_fit(:,:,g) = mvnrnd(Xs',round(Ws, 6))';
     
 %     plot(X_fit(:,:,g)')
-    
     
     % (2) update d: do things block-wise/reorder for clustering: PASS
     % here just don't do that for simplicity
@@ -169,7 +176,8 @@ for g = 2:ng
     
 %     [d_fit(:,g) d]
     
-    % (3) update C: must do things block-wise here... FAIL
+    % (3) update C: must do things block-wise here... PASS
+    % depends on identifiabiility of latent...
     for l = unique(Lab)
         latentId = ((l-1)*p+1):(l*p);
         C_tmp = C_fit(Lab == l,:,g-1);
@@ -177,17 +185,23 @@ for g = 2:ng
         Y_tmp = Y(Lab==l,:);
         
         derC_tmp = @(vecC) derC(vecC,Y(Lab==l,:), X_fit(latentId,:,g),...
-            d_fit(Lab == l, g), T) - inv(SigCj0)*(vecC - muCj0);
+            d_fit(Lab == l, g)) - inv(SigCj0)*(vecC - muCj0);
+        
+        
         hessC_tmp = @(vecC) hessC(vecC, X_fit(latentId,:,g),...
-            d_fit(Lab == l, g), T) - inv(SigCj0);
+            d_fit(Lab == l, g)) - inv(SigCj0);
         [muC,~,niSigC,~] = newton(derC_tmp,hessC_tmp,...
-            C_tmp(:),1e-6,1000);
+            C_tmp(:),1e-8,1000);
+        
+%         [reshape(muC, [], p) C_all(Lab == l,:)]
+        
         SigC = -inv(niSigC);
-        C_fit(Lab == l,:,g) = reshape(mvnrnd(mud,Sigd)', [], p);
+        C_fit(Lab == l,:,g) = reshape(mvnrnd(muC,SigC)', [], p);
     end
     
-%     [C_fit(:,:,g) C_all]
     
+%     imagesc([C_fit(:,:,g)-C_all])
+%     colorbar()
     
     % (4) update x0: PASS
     Qc = repmat({Q0_fit(:,:,g-1)}, 1, nClus);
@@ -200,10 +214,10 @@ for g = 2:ng
 %     [x0_fit(:,g) [mu1 mu2 mu3]']
     
     % (5) update Q0: assume all cluster share the same Q0: FAIL
-    XQ0 = reshape(X_fit(:,1,g) - x0_fit(:,g), [], p);
-    PsiQ0 = Psi00 + XQ0'*XQ0;
-    nuQ0 = nClus + nu00;
-    Q0_fit(:,:,g) = iwishrnd(PsiQ0,nuQ0);
+%     XQ0 = reshape(X_fit(:,1,g) - x0_fit(:,g), [], p);
+%     PsiQ0 = Psi00 + XQ0'*XQ0;
+%     nuQ0 = nClus + nu00;
+%     Q0_fit(:,:,g) = iwishrnd(PsiQ0,nuQ0);
     
 %     [Q0_fit(:,:,g) Q0]
     
@@ -227,12 +241,12 @@ for g = 2:ng
             muA_tmp = SigA_tmp*(inv(SigAjl0)*muAjl0 +...
                 X_tmp'*kron(eye(T-1), inv(Q_fit(recId,recId,g-1)))*z_tmp2);
             
-            A_fit(recId,sendId,g) = reshape(mvnrnd(muA_tmp, round(SigA_tmp, 6))', [], p);
+            A_fit(recId,sendId,g) = reshape(mvnrnd(muA_tmp, SigA_tmp)', [], p);
             
         end
     end
     
-%     imagesc(A_fit(:,:,g))
+%     imagesc(A_fit(:,:,g) - A)
     
     
     % (7) update b: PASS
@@ -243,16 +257,16 @@ for g = 2:ng
     
 %     [b_fit(:,g) b]
     
-    % (8) update Q: do things block-wise? PASS?
-    for l = unique(Lab)
-        latentId = ((l-1)*p+1):(l*p);
-        mux = A_fit(latentId,:,g)*X_fit(:,1:(T-1),g) + repmat(b_fit(latentId, g), 1, T-1);
-        xq = X_fit(latentId,2:T,g) - mux;
-        
-        PsiQ = Psi0 + xq*xq';
-        nuQ = T-1 + nu0;
-        Q_fit(latentId,latentId,g) = iwishrnd(PsiQ,nuQ);
-    end
+    % (8) update Q: do things block-wise? PASS
+%     for l = unique(Lab)
+%         latentId = ((l-1)*p+1):(l*p);
+%         mux = A_fit(latentId,:,g)*X_fit(:,1:(T-1),g) + repmat(b_fit(latentId, g), 1, T-1);
+%         xq = X_fit(latentId,2:T,g) - mux;
+%         
+%         PsiQ = Psi0 + xq*xq';
+%         nuQ = T-1 + nu0;
+%         Q_fit(latentId,latentId,g) = iwishrnd(PsiQ,nuQ);
+%     end
     
 %     imagesc(Q_fit(:,:,g))
 %     colorbar()
@@ -260,7 +274,7 @@ for g = 2:ng
 %     colorbar()
 end
 
-for g = 11:20
+for g = 1:10
     figure(g)
     plot(X_fit(:,:,g)')
 end
