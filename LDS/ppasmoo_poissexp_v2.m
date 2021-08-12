@@ -1,5 +1,5 @@
 function [x,W,lam,lamPred] = ppasmoo_poissexp_v2(n,C,d,x0,W0,A,b,Q)
-
+lastwarn('')
 nCell = size(n, 1);
 T = size(n, 2);
 
@@ -37,6 +37,8 @@ for i=2:length(n)
     end
     Wpostinv = inv(Wpred(:,:,i)) + INFO;
     W(:,:,i) = inv(Wpostinv);
+    W(:,:,i) = (W(:,:,i) + W(:,:,i)')/2;
+    
     x(:,i)  = xpred(:,i) + W(:,:,i)*SCORE;
     
     lam(:,i) = exp(C*x(:,i) + d);
@@ -44,7 +46,7 @@ for i=2:length(n)
     [~, msgid] = lastwarn;
     if strcmp(msgid,'MATLAB:illConditionedMatrix')
         disp('error');
-        lastwarn('')
+        
         return;
     end
 end
@@ -57,6 +59,8 @@ for i=(T-1):-1:1
     J = W(:,:,i)*A'*Wi;
     x(:,i) = x(:,i) + J*(x(:,i+1) - xpred(:,i+1));
     W(:,:,i) = W(:,:,i) + J*(W(:,:,i+1)-Wpred(:,:,i+1))*J';
+    
+    W(:,:,i) = (W(:,:,i) + W(:,:,i)')/2;
     lam(:,i) = exp(C*x(:,i) + d);
 end
 

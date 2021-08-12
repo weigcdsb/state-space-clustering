@@ -3,7 +3,7 @@
 X_fit = repmat(X, 1, 1, ng); % true
 d_fit = repmat(d,1,ng); % true
 C_fit = repmat(C_all, 1,1,ng); % true
-x0_fit = repmat([mu1 mu2 mu3]',1,ng); %true
+x0_fit = repmat(x0',1,ng); %true
 Q0_fit = repmat(Q0,1,1,ng); % true
 A_fit = repmat(A,1,1,ng); % true
 b_fit = repmat(b,1,ng); % true

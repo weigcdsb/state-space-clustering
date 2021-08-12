@@ -8,8 +8,8 @@ p = 2;
 T = 1000;
 
 Lab = repelem(1:nClus, n);
-d = ones(n*nClus,1)*0.5;
-C_all = reshape(normrnd(1e-2,1e-3,n*nClus*p,1), [], p);
+d = ones(n*nClus,1)*0.1;
+C_all = reshape(normrnd(4*1e-3,1e-3,n*nClus*p,1), [], p);
 C_trans = zeros(n*nClus, p*nClus);
 for k = 1:length(Lab)
     C_trans(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = C_all(k,:);
@@ -20,17 +20,17 @@ X2 = zeros(p, T);
 X3 = zeros(p, T);
 
 Q0 = eye(p)*1e-3;
-mu1 = [1 0.5]*20;
-mu2 = [0.5 1]*15;
+mu1 = [1 0.2]*10;
+mu2 = [0.2 1]*10;
 mu3 = [1 0.2]*10;
 X1(:,1) = mvnrnd(mu1,Q0);
 X2(:,1) = mvnrnd(mu2,Q0);
 X3(:,1) = mvnrnd(mu3,Q0);
 X = [X1; X2; X3];
 
-b1 = ones(p,1)*0.05;
-b2 = -ones(p,1)*0.05;
-b3 = -ones(p,1)*0.05;
+b1 = ones(p,1)*0.3;
+b2 = ones(p,1)*0.2;
+b3 = ones(p,1)*0.1;
 b = [b1;b2;b3];
 
 Q1 = 1e-3*eye(p);
@@ -38,12 +38,12 @@ Q2 = 1e-4*eye(p);
 Q3 = 1e-5*eye(p);
 Q = blkdiag(Q1, Q2, Q3);
 
-A_in = reshape(normrnd(0,1e-3,p*p*nClus,1), [], p, nClus);
+A_in = reshape(normrnd(0,5*1e-3,p*p*nClus,1), [], p, nClus);
 A = blkdiag(A_in(:,:,1), A_in(:,:,2), A_in(:,:,3));
-A((p+1):2*p, 1:p) = reshape(normrnd(1e-3,5*1e-4,p*p,1), [], p);
-A(1:p, (p+1):2*p) = reshape(normrnd(3*1e-3,5*1e-4,p*p,1), [], p);
-A((2*p+1):3*p, 1:p) = reshape(normrnd(1e-3,5*1e-4,p*p,1), [], p);
-A(1:p, (2*p+1):3*p) = reshape(normrnd(3*1e-5,6*1e-4,p*p,1), [], p);
+A((p+1):2*p, 1:p) = reshape(normrnd(3*1e-3,1e-3,p*p,1), [], p);
+A(1:p, (p+1):2*p) = reshape(normrnd(3*1e-3,1e-3,p*p,1), [], p);
+A((2*p+1):3*p, 1:p) = reshape(normrnd(-4*1e-3,1e-3,p*p,1), [], p);
+A(1:p, (2*p+1):3*p) = reshape(normrnd(-4*1e-3,1e-3,p*p,1), [], p);
 Aplot = A;
 A(eye(size(A)) > 0) = 1;
 
@@ -64,7 +64,8 @@ for t=2:T
 end
 
 figure(2)
-imagesc(exp(logLam))
+imagesc(logLam)
+% imagesc(exp(logLam))
 colorbar()
 
 Y = poissrnd(exp(logLam));
@@ -81,8 +82,6 @@ plot(X')
 plot(X(1:p,:)')
 plot(X(p+1:2*p,:)')
 plot(X(2*p+1:3*p,:)')
-
-
 
 %% fitting
 % assume now observe Y and Z
@@ -102,7 +101,7 @@ Q_fit = zeros(nClus*p, nClus*p, ng);
 
 % initials
 % initial for d_fit: 0
-C_fit(:,:,1) = reshape(normrnd(0,1,n*nClus*p,1), [], p);
+C_fit(:,:,1) = reshape(normrnd(0,1e-2,n*nClus*p,1), [], p);
 A_fit(:,:,1) = eye(nClus*p);
 % initial for b_fit: 0
 Q_fit(:,:,1) = eye(nClus*p)*1e-4;
@@ -125,7 +124,7 @@ mud0 = zeros(n*nClus,1);
 Sigd0 = eye(n*nClus);
 
 muCj0 = zeros(n*p,1);
-SigCj0 = eye(n*p);
+SigCj0 = eye(n*p)*1e-2;
 
 mux00 = zeros(nClus*p,1);
 Sigx00 = eye(nClus*p);
@@ -135,7 +134,7 @@ nu00 = p+2;
 
 muAjl0 = eye(p);
 muAjl0 = muAjl0(:);
-SigAjl0 = eye(p*p);
+SigAjl0 = eye(p*p)*1e-2;
 
 mub0 = zeros(nClus*p, 1);
 Sigb0 = eye(nClus*p);
@@ -143,9 +142,17 @@ Sigb0 = eye(nClus*p);
 Psi0 = eye(p)*1e-4;
 nu0 = p+2;
 
+W0 = zeros(nClus*p, nClus*p, ng);
+W0(:,:,1) = eye(nClus*p)*1e-1;
+
+mucjl0 = zeros(n,1);
+Sigcjl0 = eye(n)*1e-2;
+
+
 % Please do all the things blockwise,...
 % to transfer smoothly to clustering problem
-for g = 2:10
+for g = 2:8
+    disp(g)
     
     % (1) update latent vectors x_t^{(j)}: PASS
     % cannot do blockwise, because of interaction...
@@ -158,11 +165,19 @@ for g = 2:10
         C_trans_tmp(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = C_fit(k,:,g-1);
     end
     
-    [Xs,Ws,~] = ppasmoo_poissexp_v2(Y,C_trans_tmp,d_fit(:,g-1),...
-        x0_fit(:,g-1),Q0Filt*1e3,A_fit(:,:,g-1),b_fit(:,g-1),Q_fit(:,:,g-1));
-    X_fit(:,:,g) = mvnrnd(Xs',round(Ws, 6))';
     
-%     plot(X_fit(:,:,g)')
+    %     Qc = repmat({Q0_fit(:,:,g-1)}, 1, nClus);
+    %     Q0Filt = blkdiag(Qc{:});
+    
+    
+    [Xs,Ws,~] = ppasmoo_poissexp_v2(Y,C_trans_tmp,d_fit(:,g-1),...
+        x0_fit(:,g-1),W0(:,:,g-1),A_fit(:,:,g-1),b_fit(:,g-1),Q_fit(:,:,g-1));
+    x0_fit(:,g) = Xs(:,1);
+    W0(:,:,g) = Ws(:,:,1);
+    
+    X_fit(:,:,g) = mvnrnd(Xs',Ws)';
+    
+    %     plot(X_fit(:,:,g)')
     
     % (2) update d: do things block-wise/reorder for clustering: PASS
     % here just don't do that for simplicity
@@ -172,12 +187,13 @@ for g = 2:10
     hesd = @(d) -diag(sum(lamd(d),2)) - inv(Sigd0);
     [mud,~,niSigd,~] = newton(derd,hesd,d_fit(:,g-1),1e-6,1000);
     Sigd = -inv(niSigd);
+    Sigd = (Sigd + Sigd')/2;
+    
     d_fit(:,g) = mvnrnd(mud,Sigd)';
     
-%     [d_fit(:,g) d]
+    %     [d_fit(:,g) d]
     
-    % (3) update C: must do things block-wise here... PASS
-    % depends on identifiabiility of latent...
+    % (3) update C: do things cluster-wise
     for l = unique(Lab)
         latentId = ((l-1)*p+1):(l*p);
         C_tmp = C_fit(Lab == l,:,g-1);
@@ -187,41 +203,26 @@ for g = 2:10
         derC_tmp = @(vecC) derC(vecC,Y(Lab==l,:), X_fit(latentId,:,g),...
             d_fit(Lab == l, g)) - inv(SigCj0)*(vecC - muCj0);
         
-        
         hessC_tmp = @(vecC) hessC(vecC, X_fit(latentId,:,g),...
             d_fit(Lab == l, g)) - inv(SigCj0);
         [muC,~,niSigC,~] = newton(derC_tmp,hessC_tmp,...
             C_tmp(:),1e-8,1000);
         
-%         [reshape(muC, [], p) C_all(Lab == l,:)]
+        %         [reshape(muC, [], p) C_all(Lab == l,:)]
         
         SigC = -inv(niSigC);
+        SigC = (SigC + SigC')/2;
         C_fit(Lab == l,:,g) = reshape(mvnrnd(muC,SigC)', [], p);
     end
     
     
-%     imagesc([C_fit(:,:,g)-C_all])
-%     colorbar()
-    
-    % (4) update x0: PASS
-    Qc = repmat({Q0_fit(:,:,g-1)}, 1, nClus);
-    Q0expand = blkdiag(Qc{:});
-    
-    Sigx0 = inv(inv(Sigx00) + inv(Q0expand));
-    mux0 = Sigx0*(inv(Sigx00)*mux00 + inv(Q0expand)*X_fit(:,1,g));
-    x0_fit(:,g) = mvnrnd(mux0, Sigx0)';
-    
-%     [x0_fit(:,g) [mu1 mu2 mu3]']
-    
-    % (5) update Q0: assume all cluster share the same Q0: FAIL
-%     XQ0 = reshape(X_fit(:,1,g) - x0_fit(:,g), [], p);
-%     PsiQ0 = Psi00 + XQ0'*XQ0;
-%     nuQ0 = nClus + nu00;
-%     Q0_fit(:,:,g) = iwishrnd(PsiQ0,nuQ0);
-    
-%     [Q0_fit(:,:,g) Q0]
-    
-    % (6) update A: do things block-wise: PASS?
+    %     [C_fit(:,:,g) C_all]
+    %     imagesc([C_fit(:,:,g)-C_all])
+    %     colorbar()
+    %
+    %
+    % (6) update A: do things block-wise: PASS
+    A_fit(:,:,g) = A_fit(:,:,g-1);
     for rec = unique(Lab)
         for send = unique(Lab)
             
@@ -230,7 +231,7 @@ for g = 2:10
             
             z_tmp = X_fit(recId,2:T,g) -...
                 repmat(b_fit(recId, g-1), 1, T-1) -...
-                A(recId, setdiff(1:end, sendId))*...
+                A_fit(recId, setdiff(1:end, sendId), g)*...
                 X_fit(setdiff(1:end, sendId),1:(T-1),g);
             
             z_tmp2 = z_tmp(:);
@@ -238,46 +239,100 @@ for g = 2:10
             
             
             SigA_tmp = inv(inv(SigAjl0) + X_tmp'*kron(eye(T-1), inv(Q_fit(recId,recId,g-1)))*X_tmp);
+            SigA_tmp = (SigA_tmp + SigA_tmp')/2;
             muA_tmp = SigA_tmp*(inv(SigAjl0)*muAjl0 +...
                 X_tmp'*kron(eye(T-1), inv(Q_fit(recId,recId,g-1)))*z_tmp2);
+            
             
             A_fit(recId,sendId,g) = reshape(mvnrnd(muA_tmp, SigA_tmp)', [], p);
             
         end
     end
     
-%     imagesc(A_fit(:,:,g) - A)
+    %     [A_fit(:,:,g)  A]
+    %     imagesc(abs(A_fit(:,:,g) - A))
+    %     colorbar()
+    %
+    %
+    %     % (7) update b: PASS
+    %     r_tmp = X_fit(:,2:T,g) - A_fit(:,:,g)*X_fit(:,1:(T-1),g);
+    %     Sigb = inv(inv(Sigb0) + (T-1)*inv(Q_fit(:,:,g-1)));
+    %     mub = Sigb*(inv(Sigb0)*mub0 + (T-1)*inv(Q_fit(:,:,g-1))*mean(r_tmp, 2));
+    %     b_fit(:,g) = mvnrnd(mub, Sigb)';
+    %
+    % %     [b_fit(:,g) b]
+    %
+    %     % (8) update Q: do things block-wise? PASS
+    %     for l = unique(Lab)
+    %         latentId = ((l-1)*p+1):(l*p);
+    %         mux = A_fit(latentId,:,g)*X_fit(:,1:(T-1),g) + repmat(b_fit(latentId, g), 1, T-1);
+    %         xq = X_fit(latentId,2:T,g) - mux;
+    %
+    %         PsiQ = Psi0 + xq*xq';
+    %         nuQ = T-1 + nu0;
+    %         Q_fit(latentId,latentId,g) = iwishrnd(PsiQ,nuQ);
+    %     end
     
-    
-    % (7) update b: PASS
-    r_tmp = X_fit(:,2:T,g) - A_fit(:,:,g)*X_fit(:,1:(T-1),g);
-    Sigb = inv(inv(Sigb0) + (T-1)*inv(Q_fit(:,:,g-1)));
-    mub = Sigb*(inv(Sigb0)*mub0 + (T-1)*inv(Q_fit(:,:,g-1))*mean(r_tmp, 2));
-    b_fit(:,g) = mvnrnd(mub, Sigb)';
-    
-%     [b_fit(:,g) b]
-    
-    % (8) update Q: do things block-wise? PASS
-%     for l = unique(Lab)
-%         latentId = ((l-1)*p+1):(l*p);
-%         mux = A_fit(latentId,:,g)*X_fit(:,1:(T-1),g) + repmat(b_fit(latentId, g), 1, T-1);
-%         xq = X_fit(latentId,2:T,g) - mux;
-%         
-%         PsiQ = Psi0 + xq*xq';
-%         nuQ = T-1 + nu0;
-%         Q_fit(latentId,latentId,g) = iwishrnd(PsiQ,nuQ);
-%     end
-    
-%     imagesc(Q_fit(:,:,g))
-%     colorbar()
-%     imagesc(Q - Q_fit(:,:,g))
-%     colorbar()
+    %     imagesc(Q_fit(:,:,g))
+    %     colorbar()
+    %     imagesc(Q - Q_fit(:,:,g))
+    %     colorbar()
 end
 
-for g = 1:10
-    figure(g)
-    plot(X_fit(:,:,g)')
+% for g = 1:ng
+%     figure(g)
+%     subplot(1,2,1)
+%     plot(X_fit(:,:,g)')
+%     subplot(1,2,2)
+%     plot(X')
+% end
+
+iter = 6;
+
+subplot(1,2,1)
+plot(X_fit(:,:,iter)')
+subplot(1,2,2)
+plot(X')
+
+[d_fit(:,iter) d]
+% [d_fit(:,iter-10) d_fit(:,iter)]
+
+
+
+[C_fit(:,:,iter) C_all]
+% [C_fit(:,:,iter-10) C_fit(:,:,iter)]
+
+% imagesc(abs(C_fit(:,:,iter-10)-C_all))
+% colorbar()
+
+imagesc(abs(C_fit(:,:,iter)-C_all))
+colorbar()
+
+
+C_trans_fit = zeros(n*nClus, p*nClus);
+for k = 1:length(Lab)
+    C_trans_fit(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = C_fit(k,:,iter);
 end
+
+subplot(1,2,1)
+imagesc(C_trans_fit*X_fit(:,:,iter) + d_fit(:,iter))
+colorbar()
+subplot(1,2,2)
+imagesc(C_trans*X + d)
+colorbar()
+
+imagesc(abs(C_trans_fit*X_fit(:,:,iter) + d_fit(:,iter) -...
+    C_trans*X - d))
+colorbar()
+
+imagesc(abs(A_fit(:,:,iter) - A))
+colorbar()
+
+% each part: OK (not for Q0, too few samples for estimation)
+% X + d: OK
+% X + d + C:
+
+
 
 
 
