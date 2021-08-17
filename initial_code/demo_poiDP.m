@@ -34,10 +34,10 @@ Z = zeros(nG, N);
 THETA{1} = THETA0; 
 
 % start from single cluster
-Z(1,:) = ones(1, N);
+% Z(1,:) = ones(1, N);
 
 % start from each full clusters
-% Z(1,:) = 1:N;
+Z(1,:) = 1:N;
 
 for g = 2:nG
     

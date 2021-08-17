@@ -21,7 +21,7 @@ lam = lamPred;
 I = eye(size(W0));
 
 % Forward-Pass (Filtering)
-for i=2:length(n)
+for i=2:size(n,2)
     xpred(:,i) = A*x(:,i-1) + b;
     lamPred(:,i) = exp(C*xpred(:,i) + d);
     Wpred(:,:,i) = A*W(:,:,i-1)*A' + Q;
