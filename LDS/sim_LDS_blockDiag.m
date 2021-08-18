@@ -158,6 +158,8 @@ for g = 2:ng
     
     % (3) update d_fit & C_fit
     % Laplace approximation
+    % dTest = zeros(N,1);
+    % CTest = zeros(N, p);
     for i = 1:N
         l = Lab(i);
         latentId = ((l-1)*p+1):(l*p);
@@ -175,12 +177,15 @@ for g = 2:ng
         Sigdc = -inv(niSigdc);
         Sigdc = (Sigdc + Sigdc')/2;
         dc = mvnrnd(mudc, Sigdc);
+        
+        % dTest(i) = mudc(1);
+        % CTest(i,:) = mudc(2:end);
         d_fit(i,g) = dc(1);
         C_fit(i,:,g) = dc(2:end);
     end
     
-    %     [C_fit(:,:,g) C_all]
-    %     [d_fit(:,g) d]
+    %     [CTest C_all]
+    %     [dTest d]
     
     % (4) update b_fit & A_fit
     for l = unique(Lab)

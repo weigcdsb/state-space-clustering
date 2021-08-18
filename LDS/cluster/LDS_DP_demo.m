@@ -1,5 +1,6 @@
 addpath(genpath('D:\github\state-space-clustering'));
 
+% TODO: need to debug a lot...
 %% simulation
 rng(2)
 n = 10;
@@ -52,7 +53,7 @@ Y = poissrnd(exp(logLam));
 
 %% MCMC setting
 alphaDP = 0.01;
-ng = 50;
+ng = 20;
 
 % pre-allocation
 Z_fit = zeros(N, ng);
@@ -62,45 +63,14 @@ b_fit = zeros(N*p, ng);
 A_fit = zeros(N*p, N*p, ng);
 Q_fit = zeros(N*p, N*p, ng);
 x0_fit = zeros(N*p, ng);
-Q0_fit = zeros(N*p, N*p, ng);
 X_fit = zeros(N*p, T, ng);
-
-
-% initials
-% start from each full clusters
-% Z_fit(:,1) = 1:N;
-
-% test
-Z_fit(:,1) = [1 1 1 2 1 2 1 2 1 3 1 4 1 5 5 5 6 6 10 1 1 2 10 10 10 6 6 6 5 4];
-
-% reorder Y by labels
-[Zsort_tmp,id] = sort(Z_fit(:,1));
-uniZsort_tmp = unique(Zsort_tmp);
-nClus_tmp = length(uniZsort_tmp);
-
-% initial for d_fit: 0
-C_fit(:,:,1) = reshape(normrnd(0,1e-2,N*p,1), [], p);
-C_trans_tmp = zeros(N, p*nClus_tmp);
-for k = 1:nClus_tmp
-    idx_tmp = (Zsort_tmp == uniZsort_tmp(k));
-    C_trans_tmp(idx_tmp, ((k-1)*p+1):k*p) = C_fit(idx_tmp,:,1);
-end
-% imagesc(C_trans_tmp)
-% initial for b_fit: 0
-A_fit(:,:,1) = eye(N*p);
-Q_fit(:,:,1) = eye(N*p)*1e-4;
-
-latID = id2id(uniZsort_tmp, p);
-x0_fit(latID,1) = lsqr(C_trans_tmp,(log(mean(Y(id,1:10),2))-d_fit(id,1)));
-Q0_fit(:, :, 1) = eye(N*p);
-X_fit(latID, :, 1) = ppasmoo_poissexp_v2(Y(id,:),C_trans_tmp,d_fit(id,1),...
-    x0_fit(latID,1),Q0_fit(latID, latID, 1),...
-    A_fit(latID, latID,1),b_fit(latID, 1),Q_fit(latID, latID,1));
 
 % priors
 % place-holder
-x0 = zeros(N*p, 1);
 Q0 = eye(N*p);
+
+mux00 = zeros(N*p, 1);
+Sigx00 = eye(N*p)*1e2;
 
 mudc0 = zeros(p+1,1);
 Sigdc0 = sparse(eye(p+1)*1e-2);
@@ -111,7 +81,37 @@ SigbA0_f = @(nClus) sparse(eye(p*(1+p*nClus))*1e-2);
 Psi0 = eye(p)*1e-4;
 nu0 = p+2;
 
+% initials
+% start from each full clusters
+% Z_fit(:,1) = 1:N;
 
+% start from single cluster
+Z_fit(:,1) = ones(N, 1);
+
+
+% reorder Y by labels
+[Zsort_tmp,id] = sort(Z_fit(:,1));
+uniZsort_tmp = unique(Zsort_tmp);
+nClus_tmp = length(uniZsort_tmp);
+
+% initial for d_fit: 0
+C_fit(:,:,1) = reshape(normrnd(0,1e-2,N*p,1), [], p);
+Csort_trans_tmp = zeros(N, p*nClus_tmp);
+for k = 1:nClus_tmp
+    idx_old = (Z_fit(:, 1) == uniZsort_tmp(k));
+    idx_sort = (Zsort_tmp == uniZsort_tmp(k));
+    Csort_trans_tmp(idx_sort, ((k-1)*p+1):k*p) = C_fit(idx_old,:,1);
+end
+% imagesc(C_trans_tmp)
+% initial for b_fit: 0
+A_fit(:,:,1) = eye(N*p);
+Q_fit(:,:,1) = eye(N*p)*1e-4;
+
+latID = id2id(uniZsort_tmp, p);
+x0_fit(latID,1) = lsqr(Csort_trans_tmp,(log(mean(Y(id,1:10),2))-d_fit(id,1)));
+X_fit(latID, :, 1) = ppasmoo_poissexp_v2(Y(id,:),Csort_trans_tmp,d_fit(id,1),...
+    x0_fit(latID,1),Q0(latID, latID),...
+    A_fit(latID, latID,1),b_fit(latID, 1),Q_fit(latID, latID,1));
 
 
 %% MCMC
@@ -139,14 +139,29 @@ for g = 2:ng
     s_star = length(eta_tmp2);
     
     % (4) update THETA: model related parameters
-    [] = gibbsLoop();
+    [X_fit(:,:,g),x0_fit(:,g),d_fit(:,g),C_fit(:,:,g),b_fit(:,g),A_fit(:,:,g),Q_fit(:,:,g)] =...
+        blockDiag_gibbsLoop_DP(Y, Z_fit(:,g-1), d_fit(:,g-1), C_fit(:,:,g-1),... % cluster-invariant
+        x0_fit(:,g-1), b_fit(:,g-1), A_fit(:,:,g-1), Q_fit(:,:,g-1), s_star,... % cluster-related
+        Q0, mux00, Sigx00, mudc0, Sigdc0, mubA0_all, SigbA0_f, Psi0,nu0); % priors
     
+    % (5) update Z
+    LAM_tmp = zeros(N, T, s_star);
+    LLHD = zeros(N, s_star);
+    for k=1:s_star
+        latID = id2id(k,p);
+        LAM_tmp(:,:,k) = exp(C_fit(:,:,g)*X_fit(latID,:,g) + d_fit(:,g));
+        LLHD(:, k) = sum(log(poisspdf(Y, LAM_tmp(:,:,k))), 2);
+    end
     
+    rho_tmp2 = eta2rho(eta_tmp2);
+    LLHD2 = ones(N, s_star)*-Inf;
+    LLHD2(u_tmp < rho_tmp2) = LLHD(u_tmp < rho_tmp2);
     
+    clus_tmp = mnrnd(ones(N, 1), softmax(LLHD2')');
+    [Z_fit(:,g), ~] = find(clus_tmp');
     
-    
-    
-    
+    figure(1)
+    clusterPlot(Y, Z_fit(:,g)')
 end
 
 
