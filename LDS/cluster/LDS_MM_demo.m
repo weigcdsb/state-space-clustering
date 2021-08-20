@@ -52,7 +52,7 @@ Y = poissrnd(exp(logLam));
 
 %% MCMC setting
 ng = 20;
-kMM = 3;
+kMM = 10;
 
 % pre-allocation
 Z_fit = zeros(N, ng);
@@ -84,13 +84,19 @@ nu0 = p+2;
 
 % initials
 % Z_fit(:,1) = ones(1, N);
+Z_fit(:,1) = randsample(kMM, N, true);
 
-% test
-Z_fit(:,1) = randsample(2, N, true);
 RHO_fit(:,1) = ones(kMM,1)/kMM;
 
 % initial for d_fit: 0
-C_fit(:,:,1) = reshape(normrnd(0,1e-2,N*p,1), [], p);
+% C_fit(:,:,1) = reshape(normrnd(0,1e-2,N*p,1), [], p);
+
+
+% to debug d & C
+d_fit(:,1) = d;
+C_fit(:,:,1) = C_all;
+
+
 % initial for b_fit: 0
 A_fit(:,:,1) = eye(kMM*p);
 Q_fit(:,:,1) = eye(kMM*p)*1e-4;
@@ -133,8 +139,9 @@ end
 % plot(X_fit(:,:,1)')
 
 %% MCMC
-for g = 2:ng
+for g = 2:10
     
+    disp(g)
     % (1) update Z_fit
     LAM_tmp = zeros(N, T, kMM);
     LLHD = zeros(N, kMM);
@@ -161,6 +168,13 @@ for g = 2:ng
     figure(1)
     clusterPlot(Y, Z_fit(:,g)')
 end
+
+
+for k = 1:g
+    figure(k)
+    clusterPlot(Y, Z_fit(:,k)')
+end
+
 
 
 

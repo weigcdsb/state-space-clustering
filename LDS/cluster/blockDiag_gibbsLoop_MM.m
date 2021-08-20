@@ -38,20 +38,23 @@ if(~isempty(outLab))
     x0Out =  mvnrnd(mux00, Sigx00)';
     for k =1:kMM
         latID_tmp = id2id(k, p);
-        mubA0_tmp = mubA0_mat(latID_tmp, :);
-        mubA0_tmp = mubA0_tmp(:);
-        
-        SigbA0_tmp = SigbA0_f(kMM);
-        
-        R = chol(inv(SigbA0_tmp),'lower');
-        z = randn(length(mubA0_tmp), 1) + R'*mubA0_tmp;
-        bASamp = R'\z;
-        bAtmp = reshape(bASamp, [], 1+kMM*p);
-        bOut(latID_tmp) = bAtmp(:,1);
-        AOut(latID_tmp, :) = bAtmp(:,2:end);
+%         mubA0_tmp = mubA0_mat(latID_tmp, :);
+%         mubA0_tmp = mubA0_tmp(:);
+%         
+%         SigbA0_tmp = SigbA0_f(kMM);
+%         
+%         R = chol(inv(SigbA0_tmp),'lower');
+%         z = randn(length(mubA0_tmp), 1) + R'*mubA0_tmp;
+%         bASamp = R'\z;
+%         bAtmp = reshape(bASamp, [], 1+kMM*p);
+%         bOut(latID_tmp) = bAtmp(:,1);
+%         AOut(latID_tmp, :) = bAtmp(:,2:end);
         
         QOut(latID_tmp,latID_tmp) = iwishrnd(Psi0,nu0);
     end
+    
+    bOut = zeros(kMM*p, 1);
+    AOut = eye(kMM*p);
     
     invQ0 = inv(sparse(Q0));
     R = chol(invQ0,'lower');
@@ -99,22 +102,25 @@ x0Out(latID) = R'\z;
 % (3) update d_fit & C_fit
 % Laplace approximation
 
-for i = 1:N
-    latentId = id2id(Z_tmp(i), p);
-    X_tmpdc = [ones(1, T) ; XOut(latentId,:)]';
-    lamdc = @(dc) exp(X_tmpdc*dc);
-    
-    derdc = @(dc) X_tmpdc'*(Y(i,:)' - lamdc(dc)) - Sigdc0\(dc - mudc0);
-    hessdc = @(dc) -X_tmpdc'*diag(lamdc(dc))*X_tmpdc - inv(Sigdc0);
-    [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
-        [d_tmp(i) C_tmp(i,:)]',1e-8,1000);
-    
-    Sigdc = -inv(niSigdc);
-    Sigdc = (Sigdc + Sigdc')/2;
-    dc = mvnrnd(mudc, Sigdc);
-    dOut(i) = dc(1);
-    COut(i,:) = dc(2:end);
-end
+% for i = 1:N
+%     latentId = id2id(Z_tmp(i), p);
+%     X_tmpdc = [ones(1, T) ; XOut(latentId,:)]';
+%     lamdc = @(dc) exp(X_tmpdc*dc);
+%     
+%     derdc = @(dc) X_tmpdc'*(Y(i,:)' - lamdc(dc)) - Sigdc0\(dc - mudc0);
+%     hessdc = @(dc) -X_tmpdc'*diag(lamdc(dc))*X_tmpdc - inv(Sigdc0);
+%     [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
+%         [d_tmp(i) C_tmp(i,:)]',1e-8,1000);
+%     
+%     Sigdc = -inv(niSigdc);
+%     Sigdc = (Sigdc + Sigdc')/2;
+%     dc = mvnrnd(mudc, Sigdc);
+%     dOut(i) = dc(1);
+%     COut(i,:) = dc(2:end);
+% end
+
+dOut = d_tmp;
+COut = C_tmp;
 
 % (4) update b_fit & A_fit
 SigbA0 = SigbA0_f(nClus_tmp);
