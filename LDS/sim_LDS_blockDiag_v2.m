@@ -85,8 +85,8 @@ ng = 100;
 X_fit = zeros(nClus*p, T, ng);
 d_fit = zeros(N, ng);
 C_fit = zeros(N, p, ng);
-mudc_fit = zeros(p+1, ng);
-Sigdc_fit = zeros(p+1, p+1, ng);
+mudc_fit = zeros(p+1, nClus, ng);
+Sigdc_fit = zeros(p+1, p+1, nClus, ng);
 x0_fit = zeros(nClus*p, ng);
 A_fit = zeros(nClus*p, nClus*p, ng);
 b_fit = zeros(nClus*p, ng);
@@ -115,8 +115,8 @@ nu0 = p+2;
 % initials
 % initial for d_fit: 0
 C_fit(:,:,1) = reshape(normrnd(0,1e-2,N*p,1), [], p);
-mudc_fit(:,1) = zeros(p+1, 1);
-Sigdc_fit(:,:,1) = eye(p+1)*1e-2;
+% mudc_fit(:,:,1) = zeros(p+1, 1);
+Sigdc_fit(:,:,1:nClus,1) = repmat(eye(p+1)*1e-2,1,1,nClus);
 
 A_fit(:,:,1) = eye(nClus*p);
 % initial for b_fit: 0
@@ -174,8 +174,8 @@ for g = 2:ng
         
         lamdc = @(dc) exp(X_tmp*dc);
         
-        derdc = @(dc) X_tmp'*(Y(i,:)' - lamdc(dc)) - inv(Sigdc_fit(:,:,g-1))*(dc - mudc_fit(:,g-1));
-        hessdc = @(dc) -X_tmp'*diag(lamdc(dc))*X_tmp - inv(Sigdc_fit(:,:,g-1));
+        derdc = @(dc) X_tmp'*(Y(i,:)' - lamdc(dc)) - inv(Sigdc_fit(:,:,l,g-1))*(dc - mudc_fit(:,l,g-1));
+        hessdc = @(dc) -X_tmp'*diag(lamdc(dc))*X_tmp - inv(Sigdc_fit(:,:,l,g-1));
         [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
             [d_fit(i, g-1) C_fit(i,:,g-1)]',1e-8,1000);
         
