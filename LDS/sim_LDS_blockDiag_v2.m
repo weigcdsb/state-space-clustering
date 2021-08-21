@@ -83,8 +83,8 @@ ng = 100;
 
 % pre-allocation
 X_fit = zeros(nClus*p, T, ng);
-d_fit = zeros(N, ng);
-C_fit = zeros(N, p, ng);
+d_fit = zeros(N, nClus, ng);
+C_fit = zeros(N, nClus*p, ng);
 mudc_fit = zeros(p+1, nClus, ng);
 Sigdc_fit = zeros(p+1, p+1, nClus, ng);
 x0_fit = zeros(nClus*p, ng);
@@ -101,7 +101,7 @@ mux00 = zeros(nClus*p, 1);
 Sigx00 = eye(nClus*p)*1e2;
 
 deltadc0 = zeros(p+1,1);
-Taudc0 = eye(p+1)*1e-1;
+Taudc0 = eye(p+1)*1e-2;
 
 Psidc0 = eye(p+1)*1e-2;
 nudc0 = p+1+2;
@@ -114,7 +114,14 @@ nu0 = p+2;
 
 % initials
 % initial for d_fit: 0
-C_fit(:,:,1) = reshape(normrnd(0,1e-2,N*p,1), [], p);
+C_raw = reshape(normrnd(0,1e-2,N*p,1), [], p);
+d_tmp = zeros(N,1);
+for k = unique(Lab)
+    ladid_tmp = id2id(k, p);
+    C_fit(Lab == k, ladid_tmp, 1) = C_raw(Lab == k, :);
+    d_tmp(Lab == k) = d_fit(Lab ==k, k)
+end
+
 % mudc_fit(:,:,1) = zeros(p+1, 1);
 Sigdc_fit(:,:,1:nClus,1) = repmat(eye(p+1)*1e-2,1,1,nClus);
 
@@ -122,12 +129,9 @@ A_fit(:,:,1) = eye(nClus*p);
 % initial for b_fit: 0
 Q_fit(:,:,1) = eye(nClus*p)*1e-4;
 
-C_trans_tmp = zeros(n*nClus, p*nClus);
-for k = 1:length(Lab)
-    C_trans_tmp(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = C_fit(k,:,1);
-end
-x0_fit(:,1) = lsqr(C_trans_tmp,(log(mean(Y(:,1:10),2))-d_fit(:,1)));
-[X_fit(:,:,1),~,~] = ppasmoo_poissexp_v2(Y,C_trans_tmp,d_fit(:,1),...
+
+x0_fit(:,1) = lsqr(C_fit(:,:,1),(log(mean(Y(:,1:10),2))-d_tmp));
+[X_fit(:,:,1),~,~] = ppasmoo_poissexp_v2(Y,C_fit(:,:,1),d_tmp,...
     x0_fit(:,1),Q0,A_fit(:,:,1),b_fit(:,1),Q_fit(:,:,1));
 
 %% MCMC
@@ -137,18 +141,20 @@ for g = 2:ng
     
     % (1) update X_fit
     % adaptive smoothing
-    C_trans_tmp = zeros(n*nClus, p*nClus);
-    for k = 1:length(Lab)
-        C_trans_tmp(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = C_fit(k,:,g-1);
-    end
-    d_tmp = d_fit(:,g-1);
+    
+    d_raw = d_fit(:,:,g-1);
+    I = (1 : size(d_raw, 1)) .';
+    k = sub2ind(size(d_raw), I, Lab');
+    d_tmp = d_raw(k);
+    C_tmp = C_fit(:,:,g-1);
+    
     x0_tmp = x0_fit(:,g-1);
     A_tmp = A_fit(:,:,g-1);
     b_tmp = b_fit(:,g-1);
     Q_tmp = Q_fit(:,:,g-1);
     
-    [muX,~,~] = ppasmoo_poissexp_v2(Y,C_trans_tmp,d_tmp,x0_tmp,Q0,A_tmp,b_tmp,Q_tmp);
-    hess_tmp = hessX(muX(:), d_tmp, C_trans_tmp, Q0, Q_tmp, A_tmp, Y);
+    [muX,~,~] = ppasmoo_poissexp_v2(Y,C_tmp,d_tmp,x0_tmp,Q0,A_tmp,b_tmp,Q_tmp);
+    hess_tmp = hessX(muX(:), d_tmp, C_tmp, Q0, Q_tmp, A_tmp, Y);
     % tic;
     % use Cholesky decomposition to sample efficiently
     R = chol(-hess_tmp,'lower'); % sparse
@@ -165,19 +171,18 @@ for g = 2:ng
     
     % (3) update d_fit & C_fit
     % Laplace approximation
-    % dTest = zeros(N,1);
-    % CTest = zeros(N, p);
+    
     for i = 1:N
         l = Lab(i);
-        latentId = ((l-1)*p+1):(l*p);
+        latentId = id2id(l,p);
         X_tmp = [ones(1, T) ;X_fit(latentId,:,g)]';
         
         lamdc = @(dc) exp(X_tmp*dc);
         
-        derdc = @(dc) X_tmp'*(Y(i,:)' - lamdc(dc)) - inv(Sigdc_fit(:,:,l,g-1))*(dc - mudc_fit(:,l,g-1));
+        derdc = @(dc) X_tmp'*(Y(i,:)' - lamdc(dc)) - Sigdc_fit(:,:,l,g-1)\(dc - mudc_fit(:,l,g-1));
         hessdc = @(dc) -X_tmp'*diag(lamdc(dc))*X_tmp - inv(Sigdc_fit(:,:,l,g-1));
         [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
-            [d_fit(i, g-1) C_fit(i,:,g-1)]',1e-8,1000);
+            [d_fit(i,l, g-1) C_fit(i,latentId,g-1)]',1e-8,1000);
         
         % [mudc [d(i) C_all(i,:)]']
         
@@ -187,17 +192,33 @@ for g = 2:ng
         
         % dTest(i) = mudc(1);
         % CTest(i,:) = mudc(2:end);
-        d_fit(i,g) = dc(1);
-        C_fit(i,:,g) = dc(2:end);
+        d_fit(i,l,g) = dc(1);
+        C_fit(i,latentId,g) = dc(2:end);
     end
     
-    %     [CTest C_all]
-    %     [dTest d]
+    %     C_fit(:,:,g)
+    %     d_fit(:,:,g)
     
-    % (4) update b_fit & A_fit
+    % (4) update mudc_fit & Sigdc_fit
+    for l = unique(Lab)
+        dc_tmp = [d_fit(Lab == l, l, g) C_fit(Lab == l, id2id(l,p), g)];
+        invTaudc = inv(Taudc0) + sum(Lab == l)*inv(Sigdc_fit(:,:,l,g-1));
+        deltadc = invTaudc\(Taudc0\deltadc0 + Sigdc_fit(:,:,l,g-1)\sum(dc_tmp,1)');
+        mudc_fit(:,l,g) = mvnrnd(deltadc, inv(invTaudc));
+        
+        dcRes = dc_tmp' - mudc_fit(:,l,g);
+        Psidc = Psidc0 + dcRes*dcRes';
+        nudc = sum(Lab == l) + nudc0;
+        Sigdc_fit(:,:,l,g) = iwishrnd(Psidc,nudc);
+    end
+    
+%     mudc_fit(:,:,g)
+%     Sigdc_fit(:,:,:,g)
+    
+    % (5) update b_fit & A_fit
     for l = unique(Lab)
         
-        latentId = ((l-1)*p+1):(l*p);
+        latentId = id2id(l,p);
         mubA0 = mubA0_mat(latentId, :);
         mubA0 = mubA0(:);
         Z_tmp = X_fit(latentId,2:T,g);
@@ -217,7 +238,7 @@ for g = 2:ng
     %     imagesc(abs(A_fit(:,:,g) - A))
     %     colorbar()
     
-    % (5) update Q_fit
+    % (6) update Q_fit
     for l = unique(Lab)
         latentId = ((l-1)*p+1):(l*p);
         mux = A_fit(latentId,:,g)*X_fit(:,1:(T-1),g) +...
@@ -230,8 +251,48 @@ for g = 2:ng
     end
 end
 
+%% diagnose
+idx = 50:ng;
+
+subplot(1,2,1)
+plot(mean(X_fit(:,:,idx), 3)')
+subplot(1,2,2)
+plot(X')
+
+subplot(3,2,1)
+plot(X(1:p,:)')
+subplot(3,2,2)
+plot(mean(X_fit(1:p,:,idx), 3)')
+subplot(3,2,3)
+plot(X(p+1:2*p,:)')
+subplot(3,2,4)
+plot(mean(X_fit(p+1:2*p,:,idx), 3)')
+subplot(3,2,5)
+plot(X(2*p+1:3*p,:)')
+subplot(3,2,6)
+plot(mean(X_fit(2*p+1:3*p,:,idx), 3)')
+
+imagesc(mean(A_fit(:,:,idx), 3))
+colorbar()
+
+mean(d_fit(:,:,idx), 3)
+mean(C_fit(:,:,idx), 3)
+
+mean(mudc_fit(:,:,idx), 3)
+mean(Sigdc_fit(:,:,:,idx), 4)
 
 
+
+subplot(1,2,1)
+imagesc(exp(C_trans*X + d))
+cLim = caxis;
+title('true')
+colorbar()
+subplot(1,2,2)
+imagesc(exp(mean(C_fit(:,:,idx), 3)*mean(X_fit(:,:,idx), 3) + sum(mean(d_fit(:,:,idx), 3),2)))
+set(gca,'CLim',cLim)
+title('fit')
+colorbar()
 
 
 

@@ -9,8 +9,14 @@ p = 2;
 T = 1000;
 
 Lab = repelem(1:nClus, n);
-d = ones(n*nClus,1)*0;
-C_all = reshape(normrnd(0.08,1e-3,n*nClus*p,1), [], p);
+d1 = ones(n,1)*0;
+d2 = ones(n,1)*0.1;
+d3 = ones(n,1)*0.2;
+d = [d1;d2;d3];
+C_all1 = reshape(normrnd(0.06,1e-3,n*p,1), [], p);
+C_all2 = reshape(normrnd(0.08,1e-3,n*p,1), [], p);
+C_all3 = reshape(normrnd(0.1,1e-3,n*p,1), [], p);
+C_all = [C_all1; C_all2; C_all3];
 C_trans = zeros(n*nClus, p*nClus);
 for k = 1:length(Lab)
     C_trans(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = C_all(k,:);
@@ -49,16 +55,20 @@ for t=2:T
 end
 
 Y = poissrnd(exp(logLam));
+% clusterPlot(Y, Lab)
+
 
 %% MCMC setting
 ng = 20;
-kMM = 10;
+kMM = 3;
 
 % pre-allocation
 Z_fit = zeros(N, ng);
 RHO_fit = zeros(kMM, ng);
 d_fit = zeros(N, kMM, ng);
 C_fit = zeros(N, p*kMM, ng);
+mudc_fit = zeros(p+1, kMM, ng);
+Sigdc_fit = zeros(p+1, p+1, kMM, ng);
 b_fit = zeros(kMM*p, ng);
 A_fit = zeros(kMM*p, kMM*p, ng);
 Q_fit = zeros(kMM*p, kMM*p, ng);
@@ -73,8 +83,11 @@ Q0 = eye(kMM*p);
 mux00 = zeros(kMM*p, 1);
 Sigx00 = eye(kMM*p)*1e2;
 
-mudc0 = zeros(p+1,1);
-Sigdc0 = sparse(eye(p+1)*1e-2);
+deltadc0 = zeros(p+1,1);
+Taudc0 = eye(p+1)*1e-2;
+
+Psidc0 = eye(p+1)*1e-2;
+nudc0 = p+1+2;
 
 mubA0_mat = [zeros(kMM*p,1) eye(kMM*p)];
 SigbA0_f = @(nClus) sparse(eye(p*(1+p*nClus))*0.25);
@@ -85,12 +98,12 @@ nu0 = p+2;
 % initials
 % Z_fit(:,1) = ones(1, N);
 Z_fit(:,1) = randsample(kMM, N, true);
-
 RHO_fit(:,1) = ones(kMM,1)/kMM;
 
+mudc_fit(:,:,1) = zeros(p+1, kMM);
+Sigdc_fit(:,:,:,1) = repmat(eye(p+1)*1e-2,1,1,kMM);
 % initial for d_fit: 0
 C_fit(:,:,1) = reshape(normrnd(0,1e-2,N*p*kMM,1), N, []);
-
 
 % initial for b_fit: 0
 A_fit(:,:,1) = eye(kMM*p);
@@ -100,7 +113,6 @@ Q_fit(:,:,1) = eye(kMM*p)*1e-4;
 [Zsort_tmp,id] = sort(Z_fit(:,1));
 uniZsort_tmp = unique(Zsort_tmp);
 nClus_tmp = length(uniZsort_tmp);
-
 
 Csort_trans_tmp = zeros(N, p*nClus_tmp);
 for k = 1:nClus_tmp
@@ -112,15 +124,15 @@ for k = 1:nClus_tmp
 end
 
 
-d_tmp = d_fit(:,:,1);
-I = (1 : size(d_tmp, 1)) .';
-k = sub2ind(size(d_tmp), I, Z_fit(:,1));
-d_new = d_tmp(k);
+d_raw = d_fit(:,:,1);
+I = (1 : size(d_raw, 1)) .';
+k = sub2ind(size(d_raw), I, Z_fit(:,1));
+d_tmp = d_raw(k);
 
 latID = id2id(uniZsort_tmp, p);
 x0_fit(latID,1) =...
-    lsqr(Csort_trans_tmp,(log(mean(Y(id,1:10),2))-d_new(id,1)));
-X_fit(latID, :, 1) = ppasmoo_poissexp_v2(Y(id,:),Csort_trans_tmp,d_new(id,1),...
+    lsqr(Csort_trans_tmp,(log(mean(Y(id,1:10),2))-d_tmp(id)));
+X_fit(latID, :, 1) = ppasmoo_poissexp_v2(Y(id,:),Csort_trans_tmp,d_tmp(id,1),...
     x0_fit(latID,1),Q0(latID, latID),...
     A_fit(latID, latID,1),b_fit(latID, 1),Q_fit(latID, latID,1));
 
@@ -138,11 +150,10 @@ end
 
 
 % check
-% x0_fit(:,1)
-% plot(X_fit(:,:,1)')
+Sigdc_fit = repmat(eye(p+1)*1e-2,1,1,kMM,ng);
 
 %% MCMC
-for g = 2:10
+for g = 2:ng
     
     disp(g)
     % (1) update Z_fit
@@ -163,10 +174,14 @@ for g = 2:10
     RHO_fit(:,g) = drchrnd(delta0 + nClus', 1);
     
     % (3) update model-related parameters
-    [X_fit(:,:,g),x0_fit(:,g),d_fit(:,:,g),C_fit(:,:,g),b_fit(:,g),A_fit(:,:,g),Q_fit(:,:,g)] =...
-        blockDiag_gibbsLoop_MM_v2(Y, Z_fit(:,g), d_fit(:,:,g-1), C_fit(:,:,g-1),... % cluster-invariant
-        x0_fit(:,g-1), b_fit(:,g-1), A_fit(:,:,g-1), Q_fit(:,:,g-1), kMM,... % cluster-related
-        Q0, mux00, Sigx00, mudc0, Sigdc0, mubA0_mat, SigbA0_f, Psi0,nu0);
+    [X_fit(:,:,g),x0_fit(:,g),d_fit(:,:,g),C_fit(:,:,g),...
+    mudc_fit(:,:,g), Sigdc_fit(:,:,:,g),...
+    b_fit(:,g),A_fit(:,:,g),Q_fit(:,:,g)] =...
+    blockDiag_gibbsLoop_MM_v2(Y, Z_fit(:,g), d_fit(:,:,g-1), C_fit(:,:,g-1),... % cluster-invariant
+    mudc_fit(:,:,g-1), Sigdc_fit(:,:,:,g-1),...
+    x0_fit(:,g-1), b_fit(:,g-1), A_fit(:,:,g-1), Q_fit(:,:,g-1), kMM,... % cluster-related
+    Q0, mux00, Sigx00, deltadc0, Taudc0,Psidc0,nudc0,...
+    mubA0_mat, SigbA0_f, Psi0,nu0);
     
     figure(1)
     clusterPlot(Y, Z_fit(:,g)')
