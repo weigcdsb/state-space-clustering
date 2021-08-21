@@ -52,7 +52,7 @@ Y = poissrnd(exp(logLam));
 
 %% MCMC setting
 ng = 20;
-kMM = 10;
+kMM = N;
 
 % pre-allocation
 Z_fit = zeros(N, ng);
@@ -84,7 +84,8 @@ nu0 = p+2;
 
 % initials
 % Z_fit(:,1) = ones(1, N);
-Z_fit(:,1) = randsample(kMM, N, true);
+Z_fit(:,1) = 1:N;
+% Z_fit(:,1) = randsample(kMM, N, true);
 
 RHO_fit(:,1) = ones(kMM,1)/kMM;
 
@@ -122,14 +123,22 @@ X_fit(latID, :, 1) = ppasmoo_poissexp_v2(Y(id,:),Csort_trans_tmp,d_fit(id,1),...
     A_fit(latID, latID,1),b_fit(latID, 1),Q_fit(latID, latID,1));
 
 % no labels: generate by priors
+% x00 = lsqr(C_fit(:,:,1),(log(mean(Y(:,1:10),2))-d_fit(:,1)));
 outLab = setdiff(1:kMM, uniZsort_tmp);
 if(~isempty(outLab))
     outLatID = id2id(outLab , p);
     x0_fit(outLatID,1) = mvnrnd(mux00(outLatID), Sigx00(outLatID,outLatID))';
+    %     x0_fit(outLatID, 1) = repmat(x00,length(outLab),1);
     X_fit(outLatID, 1,1) = mvnrnd(x0_fit(outLatID,1), Q0(outLatID,outLatID))';
+    %     A_tmp = eye(kMM*p);
+    %     b_tmp = zeros(kMM*p);
+    %     Q_tmp = eye(kMM*p)*1e-4;
     for t= 2:T
         X_fit(outLatID, t,1) = mvnrnd(A_fit(outLatID,:,1)*X_fit(:,t-1,1) +...
             b_fit(outLatID,1), Q_fit(outLatID,outLatID,1));
+        %         X_fit(outLatID, t,1) = mvnrnd(A_tmp(outLatID,:)*X_fit(:,t-1,1) +...
+        %             b_tmp(outLatID), Q_tmp(outLatID,outLatID));
+        
     end
 end
 
@@ -139,7 +148,7 @@ end
 % plot(X_fit(:,:,1)')
 
 %% MCMC
-for g = 2:10
+for g = 2:ng
     
     disp(g)
     % (1) update Z_fit

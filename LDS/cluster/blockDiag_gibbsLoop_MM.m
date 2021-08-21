@@ -1,7 +1,8 @@
 function [XOut,x0Out,dOut,COut,bOut,AOut,QOut] =...
     blockDiag_gibbsLoop_MM(Y, Z_tmp, d_tmp, C_tmp,... % cluster-invariant
     x0_tmp, b_tmp, A_tmp, Q_tmp, kMM,... % cluster-related
-    Q0, mux00, Sigx00, mudc0, Sigdc0, mubA0_mat, SigbA0_f, Psi0,nu0) % priors
+    Q0, mux00, Sigx00, mudc0, Sigdc0, mubA0_mat, SigbA0_f, Psi0,nu0... %,x00...
+    ) % priors
 
 
 % for development & debug...
@@ -23,8 +24,8 @@ x0Out = zeros(kMM*p, 1);
 dOut = zeros(N, 1);
 COut = zeros(N, p);
 bOut = zeros(kMM*p, 1);
-AOut = zeros(kMM*p, kMM*p);
-QOut = zeros(kMM*p, kMM*p);
+AOut = eye(kMM*p);
+QOut = eye(kMM*p)*1e-4;
 
 [Zsort_tmp,idY] = sort(Z_tmp);
 uniZsort_tmp = unique(Zsort_tmp);
@@ -36,6 +37,7 @@ outLab = setdiff(1:kMM, uniZsort_tmp);
 if(~isempty(outLab))
     
     x0Out =  mvnrnd(mux00, Sigx00)';
+%     x0Out = repmat(x00, kMM,1);
     for k =1:kMM
         latID_tmp = id2id(k, p);
 %         mubA0_tmp = mubA0_mat(latID_tmp, :);
@@ -49,12 +51,10 @@ if(~isempty(outLab))
 %         bAtmp = reshape(bASamp, [], 1+kMM*p);
 %         bOut(latID_tmp) = bAtmp(:,1);
 %         AOut(latID_tmp, :) = bAtmp(:,2:end);
-        
+%         
         QOut(latID_tmp,latID_tmp) = iwishrnd(Psi0,nu0);
     end
     
-    bOut = zeros(kMM*p, 1);
-    AOut = eye(kMM*p);
     
     invQ0 = inv(sparse(Q0));
     R = chol(invQ0,'lower');
