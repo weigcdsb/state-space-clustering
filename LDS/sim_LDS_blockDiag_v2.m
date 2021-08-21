@@ -10,8 +10,15 @@ p = 2;
 T = 1000;
 
 Lab = repelem(1:nClus, n);
-d = ones(n*nClus,1)*0;
-C_all = reshape(normrnd(0.08,1e-3,n*nClus*p,1), [], p);
+d1 = ones(n,1)*0;
+d2 = ones(n,1)*0.1;
+d3 = ones(n,1)*0.2;
+d = [d1;d2;d3];
+C_all1 = reshape(normrnd(0.06,1e-3,n*p,1), [], p);
+C_all2 = reshape(normrnd(0.08,1e-3,n*p,1), [], p);
+C_all3 = reshape(normrnd(0.1,1e-3,n*p,1), [], p);
+C_all = [C_all1; C_all2; C_all3];
+
 C_trans = zeros(n*nClus, p*nClus);
 for k = 1:length(Lab)
     C_trans(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = C_all(k,:);
@@ -71,23 +78,20 @@ colorbar()
 figure(5)
 clusterPlot(Y, Lab)
 
-% plot(X(1:p,:)')
-% plot(X(p+1:2*p,:)')
-% plot(X(2*p+1:3*p,:)')
-
-%% fitting: pre-setting
-% assume now observe Y and Lab
-% later Y will be the only observation for clustering problem
+%%
 ng = 100;
 
 % pre-allocation
 X_fit = zeros(nClus*p, T, ng);
-d_fit = zeros(n*nClus, ng);
-C_fit = zeros(n*nClus, p, ng);
+d_fit = zeros(N, ng);
+C_fit = zeros(N, p, ng);
+mudc_fit = zeros(p+1, ng);
+Sigdc_fit = zeros(p+1, p+1, ng);
 x0_fit = zeros(nClus*p, ng);
 A_fit = zeros(nClus*p, nClus*p, ng);
 b_fit = zeros(nClus*p, ng);
 Q_fit = zeros(nClus*p, nClus*p, ng);
+
 
 % priors
 % place-holder...
@@ -96,8 +100,11 @@ Q0 = eye(nClus*p);
 mux00 = zeros(nClus*p, 1);
 Sigx00 = eye(nClus*p)*1e2;
 
-mudc0 = zeros(p+1,1);
-Sigdc0 = eye(p+1)*1e-2;
+deltadc0 = zeros(p+1,1);
+Taudc0 = eye(p+1)*1e-1;
+
+Psidc0 = eye(p+1)*1e-2;
+nudc0 = p+1+2;
 
 mubA0_mat = [zeros(nClus*p,1) eye(nClus*p)];
 SigbA0 = eye(p*(1+p*nClus))*0.25;
@@ -107,7 +114,10 @@ nu0 = p+2;
 
 % initials
 % initial for d_fit: 0
-C_fit(:,:,1) = reshape(normrnd(0,1e-2,n*nClus*p,1), [], p);
+C_fit(:,:,1) = reshape(normrnd(0,1e-2,N*p,1), [], p);
+mudc_fit(:,1) = zeros(p+1, 1);
+Sigdc_fit(:,:,1) = eye(p+1)*1e-2;
+
 A_fit(:,:,1) = eye(nClus*p);
 % initial for b_fit: 0
 Q_fit(:,:,1) = eye(nClus*p)*1e-4;
@@ -120,10 +130,7 @@ x0_fit(:,1) = lsqr(C_trans_tmp,(log(mean(Y(:,1:10),2))-d_fit(:,1)));
 [X_fit(:,:,1),~,~] = ppasmoo_poissexp_v2(Y,C_trans_tmp,d_fit(:,1),...
     x0_fit(:,1),Q0,A_fit(:,:,1),b_fit(:,1),Q_fit(:,:,1));
 
-% turn off Q estimation (for debug)
-% Q_fit = repmat(Q,1,1,ng); % true
-
-%% fitting: MCMC
+%% MCMC
 for g = 2:ng
     
     disp(g)
@@ -167,8 +174,8 @@ for g = 2:ng
         
         lamdc = @(dc) exp(X_tmp*dc);
         
-        derdc = @(dc) X_tmp'*(Y(i,:)' - lamdc(dc)) - inv(Sigdc0)*(dc - mudc0);
-        hessdc = @(dc) -X_tmp'*diag(lamdc(dc))*X_tmp - inv(Sigdc0);
+        derdc = @(dc) X_tmp'*(Y(i,:)' - lamdc(dc)) - inv(Sigdc_fit(:,:,g-1))*(dc - mudc_fit(:,g-1));
+        hessdc = @(dc) -X_tmp'*diag(lamdc(dc))*X_tmp - inv(Sigdc_fit(:,:,g-1));
         [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
             [d_fit(i, g-1) C_fit(i,:,g-1)]',1e-8,1000);
         
@@ -222,59 +229,9 @@ for g = 2:ng
         Q_fit(latentId,latentId,g) = iwishrnd(PsiQ,nuQ);
     end
 end
-%% diagnose
-idx = 50:ng;
-
-% for k = round(linspace(2, 1000, 10))
-%     figure(k)
-%     subplot(1,2,1)
-%     plot(X_fit(:,:,k)')
-%     subplot(1,2,2)
-%     plot(X')
-% end
-
-subplot(1,2,1)
-plot(mean(X_fit(:,:,idx), 3)')
-subplot(1,2,2)
-plot(X')
-
-subplot(3,2,1)
-plot(X(1:p,:)')
-subplot(3,2,2)
-plot(mean(X_fit(1:p,:,idx), 3)')
-subplot(3,2,3)
-plot(X(p+1:2*p,:)')
-subplot(3,2,4)
-plot(mean(X_fit(p+1:2*p,:,idx), 3)')
-subplot(3,2,5)
-plot(X(2*p+1:3*p,:)')
-subplot(3,2,6)
-plot(mean(X_fit(2*p+1:3*p,:,idx), 3)')
 
 
-[mean(d_fit(:,idx), 2) d]
-[mean(C_fit(:,:,idx), 3) C_all]
-[mean(x0_fit(:,idx), 2) x0']
-abs(mean(A_fit(:,:,idx), 3) - A)
-[mean(b_fit(:,idx), 2) b]
-imagesc(mean(A_fit(:,:,idx), 3))
-colorbar()
-mean(Q_fit(:,:,idx), 3)
 
-C_fit_mean = mean(C_fit(:,:,idx), 3);
-C_trans_fit = zeros(n*nClus, p*nClus);
-for k = 1:length(Lab)
-    C_trans_fit(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = C_fit_mean(k,:);
-end
-subplot(1,2,1)
-imagesc(exp(C_trans*X + d))
-cLim = caxis;
-title('true')
-colorbar()
-subplot(1,2,2)
-imagesc(exp(C_trans_fit*mean(X_fit(:,:,idx), 3) + mean(d_fit(:,idx), 2)))
-set(gca,'CLim',cLim)
-title('fit')
-colorbar()
+
 
 
