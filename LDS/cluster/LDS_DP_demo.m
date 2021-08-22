@@ -52,6 +52,7 @@ end
 Y = poissrnd(exp(logLam));
 
 %% MCMC setting
+rng(3)
 alphaDP = 0.01;
 ng = 20;
 
@@ -59,23 +60,18 @@ ng = 20;
 Z_fit = zeros(N, ng);
 d_fit = zeros(N, ng);
 C_fit = zeros(N, p, ng);
-b_fit = zeros(N*p, ng);
-A_fit = zeros(N*p, N*p, ng);
-Q_fit = zeros(N*p, N*p, ng);
-x0_fit = zeros(N*p, ng);
-X_fit = zeros(N*p, T, ng);
 
 % priors
 % place-holder
-Q0 = eye(N*p);
+Q0_f = @(nClus) eye(nClus*p);
 
-mux00 = zeros(N*p, 1);
-Sigx00 = eye(N*p)*1e2;
+mux00_f = @(nClus) zeros(nClus*p, 1);
+Sigx00_f = @(nClus) eye(nClus*p)*1e2;
 
 mudc0 = zeros(p+1,1);
 Sigdc0 = sparse(eye(p+1)*1e-2);
 
-mubA0_all = sparse([zeros(N*p,1) eye(N*p)]);
+mubA0_all_f = @(nClus) sparse([zeros(nClus*p,1) eye(nClus*p)]);
 SigbA0_f = @(nClus) sparse(eye(p*(1+p*nClus))*1e-2);
 
 Psi0 = eye(p)*1e-4;
@@ -102,16 +98,22 @@ for k = 1:nClus_tmp
     idx_sort = (Zsort_tmp == uniZsort_tmp(k));
     Csort_trans_tmp(idx_sort, ((k-1)*p+1):k*p) = C_fit(idx_old,:,1);
 end
-% imagesc(C_trans_tmp)
-% initial for b_fit: 0
-A_fit(:,:,1) = eye(N*p);
-Q_fit(:,:,1) = eye(N*p)*1e-4;
 
+
+
+clusMax = max(Z_fit(:,1));
+b_fit{1} = zeros(clusMax*p,1);
+A_fit{1} = eye(clusMax*p);
+Q_fit{1} = eye(clusMax*p)*1e-4;
+x0_fit{1} = zeros(clusMax*p, 1);
+X_fit{1} = zeros(clusMax*p, T);
 latID = id2id(uniZsort_tmp, p);
-x0_fit(latID,1) = lsqr(Csort_trans_tmp,(log(mean(Y(id,1:10),2))-d_fit(id,1)));
-X_fit(latID, :, 1) = ppasmoo_poissexp_v2(Y(id,:),Csort_trans_tmp,d_fit(id,1),...
-    x0_fit(latID,1),Q0(latID, latID),...
-    A_fit(latID, latID,1),b_fit(latID, 1),Q_fit(latID, latID,1));
+
+x0_fit{1}(latID) = lsqr(Csort_trans_tmp,(log(mean(Y(id,1:10),2))-d_fit(id,1)));
+X_fit{1}(latID,:) = ppasmoo_poissexp_v2(Y(id,:),Csort_trans_tmp,d_fit(id,1),...
+    x0_fit{1}(latID),Q0(latID, latID),...
+    A_fit{1}(latID, latID),b_fit{1}(latID),Q_fit{1}(latID, latID));
+
 
 
 %% MCMC

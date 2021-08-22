@@ -115,9 +115,10 @@ for i = 1:N
     [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
         [d_tmp(i, Z_tmp(i)) C_tmp(i,latentId)]',1e-8,1000);
     
-    Sigdc = -inv(niSigdc);
-    Sigdc = (Sigdc + Sigdc')/2;
-    dc = mvnrnd(mudc, Sigdc);
+    R = chol(-niSigdc,'lower'); % sparse
+    z = randn(length(mudc), 1) + R'*mudc;
+    dc = R'\z;
+    
     dOut(i,Z_tmp(i)) = dc(1);
     COut(i,latentId) = dc(2:end);
 end
@@ -127,7 +128,7 @@ end
 % COut = C_tmp;
 
 % (4) update mudc_fit & Sigdc_fit
-SigdcOut = Sigdc_tmp;
+% SigdcOut = Sigdc_tmp;
 dOut_new = zeros(N, kMM);
 COut_new = zeros(N, p*kMM);
 for l = uniZsort_tmp(:)'
@@ -136,10 +137,10 @@ for l = uniZsort_tmp(:)'
     deltadc = invTaudc\(Taudc0\deltadc0 + Sigdc_tmp(:,:,l)\sum(dc_tmp,1)');
     mudcOut(:,l) = mvnrnd(deltadc, inv(invTaudc));
     
-%     dcRes = dc_tmp' - mudcOut(:,l);
-%     Psidc = Psidc0 + dcRes*dcRes';
-%     nudc = sum(Z_tmp == l) + nudc0;
-%     SigdcOut(:,:,l) = iwishrnd(Psidc,nudc);
+    dcRes = dc_tmp' - mudcOut(:,l);
+    Psidc = Psidc0 + dcRes*dcRes';
+    nudc = sum(Z_tmp == l) + nudc0;
+    SigdcOut(:,:,l) = iwishrnd(Psidc,nudc);
     
     dc_samp = mvnrnd(mudcOut(:,l), SigdcOut(:,:,l), N);
     dOut_new(:,l) = dc_samp(:,1);
@@ -211,6 +212,6 @@ if(~isempty(outLab))
             bOut(outLatID), QOut(outLatID, outLatID));
     end
 end
-SigdcOut = Sigdc_tmp;
+% SigdcOut = Sigdc_tmp;
 
 end

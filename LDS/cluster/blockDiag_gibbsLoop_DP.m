@@ -7,23 +7,23 @@ function [XOut,x0Out,dOut,COut,bOut,AOut,QOut] =...
 % Lab = Z_fit(:,g-1);
 % d_tmp = d_fit(:,g-1);
 % C_tmp = C_fit(:,:,g-1);
-% x0_tmp = x0_fit(:,g-1);
-% b_tmp = b_fit(:,g-1);
-% A_tmp = A_fit(:,:,g-1);
-% Q_tmp = Q_fit(:,:,g-1);
+% x0_tmp = x0_fit{g-1};
+% b_tmp = b_fit{g-1};
+% A_tmp = A_fit{g-1};
+% Q_tmp = Q_fit{g-1};
 
 % output
 N = size(Y, 1);
 T = size(Y, 2);
-p = length(x0_tmp)/N;
+p = 2;
 
-XOut = zeros(N*p, T);
-x0Out = zeros(N*p, 1);
+XOut = zeros(s_star*p, T);
+x0Out = zeros(s_star*p, 1);
 dOut = zeros(N, 1);
 COut = zeros(N, p);
-bOut = zeros(N*p, 1);
-AOut = zeros(N*p, N*p);
-QOut = zeros(N*p, N*p);
+bOut = zeros(s_star*p, 1);
+AOut = eye(s_star*p);
+QOut = zeros(s_star*p, s_star*p);
 
 [Zsort_tmp,idY] = sort(Lab);
 uniZsort_tmp = unique(Zsort_tmp);
@@ -33,22 +33,22 @@ latID = id2id(uniZsort_tmp, p);
 % labels without obs.: generate things by prior
 outLab = setdiff(1:s_star, uniZsort_tmp);
 if(~isempty(outLab))
-    fullLatid = id2id(1:s_star, p);
+    fullLatid = 1:(s_star*p);
     
-    x0Out(fullLatid) =  mvnrnd(mux00(fullLatid), Sigx00(fullLatid, fullLatid))';
+    x0Out =  mvnrnd(mux00(fullLatid), Sigx00(fullLatid, fullLatid))';
     for k =1:s_star
         latID_tmp = id2id(k, p);
-        mubA0_tmp = mubA0_all(latID_tmp, [1; fullLatid+1]);
-        mubA0_tmp = mubA0_tmp(:);
-        
-        SigbA0_tmp = SigbA0_f(s_star);
-        
-        R = chol(inv(SigbA0_tmp),'lower');
-        z = randn(length(mubA0_tmp), 1) + R'*mubA0_tmp;
-        bASamp = R'\z;
-        bAtmp = reshape(bASamp, [], 1+s_star*p);
-        bOut(latID_tmp) = bAtmp(:,1);
-        AOut(latID_tmp, fullLatid) = bAtmp(:,2:end);
+%         mubA0_tmp = mubA0_all(latID_tmp, [1; fullLatid+1]);
+%         mubA0_tmp = mubA0_tmp(:);
+%         
+%         SigbA0_tmp = SigbA0_f(s_star);
+%         
+%         R = chol(inv(SigbA0_tmp),'lower');
+%         z = randn(length(mubA0_tmp), 1) + R'*mubA0_tmp;
+%         bASamp = R'\z;
+%         bAtmp = reshape(bASamp, [], 1+s_star*p);
+%         bOut(latID_tmp) = bAtmp(:,1);
+%         AOut(latID_tmp, fullLatid) = bAtmp(:,2:end);
         
         QOut(latID_tmp,latID_tmp) = iwishrnd(Psi0,nu0);
     end
@@ -119,6 +119,9 @@ for i = 1:N
     dOut(i) = dc(1);
     COut(i,:) = dc(2:end);
 end
+
+
+
 
 % [dTest d(idPer)]
 % [CTest C_all(idPer, :)]

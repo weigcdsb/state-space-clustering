@@ -5,7 +5,7 @@ xx(:,1) = x0;
 fx = feval(f,x0);
 % disp(norm(fx))
 warning('off');
-for k = 1:63
+for k = 1:MaxIter
 %     disp(k)
     dfdx = feval(df,xx(:,k));
     dx = -dfdx\fx;

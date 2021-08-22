@@ -51,7 +51,8 @@ end
 Y = poissrnd(exp(logLam));
 
 %% MCMC setting
-ng = 20;
+rng(3)
+ng = 50;
 kMM = N;
 
 % pre-allocation
@@ -74,7 +75,8 @@ mux00 = zeros(kMM*p, 1);
 Sigx00 = eye(kMM*p)*1e2;
 
 mudc0 = zeros(p+1,1);
-Sigdc0 = sparse(eye(p+1)*1e-2);
+% Sigdc0 = sparse(eye(p+1)*1e-2);
+Sigdc0 = sparse(eye(p+1));
 
 mubA0_mat = [zeros(kMM*p,1) eye(kMM*p)];
 SigbA0_f = @(nClus) sparse(eye(p*(1+p*nClus))*0.25);
@@ -179,7 +181,7 @@ for g = 2:ng
 end
 
 
-for k = 1:g
+for k = 1:10
     figure(k)
     clusterPlot(Y, Z_fit(:,k)')
 end

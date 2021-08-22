@@ -1,4 +1,5 @@
-addpath(genpath('D:\github\state-space-clustering'));
+% addpath(genpath('D:\github\state-space-clustering'));
+addpath(genpath('C:\Users\gaw19004\Documents\GitHub\state-space-clustering'));
 
 %% simulation
 rng(2)
@@ -10,12 +11,12 @@ T = 1000;
 
 Lab = repelem(1:nClus, n);
 d1 = ones(n,1)*0;
-d2 = ones(n,1)*0.1;
-d3 = ones(n,1)*0.2;
+d2 = ones(n,1)*1;
+d3 = ones(n,1)*-5;
 d = [d1;d2;d3];
-C_all1 = reshape(normrnd(0.06,1e-3,n*p,1), [], p);
-C_all2 = reshape(normrnd(0.08,1e-3,n*p,1), [], p);
-C_all3 = reshape(normrnd(0.1,1e-3,n*p,1), [], p);
+C_all1 = reshape(normrnd(0.08,1e-4,n*p,1), [], p);
+C_all2 = reshape(normrnd(-0.02,1e-4,n*p,1), [], p);
+C_all3 = reshape(normrnd(-0.18,1e-4,n*p,1), [], p);
 C_all = [C_all1; C_all2; C_all3];
 C_trans = zeros(n*nClus, p*nClus);
 for k = 1:length(Lab)
@@ -59,8 +60,9 @@ Y = poissrnd(exp(logLam));
 
 
 %% MCMC setting
-ng = 20;
-kMM = 3;
+rng(3)
+ng = 100;
+kMM = 4;
 
 % pre-allocation
 Z_fit = zeros(N, ng);
@@ -81,12 +83,12 @@ delta0 = ones(1, kMM);
 Q0 = eye(kMM*p);
 
 mux00 = zeros(kMM*p, 1);
-Sigx00 = eye(kMM*p)*1e2;
+Sigx00 = eye(kMM*p)*25;
 
 deltadc0 = zeros(p+1,1);
-Taudc0 = eye(p+1)*1e-2;
+Taudc0 = eye(p+1)*1e6;
 
-Psidc0 = eye(p+1)*1e-2;
+Psidc0 = eye(p+1)*1e-4;
 nudc0 = p+1+2;
 
 mubA0_mat = [zeros(kMM*p,1) eye(kMM*p)];
@@ -96,8 +98,7 @@ Psi0 = eye(p)*1e-4;
 nu0 = p+2;
 
 % initials
-% Z_fit(:,1) = ones(1, N);
-Z_fit(:,1) = randsample(kMM, N, true);
+Z_fit(:,1) = ones(1, N);
 RHO_fit(:,1) = ones(kMM,1)/kMM;
 
 mudc_fit(:,:,1) = zeros(p+1, kMM);
@@ -150,7 +151,7 @@ end
 
 
 % check
-Sigdc_fit = repmat(eye(p+1)*1e-2,1,1,kMM,ng);
+% Sigdc_fit = repmat(eye(p+1)*1e-4,1,1,kMM,ng);
 
 %% MCMC
 for g = 2:ng
@@ -183,12 +184,12 @@ for g = 2:ng
     Q0, mux00, Sigx00, deltadc0, Taudc0,Psidc0,nudc0,...
     mubA0_mat, SigbA0_f, Psi0,nu0);
     
-    figure(1)
-    clusterPlot(Y, Z_fit(:,g)')
+%     figure(1)
+%     clusterPlot(Y, Z_fit(:,g)')
 end
 
 
-for k = 1:g
+for k = 1:ng
     figure(k)
     clusterPlot(Y, Z_fit(:,k)')
 end
