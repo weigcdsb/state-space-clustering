@@ -78,7 +78,7 @@ clusterPlot(Y, Lab)
 %% fitting: pre-setting
 % assume now observe Y and Lab
 % later Y will be the only observation for clustering problem
-ng = 1000;
+ng = 100;
 
 % pre-allocation
 X_fit = zeros(nClus*p, T, ng);
@@ -215,7 +215,7 @@ for g = 2:ng
 end
 
 %% diagnose
-idx = 200:ng;
+idx = 50:ng;
 
 % for k = round(linspace(2, 1000, 10))
 %     figure(k)
@@ -232,8 +232,10 @@ plot(X')
 
 subplot(3,2,1)
 plot(X(1:p,:)')
+title('true')
 subplot(3,2,2)
 plot(mean(X_fit(1:p,:,idx), 3)')
+title('fit')
 subplot(3,2,3)
 plot(X(p+1:2*p,:)')
 subplot(3,2,4)
@@ -249,8 +251,18 @@ plot(mean(X_fit(2*p+1:3*p,:,idx), 3)')
 [mean(x0_fit(:,idx), 2) x0']
 abs(mean(A_fit(:,:,idx), 3) - A)
 [mean(b_fit(:,idx), 2) b]
+
+subplot(1,2,1)
+imagesc(A)
+colorbar()
+cLim = caxis;
+title('true')
+subplot(1,2,2)
 imagesc(mean(A_fit(:,:,idx), 3))
 colorbar()
+set(gca,'CLim',cLim)
+title('fit')
+
 mean(Q_fit(:,:,idx), 3)
 
 C_fit_mean = mean(C_fit(:,:,idx), 3);

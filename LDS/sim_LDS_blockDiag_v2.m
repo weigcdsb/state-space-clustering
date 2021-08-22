@@ -11,14 +11,13 @@ T = 1000;
 
 Lab = repelem(1:nClus, n);
 d1 = ones(n,1)*0;
-d2 = ones(n,1)*0.1;
-d3 = ones(n,1)*0.2;
+d2 = ones(n,1)*1;
+d3 = ones(n,1)*-5;
 d = [d1;d2;d3];
-C_all1 = reshape(normrnd(0.06,1e-3,n*p,1), [], p);
-C_all2 = reshape(normrnd(0.08,1e-3,n*p,1), [], p);
-C_all3 = reshape(normrnd(0.1,1e-3,n*p,1), [], p);
+C_all1 = reshape(normrnd(0.08,1e-4,n*p,1), [], p);
+C_all2 = reshape(normrnd(-0.02,1e-4,n*p,1), [], p);
+C_all3 = reshape(normrnd(-0.18,1e-4,n*p,1), [], p);
 C_all = [C_all1; C_all2; C_all3];
-
 C_trans = zeros(n*nClus, p*nClus);
 for k = 1:length(Lab)
     C_trans(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = C_all(k,:);
@@ -47,12 +46,6 @@ A = [1 0 0 0 0.4 -0.4;...
     0 0 0 0 1 0;
     0 0 0 0 0 1];
 
-figure(1)
-imagesc(A)
-colorbar()
-xlabel('sending')
-ylabel('receiving')
-
 % let's generate lambda
 logLam = zeros(n*nClus, T);
 logLam(:,1) = d + C_trans*X(:,1);
@@ -62,23 +55,11 @@ for t=2:T
     logLam(:, t) = d + C_trans*X(:,t);
 end
 
-figure(2)
-plot(X')
-
-figure(3)
-% imagesc(logLam)
-imagesc(exp(logLam))
-colorbar()
-
 Y = poissrnd(exp(logLam));
-figure(4)
-imagesc(Y)
-colorbar()
-
-figure(5)
 clusterPlot(Y, Lab)
 
 %%
+rng(3)
 ng = 100;
 
 % pre-allocation
@@ -98,12 +79,12 @@ Q_fit = zeros(nClus*p, nClus*p, ng);
 Q0 = eye(nClus*p);
 
 mux00 = zeros(nClus*p, 1);
-Sigx00 = eye(nClus*p)*1e2;
+Sigx00 = eye(nClus*p)*25;
 
 deltadc0 = zeros(p+1,1);
-Taudc0 = eye(p+1)*1e-2;
+Taudc0 = eye(p+1)*1e6;
 
-Psidc0 = eye(p+1)*1e-2;
+Psidc0 = eye(p+1)*1e-4;
 nudc0 = p+1+2;
 
 mubA0_mat = [zeros(nClus*p,1) eye(nClus*p)];
@@ -119,7 +100,7 @@ d_tmp = zeros(N,1);
 for k = unique(Lab)
     ladid_tmp = id2id(k, p);
     C_fit(Lab == k, ladid_tmp, 1) = C_raw(Lab == k, :);
-    d_tmp(Lab == k) = d_fit(Lab ==k, k)
+    d_tmp(Lab == k) = d_fit(Lab ==k, k);
 end
 
 % mudc_fit(:,:,1) = zeros(p+1, 1);
@@ -261,8 +242,10 @@ plot(X')
 
 subplot(3,2,1)
 plot(X(1:p,:)')
+title('true')
 subplot(3,2,2)
 plot(mean(X_fit(1:p,:,idx), 3)')
+title('fit')
 subplot(3,2,3)
 plot(X(p+1:2*p,:)')
 subplot(3,2,4)
@@ -272,8 +255,16 @@ plot(X(2*p+1:3*p,:)')
 subplot(3,2,6)
 plot(mean(X_fit(2*p+1:3*p,:,idx), 3)')
 
+subplot(1,2,1)
+imagesc(A)
+colorbar()
+cLim = caxis;
+title('true')
+subplot(1,2,2)
 imagesc(mean(A_fit(:,:,idx), 3))
 colorbar()
+set(gca,'CLim',cLim)
+title('fit')
 
 mean(d_fit(:,:,idx), 3)
 mean(C_fit(:,:,idx), 3)
