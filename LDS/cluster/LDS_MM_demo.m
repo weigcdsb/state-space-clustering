@@ -53,7 +53,7 @@ Y = poissrnd(exp(logLam));
 %% MCMC setting
 rng(3)
 ng = 50;
-kMM = N;
+kMM = 4;
 
 % pre-allocation
 Z_fit = zeros(N, ng);
@@ -85,8 +85,8 @@ Psi0 = eye(p)*1e-4;
 nu0 = p+2;
 
 % initials
-% Z_fit(:,1) = ones(1, N);
-Z_fit(:,1) = 1:N;
+Z_fit(:,1) = ones(1, N);
+% Z_fit(:,1) = 1:N;
 % Z_fit(:,1) = randsample(kMM, N, true);
 
 RHO_fit(:,1) = ones(kMM,1)/kMM;
