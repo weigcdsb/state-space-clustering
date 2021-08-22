@@ -53,8 +53,8 @@ Y = poissrnd(exp(logLam));
 
 %% MCMC setting
 rng(3)
-alphaDP = 0.01;
-ng = 20;
+alphaDP = 10;
+ng = 50;
 
 % pre-allocation
 Z_fit = zeros(N, ng);
@@ -79,11 +79,10 @@ nu0 = p+2;
 
 % initials
 % start from each full clusters
-% Z_fit(:,1) = 1:N;
+Z_fit(:,1) = 1:N;
 
 % start from single cluster
-Z_fit(:,1) = ones(N, 1);
-
+% Z_fit(:,1) = ones(N, 1);
 
 % reorder Y by labels
 [Zsort_tmp,id] = sort(Z_fit(:,1));
@@ -92,14 +91,16 @@ nClus_tmp = length(uniZsort_tmp);
 
 % initial for d_fit: 0
 C_fit(:,:,1) = reshape(normrnd(0,1e-2,N*p,1), [], p);
+
+d_fit(:,1) = d;
+C_fit(:,:,1) = C_all;
+
 Csort_trans_tmp = zeros(N, p*nClus_tmp);
 for k = 1:nClus_tmp
     idx_old = (Z_fit(:, 1) == uniZsort_tmp(k));
     idx_sort = (Zsort_tmp == uniZsort_tmp(k));
     Csort_trans_tmp(idx_sort, ((k-1)*p+1):k*p) = C_fit(idx_old,:,1);
 end
-
-
 
 clusMax = max(Z_fit(:,1));
 b_fit{1} = zeros(clusMax*p,1);
@@ -111,10 +112,8 @@ latID = id2id(uniZsort_tmp, p);
 
 x0_fit{1}(latID) = lsqr(Csort_trans_tmp,(log(mean(Y(id,1:10),2))-d_fit(id,1)));
 X_fit{1}(latID,:) = ppasmoo_poissexp_v2(Y(id,:),Csort_trans_tmp,d_fit(id,1),...
-    x0_fit{1}(latID),Q0(latID, latID),...
+    x0_fit{1}(latID),Q0_f(nClus_tmp),...
     A_fit{1}(latID, latID),b_fit{1}(latID),Q_fit{1}(latID, latID));
-
-
 
 %% MCMC
 for g = 2:ng
@@ -141,17 +140,17 @@ for g = 2:ng
     s_star = length(eta_tmp2);
     
     % (4) update THETA: model related parameters
-    [X_fit(:,:,g),x0_fit(:,g),d_fit(:,g),C_fit(:,:,g),b_fit(:,g),A_fit(:,:,g),Q_fit(:,:,g)] =...
-        blockDiag_gibbsLoop_DP(Y, Z_fit(:,g-1), d_fit(:,g-1), C_fit(:,:,g-1),... % cluster-invariant
-        x0_fit(:,g-1), b_fit(:,g-1), A_fit(:,:,g-1), Q_fit(:,:,g-1), s_star,... % cluster-related
-        Q0, mux00, Sigx00, mudc0, Sigdc0, mubA0_all, SigbA0_f, Psi0,nu0); % priors
+    [X_fit{g},x0_fit{g},d_fit(:,g),C_fit(:,:,g),b_fit{g},A_fit{g},Q_fit{g}] =...
+    blockDiag_gibbsLoop_DP(Y, Lab, d_fit(:,g-1), C_fit(:,:,g-1),... % cluster-invariant
+    x0_fit{g-1}, b_fit{g-1},A_fit{g-1}, Q_fit{g-1}, s_star,... % cluster-related
+    Q0_f, mux00_f, Sigx00_f, mudc0, Sigdc0, mubA0_all_f, SigbA0_f, Psi0,nu0);
     
     % (5) update Z
     LAM_tmp = zeros(N, T, s_star);
     LLHD = zeros(N, s_star);
     for k=1:s_star
         latID = id2id(k,p);
-        LAM_tmp(:,:,k) = exp(C_fit(:,:,g)*X_fit(latID,:,g) + d_fit(:,g));
+        LAM_tmp(:,:,k) = exp(C_fit(:,:,g)* X_fit{g}(latID,:) + d_fit(:,g));
         LLHD(:, k) = sum(log(poisspdf(Y, LAM_tmp(:,:,k))), 2);
     end
     

@@ -1,7 +1,7 @@
 function [XOut,x0Out,dOut,COut,bOut,AOut,QOut] =...
     blockDiag_gibbsLoop_DP(Y, Lab, d_tmp, C_tmp,... % cluster-invariant
     x0_tmp, b_tmp, A_tmp, Q_tmp, s_star,... % cluster-related
-    Q0, mux00, Sigx00, mudc0, Sigdc0, mubA0_all, SigbA0_f, Psi0,nu0) % priors
+    Q0_f, mux00_f, Sigx00_f, mudc0, Sigdc0, mubA0_all_f, SigbA0_f, Psi0,nu0) % priors
 
 % for development & debug...
 % Lab = Z_fit(:,g-1);
@@ -35,7 +35,7 @@ outLab = setdiff(1:s_star, uniZsort_tmp);
 if(~isempty(outLab))
     fullLatid = 1:(s_star*p);
     
-    x0Out =  mvnrnd(mux00(fullLatid), Sigx00(fullLatid, fullLatid))';
+    x0Out =  mvnrnd(mux00_f(s_star), Sigx00_f(s_star))';
     for k =1:s_star
         latID_tmp = id2id(k, p);
 %         mubA0_tmp = mubA0_all(latID_tmp, [1; fullLatid+1]);
@@ -53,10 +53,11 @@ if(~isempty(outLab))
         QOut(latID_tmp,latID_tmp) = iwishrnd(Psi0,nu0);
     end
     
-    invQ0 = inv(sparse(Q0(fullLatid, fullLatid)));
+    
+    invQ0 = inv(sparse(Q0_f(s_star)));
     R = chol(invQ0,'lower');
-    z = randn(s_star*p, 1) + R'*x0Out(fullLatid);
-    XOut(fullLatid, 1) = R'\z;
+    z = randn(s_star*p, 1) + R'*x0Out;
+    XOut(:, 1) = R'\z;
 end
 
 % sort C and transform to match latents
@@ -72,7 +73,7 @@ end
 Y_tmp2 = Y(idY,:);
 d_tmp2 = d_tmp(idY);
 x0_tmp2 = x0_tmp(latID);
-Q0_tmp2 = Q0(latID, latID);
+Q0_tmp2 = Q0_f(nClus_tmp);
 A_tmp2 = A_tmp(latID, latID);
 b_tmp2 = b_tmp(latID);
 Q_tmp2 = Q_tmp(latID, latID);
@@ -91,8 +92,8 @@ XOut(latID, :) = reshape(Xsamp,[], T);
 % plot(X')
 
 % (2) update x0_fit
-invSigx0 = sparse(inv(Sigx00(latID, latID)) + inv(Q0_tmp2));
-mux0 = invSigx0\(Sigx00(latID, latID)\mux00(latID) + Q0_tmp2\XOut(latID, 1));
+invSigx0 = sparse(inv(Sigx00_f(nClus_tmp)) + inv(Q0_tmp2));
+mux0 = invSigx0\(Sigx00_f(nClus_tmp)\mux00_f(nClus_tmp) + Q0_tmp2\XOut(latID, 1));
 
 R = chol(invSigx0,'lower'); % sparse
 z = randn(length(mux0), 1) + R'*mux0;
@@ -102,32 +103,31 @@ x0Out(latID) = R'\z;
 
 % (3) update d_fit & C_fit
 % Laplace approximation
+% 
+% for i = 1:N
+%     latentId = id2id(Lab(i), p);
+%     X_tmpdc = [ones(1, T) ; XOut(latentId,:)]';
+%     lamdc = @(dc) exp(X_tmpdc*dc);
+%     
+%     derdc = @(dc) X_tmpdc'*(Y(i,:)' - lamdc(dc)) - Sigdc0\(dc - mudc0);
+%     hessdc = @(dc) -X_tmpdc'*diag(lamdc(dc))*X_tmpdc - inv(Sigdc0);
+%     [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
+%         [d_tmp(i) C_tmp(i,:)]',1e-8,1000);
+%     
+%     Sigdc = -inv(niSigdc);
+%     Sigdc = (Sigdc + Sigdc')/2;
+%     dc = mvnrnd(mudc, Sigdc);
+%     dOut(i) = dc(1);
+%     COut(i,:) = dc(2:end);
+% end
 
-for i = 1:N
-    latentId = id2id(Lab(i), p);
-    X_tmpdc = [ones(1, T) ; XOut(latentId,:)]';
-    lamdc = @(dc) exp(X_tmpdc*dc);
-    
-    derdc = @(dc) X_tmpdc'*(Y(i,:)' - lamdc(dc)) - Sigdc0\(dc - mudc0);
-    hessdc = @(dc) -X_tmpdc'*diag(lamdc(dc))*X_tmpdc - inv(Sigdc0);
-    [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
-        [d_tmp(i) C_tmp(i,:)]',1e-8,1000);
-    
-    Sigdc = -inv(niSigdc);
-    Sigdc = (Sigdc + Sigdc')/2;
-    dc = mvnrnd(mudc, Sigdc);
-    dOut(i) = dc(1);
-    COut(i,:) = dc(2:end);
-end
+dOut = d_tmp;
+COut = C_tmp;
 
-
-
-
-% [dTest d(idPer)]
-% [CTest C_all(idPer, :)]
 
 % (4) update b_fit & A_fit
 SigbA0 = SigbA0_f(nClus_tmp);
+mubA0_all = mubA0_all_f(nClus_tmp);
 for l = uniZsort_tmp(:)'
     
     latentId = id2id(l,p);
@@ -173,7 +173,7 @@ end
 if(~isempty(outLab))
     outLatID = id2id(outLab , p);
     for t= 2:T
-        XOut(outLatID, t) = mvnrnd(AOut(outLatID, fullLatid)*XOut(fullLatid, t-1) +...
+        XOut(outLatID, t) = mvnrnd(AOut(outLatID, :)*XOut(:, t-1) +...
             bOut(outLatID), QOut(outLatID, outLatID));
     end
 end
