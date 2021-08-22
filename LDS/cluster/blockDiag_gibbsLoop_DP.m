@@ -33,7 +33,7 @@ latID = id2id(uniZsort_tmp, p);
 % labels without obs.: generate things by prior
 outLab = setdiff(1:s_star, uniZsort_tmp);
 if(~isempty(outLab))
-    fullLatid = 1:(s_star*p);
+%     fullLatid = 1:(s_star*p);
     
     x0Out =  mvnrnd(mux00_f(s_star), Sigx00_f(s_star))';
     for k =1:s_star
@@ -127,7 +127,7 @@ COut = C_tmp;
 
 % (4) update b_fit & A_fit
 SigbA0 = SigbA0_f(nClus_tmp);
-mubA0_all = mubA0_all_f(nClus_tmp);
+mubA0_all = mubA0_all_f(s_star);
 for l = uniZsort_tmp(:)'
     
     latentId = id2id(l,p);

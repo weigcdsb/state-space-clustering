@@ -1,4 +1,5 @@
-addpath(genpath('D:\github\state-space-clustering'));
+% addpath(genpath('D:\github\state-space-clustering'));
+addpath(genpath('C:\Users\gaw19004\Documents\GitHub\state-space-clustering'));
 
 % TODO: need to debug a lot...
 %% simulation
@@ -53,7 +54,7 @@ Y = poissrnd(exp(logLam));
 
 %% MCMC setting
 rng(3)
-alphaDP = 10;
+alphaDP = 1;
 ng = 50;
 
 % pre-allocation
@@ -66,7 +67,7 @@ C_fit = zeros(N, p, ng);
 Q0_f = @(nClus) eye(nClus*p);
 
 mux00_f = @(nClus) zeros(nClus*p, 1);
-Sigx00_f = @(nClus) eye(nClus*p)*1e2;
+Sigx00_f = @(nClus) eye(nClus*p)*25;
 
 mudc0 = zeros(p+1,1);
 Sigdc0 = sparse(eye(p+1)*1e-2);
@@ -90,7 +91,7 @@ uniZsort_tmp = unique(Zsort_tmp);
 nClus_tmp = length(uniZsort_tmp);
 
 % initial for d_fit: 0
-C_fit(:,:,1) = reshape(normrnd(0,1e-2,N*p,1), [], p);
+% C_fit(:,:,1) = reshape(normrnd(0,1e-2,N*p,1), [], p);
 
 d_fit(:,1) = d;
 C_fit(:,:,1) = C_all;
@@ -141,7 +142,7 @@ for g = 2:ng
     
     % (4) update THETA: model related parameters
     [X_fit{g},x0_fit{g},d_fit(:,g),C_fit(:,:,g),b_fit{g},A_fit{g},Q_fit{g}] =...
-    blockDiag_gibbsLoop_DP(Y, Lab, d_fit(:,g-1), C_fit(:,:,g-1),... % cluster-invariant
+    blockDiag_gibbsLoop_DP(Y, Z_fit(:,g-1), d_fit(:,g-1), C_fit(:,:,g-1),... % cluster-invariant
     x0_fit{g-1}, b_fit{g-1},A_fit{g-1}, Q_fit{g-1}, s_star,... % cluster-related
     Q0_f, mux00_f, Sigx00_f, mudc0, Sigdc0, mubA0_all_f, SigbA0_f, Psi0,nu0);
     
@@ -157,17 +158,21 @@ for g = 2:ng
     rho_tmp2 = eta2rho(eta_tmp2);
     LLHD2 = ones(N, s_star)*-Inf;
     LLHD2(u_tmp < rho_tmp2) = LLHD(u_tmp < rho_tmp2);
-    
     clus_tmp = mnrnd(ones(N, 1), softmax(LLHD2')');
-    [Z_fit(:,g), ~] = find(clus_tmp');
+    Z_fit(:,g) = Z_fit(:,g-1);
+    [Z_fit(~isnan(clus_tmp(:,1)),g), ~] = find(clus_tmp(~isnan(clus_tmp(:,1)),:)');
+    
     
     figure(1)
     clusterPlot(Y, Z_fit(:,g)')
 end
 
 
-
-
+%% plot
+for k = 1:ng
+    figure(k)
+    clusterPlot(Y, Z_fit(:,k)')
+end
 
 
 
