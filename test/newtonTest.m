@@ -91,12 +91,16 @@ Y = poissrnd(exp(logLam));
 
 % try different methods
 % filtering
+tic;
 X_filt = ppasmoo_poissexp_v2(Y,C_trans,d,x0',Q0,A,b,Q);
+toc;
 
 % direct Newton-Raphson
+tic;
 der = @(vecX) derX(vecX, d, C_trans, x0', Q0, Q, A, b, Y);
 hess = @(vecX) hessX(vecX, d, C_trans, Q0, Q, A, Y);
-[X_newton,fx,niSigX,~] = newton(der,hess,repmat(x0',T,1),1e-10,1000);
+[X_newton,fx,niSigX,~] = newton(der,hess,repmat(x0',T,1),1e-6,1000);
+toc;
 
 figure(1)
 subplot(1,2,1)
