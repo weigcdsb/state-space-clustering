@@ -86,15 +86,15 @@ A_tmp2 = A_tmp(latID, latID);
 b_tmp2 = b_tmp(latID);
 Q_tmp2 = Q_tmp(latID, latID);
 
-% [muX,~,~] = ppasmoo_poissexp_v2(Y_tmp2,Csort_trans_tmp,...
-%     d_tmp2,x0_tmp2,Q0_tmp2,A_tmp2,b_tmp2,Q_tmp2);
-% hess_tmp = hessX(muX(:),d_tmp2,Csort_trans_tmp,Q0_tmp2,Q_tmp2,A_tmp2,Y_tmp2);
+[muX,~,~] = ppasmoo_poissexp_v2(Y_tmp2,Csort_trans_tmp,...
+    d_tmp2,x0_tmp2,Q0_tmp2,A_tmp2,b_tmp2,Q_tmp2);
+hess_tmp = hessX(muX(:),d_tmp2,Csort_trans_tmp,Q0_tmp2,Q_tmp2,A_tmp2,Y_tmp2);
 
 % if use Newton-Raphson directly?
-der = @(vecX) derX(vecX, d_tmp2, Csort_trans_tmp, x0_tmp2, Q0_tmp2, Q_tmp2, A_tmp2, b_tmp2, Y_tmp2);
-hess = @(vecX) hessX(vecX, d_tmp2, Csort_trans_tmp, Q0_tmp2, Q_tmp2, A_tmp2, Y_tmp2);
-[muXvec,~,hess_tmp,~] = newton(der,hess,X_tmp2(:),1e-10,1000);
-muX = reshape(muXvec, [], T);
+% der = @(vecX) derX(vecX, d_tmp2, Csort_trans_tmp, x0_tmp2, Q0_tmp2, Q_tmp2, A_tmp2, b_tmp2, Y_tmp2);
+% hess = @(vecX) hessX(vecX, d_tmp2, Csort_trans_tmp, Q0_tmp2, Q_tmp2, A_tmp2, Y_tmp2);
+% [muXvec,~,hess_tmp,~] = newton(der,hess,X_tmp2(:),1e-10,1000);
+% muX = reshape(muXvec, [], T);
 
 % use Cholesky decomposition to sample efficiently
 R = chol(-hess_tmp,'lower'); % sparse
