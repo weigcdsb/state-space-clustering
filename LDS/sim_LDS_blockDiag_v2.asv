@@ -133,15 +133,14 @@ for g = 2:ng
     A_tmp = A_fit(:,:,g-1);
     b_tmp = b_fit(:,g-1);
     Q_tmp = Q_fit(:,:,g-1);
-    X_tmp = X_fit(:,:,g-1);
-%     [muX,~,~] = ppasmoo_poissexp_v2(Y,C_tmp,d_tmp,x0_tmp,Q0,A_tmp,b_tmp,Q_tmp);
-%     hess_tmp = hessX(muX(:), d_tmp, C_tmp, Q0, Q_tmp, A_tmp, Y);
+    
+    [muX,~,~] = ppasmoo_poissexp_v2(Y,C_tmp,d_tmp,x0_tmp,Q0,A_tmp,b_tmp,Q_tmp);
     
     % if use Newton?
     der = @(vecX) derX(vecX, d_tmp, C_tmp, x0_tmp, Q0, Q_tmp, A_tmp, b_tmp, Y);
     hess = @(vecX) hessX(vecX, d_tmp, C_tmp, Q0, Q_tmp, A_tmp, Y);
-    [muXvec,~,hess_tmp,~] = newton(der,hess,X_tmp(:),1e-10,1000);
-    muX = reshape(muXvec, [], T);
+    [muX,~,niSigX,~] = newton(der,hess,repmat(x0',T,1),1e-10,1000);
+    
     
     % tic;
     % use Cholesky decomposition to sample efficiently
