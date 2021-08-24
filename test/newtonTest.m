@@ -20,9 +20,14 @@ Q = 1e-4;
 X_filt = ppasmoo_poissexp_v2(n,C,d,x0,W0,A,b,Q);
 
 % direct Newton-Raphson
+tic;
 der = @(vecX) derX(vecX, d, C, x0, W0, Q, A, b, n);
 hess = @(vecX) hessX(vecX, d, C, W0, Q, A, n);
-[X_newton,fx,niSigX,~] = newton(der,hess,ones(T,1)*x0,1e-10,1000);
+% [X_newton,fx,niSigX,~] = newton(der,hess,ones(T,1)*x0,1e-10,1000);
+[X_newton,fx,niSigX,~] = newton(der,hess,X_filt(:),1e-10,1000);
+toc;
+
+
 
 figure(1)
 hold on
@@ -94,6 +99,7 @@ Y = poissrnd(exp(logLam));
 tic;
 X_filt = ppasmoo_poissexp_v2(Y,C_trans,d,x0',Q0,A,b,Q);
 toc;
+% Elapsed time is 0.193763 seconds.
 
 % direct Newton-Raphson
 tic;
@@ -101,6 +107,15 @@ der = @(vecX) derX(vecX, d, C_trans, x0', Q0, Q, A, b, Y);
 hess = @(vecX) hessX(vecX, d, C_trans, Q0, Q, A, Y);
 [X_newton,fx,niSigX,~] = newton(der,hess,repmat(x0',T,1),1e-6,1000);
 toc;
+% Elapsed time is 4.258177 seconds.
+
+% use adaptive smoother as a warm start
+tic;
+der = @(vecX) derX(vecX, d, C_trans, x0', Q0, Q, A, b, Y);
+hess = @(vecX) hessX(vecX, d, C_trans, Q0, Q, A, Y);
+[X_newton2,fx,niSigX2,~] = newton(der,hess,X_filt(:),1e-6,1000);
+toc;
+% Elapsed time is 0.073377 seconds.
 
 figure(1)
 subplot(1,2,1)
@@ -109,7 +124,7 @@ title('true')
 subplot(1,2,2)
 hold on
 plot(X_filt', 'r')
-plot(reshape(X_newton, [], T)', 'b')
+plot(reshape(X_newton2, [], T)', 'b')
 hold off
 legend('filter', 'newton')
 
