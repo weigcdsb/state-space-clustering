@@ -112,8 +112,14 @@ Q_fit(:,:,1) = eye(nClus*p)*1e-4;
 
 
 x0_fit(:,1) = lsqr(C_fit(:,:,1),(log(mean(Y(:,1:10),2))-d_tmp));
-[X_fit(:,:,1),~,~] = ppasmoo_poissexp_v2(Y,C_fit(:,:,1),d_tmp,...
+[X_tmp,~,~] = ppasmoo_poissexp_v2(Y,C_fit(:,:,1),d_tmp,...
     x0_fit(:,1),Q0,A_fit(:,:,1),b_fit(:,1),Q_fit(:,:,1));
+gradHess = @(vecX) gradHessX(vecX, d_tmp, C_fit(:,:,1), x0_fit(:,1), Q0,...
+    Q_fit(:,:,1), A_fit(:,:,1), b_fit(:,1), Y);
+[muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp(:),1e-10,1000);
+X_fit(:,:,1) = reshape(muXvec, [], T);
+
+
 
 %% MCMC
 for g = 2:ng
@@ -133,14 +139,13 @@ for g = 2:ng
     A_tmp = A_fit(:,:,g-1);
     b_tmp = b_fit(:,g-1);
     Q_tmp = Q_fit(:,:,g-1);
-    X_tmp = X_fit(:,:,g-1);
-%     [muX,~,~] = ppasmoo_poissexp_v2(Y,C_tmp,d_tmp,x0_tmp,Q0,A_tmp,b_tmp,Q_tmp);
+%     X_tmp = X_fit(:,:,g-1);
+    X_tmp = ppasmoo_poissexp_v2(Y,C_tmp,d_tmp,x0_tmp,Q0,A_tmp,b_tmp,Q_tmp);
 %     hess_tmp = hessX(muX(:), d_tmp, C_tmp, Q0, Q_tmp, A_tmp, Y);
     
     % if use Newton?
-    der = @(vecX) derX(vecX, d_tmp, C_tmp, x0_tmp, Q0, Q_tmp, A_tmp, b_tmp, Y);
-    hess = @(vecX) hessX(vecX, d_tmp, C_tmp, Q0, Q_tmp, A_tmp, Y);
-    [muXvec,~,hess_tmp,~] = newton(der,hess,X_tmp(:),1e-10,1000);
+    gradHess = @(vecX) gradHessX(vecX, d_tmp, C_tmp, x0_tmp, Q0, Q_tmp, A_tmp, b_tmp, Y);
+    [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp(:),1e-10,1000);
     muX = reshape(muXvec, [], T);
     
     % tic;
@@ -169,8 +174,13 @@ for g = 2:ng
         
         derdc = @(dc) X_tmp'*(Y(i,:)' - lamdc(dc)) - Sigdc_fit(:,:,l,g-1)\(dc - mudc_fit(:,l,g-1));
         hessdc = @(dc) -X_tmp'*diag(lamdc(dc))*X_tmp - inv(Sigdc_fit(:,:,l,g-1));
-        [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
-            [d_fit(i,l, g-1) C_fit(i,latentId,g-1)]',1e-8,1000);
+        
+        % tic;
+        % use warm start
+        invSigdc_star = inv(Sigdc_fit(:,:,l,g-1)) + X_tmp'*diag(lamdc(mudc_fit(:,l,g-1)))*X_tmp;
+        mudc_star = mudc_fit(:,l,g-1) + invSigdc_star\(X_tmp'*(Y(i,:)' - lamdc(mudc_fit(:,l,g-1))));
+        [mudc,~,niSigdc,~] = newton(derdc,hessdc,mudc_star,1e-8,1000);
+        % toc;
         
         % [mudc [d(i) C_all(i,:)]']
         
