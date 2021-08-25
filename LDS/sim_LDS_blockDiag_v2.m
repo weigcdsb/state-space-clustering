@@ -174,12 +174,14 @@ for g = 2:ng
         
         derdc = @(dc) X_tmp'*(Y(i,:)' - lamdc(dc)) - Sigdc_fit(:,:,l,g-1)\(dc - mudc_fit(:,l,g-1));
         hessdc = @(dc) -X_tmp'*diag(lamdc(dc))*X_tmp - inv(Sigdc_fit(:,:,l,g-1));
+        [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
+            [d_fit(i,l, g-1) C_fit(i,latentId,g-1)]',1e-8,1000);
         
         % tic;
         % use warm start
-        invSigdc_star = inv(Sigdc_fit(:,:,l,g-1)) + X_tmp'*diag(lamdc(mudc_fit(:,l,g-1)))*X_tmp;
-        mudc_star = mudc_fit(:,l,g-1) + invSigdc_star\(X_tmp'*(Y(i,:)' - lamdc(mudc_fit(:,l,g-1))));
-        [mudc,~,niSigdc,~] = newton(derdc,hessdc,mudc_star,1e-8,1000);
+        % invSigdc_star = inv(Sigdc_fit(:,:,l,g-1)) + X_tmp'*diag(lamdc(mudc_fit(:,l,g-1)))*X_tmp;
+        % mudc_star = mudc_fit(:,l,g-1) + invSigdc_star\(X_tmp'*(Y(i,:)' - lamdc(mudc_fit(:,l,g-1))));
+        % [mudc,~,niSigdc,~] = newton(derdc,hessdc,mudc_star,1e-8,1000);
         % toc;
         
         % [mudc [d(i) C_all(i,:)]']
@@ -198,17 +200,27 @@ for g = 2:ng
     %     d_fit(:,:,g)
     
     % (4) update mudc_fit & Sigdc_fit
+   dcRes_all = [];
     for l = unique(Lab)
         dc_tmp = [d_fit(Lab == l, l, g) C_fit(Lab == l, id2id(l,p), g)];
         invTaudc = inv(Taudc0) + sum(Lab == l)*inv(Sigdc_fit(:,:,l,g-1));
         deltadc = invTaudc\(Taudc0\deltadc0 + Sigdc_fit(:,:,l,g-1)\sum(dc_tmp,1)');
         mudc_fit(:,l,g) = mvnrnd(deltadc, inv(invTaudc));
         
-        dcRes = dc_tmp' - mudc_fit(:,l,g);
-        Psidc = Psidc0 + dcRes*dcRes';
-        nudc = sum(Lab == l) + nudc0;
-        Sigdc_fit(:,:,l,g) = iwishrnd(Psidc,nudc);
+        % assume different covariances 
+        % dcRes = dc_tmp' - mudc_fit(:,l,g);
+        % Psidc = Psidc0 + dcRes*dcRes';
+        % nudc = sum(Lab == l) + nudc0;
+        % Sigdc_fit(:,:,l,g) = iwishrnd(Psidc,nudc);
+        
+        % assume single covariance
+        dcRes_all = [dcRes_all dc_tmp' - mudc_fit(:,l,g)];
     end
+    
+    % assume single covariance
+    Psidc = Psidc0 + dcRes_all*dcRes_all';
+    nudc = N + nudc0;
+    Sigdc_fit(:,:,:,g) = repmat(iwishrnd(Psidc,nudc),1,1,nClus);
     
 %     mudc_fit(:,:,g)
 %     Sigdc_fit(:,:,:,g)

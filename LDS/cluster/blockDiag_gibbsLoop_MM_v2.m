@@ -59,6 +59,8 @@ if(~isempty(outLab))
     R = chol(invQ0,'lower');
     z = randn(kMM*p, 1) + R'*x0Out;
     XOut(:, 1) = R'\z;
+    
+    SigdcOut = repmat(eye(p+1)*1e-4,1,1,kMM);
 end
 
 % sort C and transform to match latents
@@ -86,15 +88,19 @@ A_tmp2 = A_tmp(latID, latID);
 b_tmp2 = b_tmp(latID);
 Q_tmp2 = Q_tmp(latID, latID);
 
-[muX,~,~] = ppasmoo_poissexp_v2(Y_tmp2,Csort_trans_tmp,...
-    d_tmp2,x0_tmp2,Q0_tmp2,A_tmp2,b_tmp2,Q_tmp2);
-hess_tmp = hessX(muX(:),d_tmp2,Csort_trans_tmp,Q0_tmp2,Q_tmp2,A_tmp2,Y_tmp2);
+% [muX,~,~] = ppasmoo_poissexp_v2(Y_tmp2,Csort_trans_tmp,...
+%     d_tmp2,x0_tmp2,Q0_tmp2,A_tmp2,b_tmp2,Q_tmp2);
+% hess_tmp = hessX(muX(:),d_tmp2,Csort_trans_tmp,Q0_tmp2,Q_tmp2,A_tmp2,Y_tmp2);
 
 % if use Newton-Raphson directly?
-% der = @(vecX) derX(vecX, d_tmp2, Csort_trans_tmp, x0_tmp2, Q0_tmp2, Q_tmp2, A_tmp2, b_tmp2, Y_tmp2);
-% hess = @(vecX) hessX(vecX, d_tmp2, Csort_trans_tmp, Q0_tmp2, Q_tmp2, A_tmp2, Y_tmp2);
-% [muXvec,~,hess_tmp,~] = newton(der,hess,X_tmp2(:),1e-10,1000);
-% muX = reshape(muXvec, [], T);
+X_tmp = ppasmoo_poissexp_v2(Y_tmp2,Csort_trans_tmp,...
+    d_tmp2,x0_tmp2,Q0_tmp2,A_tmp2,b_tmp2,Q_tmp2);
+gradHess = @(vecX) gradHessX(vecX, d_tmp2, Csort_trans_tmp, x0_tmp2, Q0_tmp2, Q_tmp2, A_tmp2, b_tmp2, Y_tmp2);
+[muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp(:),1e-6,1000);
+
+
+
+muX = reshape(muXvec, [], T);
 
 % use Cholesky decomposition to sample efficiently
 R = chol(-hess_tmp,'lower'); % sparse
@@ -121,7 +127,12 @@ for i = 1:N
     derdc = @(dc) X_tmpdc'*(Y(i,:)' - lamdc(dc)) - Sigdc_tmp(:,:,Z_tmp(i))\(dc - mudc_tmp(:,Z_tmp(i)));
     hessdc = @(dc) -X_tmpdc'*diag(lamdc(dc))*X_tmpdc - inv(Sigdc_tmp(:,:,Z_tmp(i)));
     [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
-        [d_tmp(i, Z_tmp(i)) C_tmp(i,latentId)]',1e-8,1000);
+        [d_tmp(i, Z_tmp(i)) C_tmp(i,latentId)]',1e-6,1000);
+    
+    % use warm start
+%         invSigdc_star = inv(Sigdc_tmp(:,:,Z_tmp(i))) + X_tmpdc'*diag(lamdc(mudc_tmp(:,Z_tmp(i))))*X_tmpdc;
+%         mudc_star = mudc_tmp(:,Z_tmp(i)) + invSigdc_star\(X_tmpdc'*(Y(i,:)' - lamdc(mudc_tmp(:,Z_tmp(i)))));
+%         [mudc,~,niSigdc,~] = newton(derdc,hessdc,mudc_star,1e-6,1000);
     
     R = chol(-niSigdc,'lower'); % sparse
     z = randn(length(mudc), 1) + R'*mudc;
@@ -139,17 +150,37 @@ end
 % SigdcOut = Sigdc_tmp;
 dOut_new = zeros(N, kMM);
 COut_new = zeros(N, p*kMM);
+
+% single covariance
+% dcRes_all = [];
 for l = uniZsort_tmp(:)'
     dc_tmp = [dOut(Z_tmp == l, l) COut(Z_tmp == l, id2id(l,p))];
     invTaudc = inv(Taudc0) + sum(Z_tmp == l)*inv(Sigdc_tmp(:,:,l));
     deltadc = invTaudc\(Taudc0\deltadc0 + Sigdc_tmp(:,:,l)\sum(dc_tmp,1)');
     mudcOut(:,l) = mvnrnd(deltadc, inv(invTaudc));
     
+    % different covariances
     dcRes = dc_tmp' - mudcOut(:,l);
     Psidc = Psidc0 + dcRes*dcRes';
     nudc = sum(Z_tmp == l) + nudc0;
     SigdcOut(:,:,l) = iwishrnd(Psidc,nudc);
     
+    % single covariance
+%     dcRes_all = [dcRes_all dc_tmp' -mudcOut(:,l)];
+    
+    % for debug
+%     SigdcOut(:,:,l) = Sigdc_tmp(:,:,l);
+end
+
+% single covariance
+% Psidc = Psidc0 + dcRes_all*dcRes_all';
+% nudc = N + nudc0;
+% SigdcOut = repmat(iwishrnd(Psidc,nudc),1,1,kMM);
+% SigdcOut_all = iwishrnd(Psidc,nudc);
+
+for l  = uniZsort_tmp(:)'
+    
+%     SigdcOut(:,:,l) = SigdcOut_all;
     dc_samp = mvnrnd(mudcOut(:,l), SigdcOut(:,:,l), N);
     dOut_new(:,l) = dc_samp(:,1);
     dOut_new(Z_tmp == l, l) = dOut(Z_tmp == l, l);
@@ -157,6 +188,8 @@ for l = uniZsort_tmp(:)'
     COut_new(:,id2id(l,p)) = dc_samp(:,2:end);
     COut_new(Z_tmp == l, id2id(l,p)) = COut(Z_tmp == l, id2id(l,p));
 end
+
+
 
 dOut = dOut_new;
 COut = COut_new;
@@ -205,12 +238,12 @@ if(~isempty(outLab))
     
     for l=outLab(:)'
         mudcOuter = mvnrnd(deltadc0, Taudc0);
-        SigdcOuter = iwishrnd(Psidc0,nudc0);
+%         SigdcOuter = iwishrnd(Psidc0,nudc0);
         
         mudcOut(:,l) = mudcOuter;
-        SigdcOut(:,:,l) = SigdcOuter;
+%         SigdcOut(:,:,l) = SigdcOuter;
         
-        dcSampOut = mvnrnd(mudcOuter, SigdcOuter, N);
+        dcSampOut = mvnrnd(mudcOuter, SigdcOut(:,:,l), N);
         dOut(:,l) = dcSampOut(:,1);
         COut(:,id2id(l,p)) = dcSampOut(:,2:end);
     end

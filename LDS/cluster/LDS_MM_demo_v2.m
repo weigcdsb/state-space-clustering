@@ -60,7 +60,7 @@ Y = poissrnd(exp(logLam));
 
 
 %% MCMC setting
-rng(3)
+rng(5)
 ng = 100;
 kMM = 4;
 
@@ -83,10 +83,10 @@ delta0 = ones(1, kMM);
 Q0 = eye(kMM*p);
 
 mux00 = zeros(kMM*p, 1);
-Sigx00 = eye(kMM*p)*25;
+Sigx00 = eye(kMM*p)*10;
 
 deltadc0 = zeros(p+1,1);
-Taudc0 = eye(p+1)*1e6;
+Taudc0 = eye(p+1)*1e4;
 
 Psidc0 = eye(p+1)*1e-4;
 nudc0 = p+1+2;
@@ -184,8 +184,8 @@ for g = 2:ng
     Q0, mux00, Sigx00, deltadc0, Taudc0,Psidc0,nudc0,...
     mubA0_mat, SigbA0_f, Psi0,nu0);
     
-%     figure(1)
-%     clusterPlot(Y, Z_fit(:,g)')
+    figure(1)
+    clusterPlot(Y, Z_fit(:,g)')
 end
 
 
