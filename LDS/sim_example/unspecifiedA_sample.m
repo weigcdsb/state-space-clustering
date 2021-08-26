@@ -93,7 +93,8 @@ Sigx00 = eye(nClus*p);
 deltadc0 = zeros(p+1,1);
 Taudc0 = eye(p+1);
 
-Psidc0 = eye(p+1)*1e-4;
+Psidc0 = eye(p+1);
+% Psidc0 = eye(p+1)*1e-4;
 nudc0 = p+1+2;
 
 mubA0_mat = [zeros(nClus*p,1) eye(nClus*p)];
