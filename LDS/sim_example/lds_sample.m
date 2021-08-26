@@ -1,5 +1,8 @@
+addpath(genpath('C:\Users\gaw19004\Documents\GitHub\state-space-clustering'));
+% addpath(genpath('D:\github\state-space-clustering'));
+
 %% simulation
-rng(2)
+rng(1)
 n = 10;
 nClus = 3;
 N = n*nClus;
@@ -40,12 +43,6 @@ while any(imag(eig(A))==0)
     A = A+eye(size(Q,1))*0.92;
 end
 
-figure(1)
-imagesc(A)
-colorbar()
-xlabel('sending')
-ylabel('receiving')
-
 % let's generate lambda
 logLam = zeros(n*nClus, T);
 logLam(:,1) = d + C_trans*X(:,1);
@@ -55,22 +52,32 @@ for t=2:T
     logLam(:, t) = d + C_trans*X(:,t);
 end
 
-figure(2)
-plot(X')
+Y = poissrnd(exp(logLam));
 
-figure(3)
+figure(1)
+imagesc(A)
+colorbar()
+xlabel('sending')
+ylabel('receiving')
+
+figure(2)
 imagesc(exp(logLam))
 colorbar()
 
-Y = poissrnd(exp(logLam));
-figure(4)
-imagesc(Y)
-colorbar()
-
-Y = poissrnd(exp(logLam));
+figure(3)
 clusterPlot(Y, Lab)
 
+figure(4)
+subplot(1,3,1)
+plot(X(1:p,:)')
+subplot(1,3,2)
+plot(X(p+1:2*p,:)')
+subplot(1,3,3)
+plot(X(2*p+1:3*p,:)')
+
 %%
+% nClus = 1;
+% Lab = ones(1,N);
 rng(3)
 ng = 100;
 
@@ -88,13 +95,13 @@ Q_fit = zeros(nClus*p, nClus*p, ng);
 
 % priors
 % place-holder...
-Q0 = eye(nClus*p);
+Q0 = eye(nClus*p)*1e-2;
 
 mux00 = zeros(nClus*p, 1);
 Sigx00 = eye(nClus*p);
 
 deltadc0 = zeros(p+1,1);
-Taudc0 = eye(p+1)*1e2;
+Taudc0 = eye(p+1);
 
 Psidc0 = eye(p+1)*1e-4;
 nudc0 = p+1+2;
@@ -276,9 +283,17 @@ end
 idx = 50:ng;
 
 subplot(1,2,1)
-plot(mean(X_fit(:,:,idx), 3)')
+imagesc(exp(C_trans*X + d))
+cLim = caxis;
+title('true')
+colorbar()
 subplot(1,2,2)
-plot(X')
+imagesc(exp(mean(C_fit(:,:,idx), 3)*mean(X_fit(:,:,idx), 3) + sum(mean(d_fit(:,:,idx), 3),2)))
+set(gca,'CLim',cLim)
+title('fit')
+colorbar()
+
+% plot(mean(X_fit(:,:,idx), 3)')
 
 subplot(3,2,1)
 plot(X(1:p,:)')
@@ -311,15 +326,4 @@ mean(C_fit(:,:,idx), 3)
 mean(Q_fit(:,:,idx), 3)
 mean(mudc_fit(:,:,idx), 3)
 mean(Sigdc_fit(:,:,:,idx), 4)
-
-subplot(1,2,1)
-imagesc(exp(C_trans*X + d))
-cLim = caxis;
-title('true')
-colorbar()
-subplot(1,2,2)
-imagesc(exp(mean(C_fit(:,:,idx), 3)*mean(X_fit(:,:,idx), 3) + sum(mean(d_fit(:,:,idx), 3),2)))
-set(gca,'CLim',cLim)
-title('fit')
-colorbar()
 

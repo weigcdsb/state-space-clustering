@@ -60,7 +60,7 @@ if(~isempty(outLab))
     z = randn(kMM*p, 1) + R'*x0Out;
     XOut(:, 1) = R'\z;
     
-    SigdcOut = repmat(eye(p+1)*1e-4,1,1,kMM);
+%     SigdcOut = repmat(eye(p+1)*1e-4,1,1,kMM);
 end
 
 % sort C and transform to match latents
@@ -238,10 +238,10 @@ if(~isempty(outLab))
     
     for l=outLab(:)'
         mudcOuter = mvnrnd(deltadc0, Taudc0);
-%         SigdcOuter = iwishrnd(Psidc0,nudc0);
+        SigdcOuter = iwishrnd(Psidc0,nudc0);
         
         mudcOut(:,l) = mudcOuter;
-%         SigdcOut(:,:,l) = SigdcOuter;
+        SigdcOut(:,:,l) = SigdcOuter;
         
         dcSampOut = mvnrnd(mudcOuter, SigdcOut(:,:,l), N);
         dOut(:,l) = dcSampOut(:,1);

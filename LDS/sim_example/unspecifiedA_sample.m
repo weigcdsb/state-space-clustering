@@ -1,5 +1,9 @@
+addpath(genpath('C:\Users\gaw19004\Documents\GitHub\state-space-clustering'));
+% addpath(genpath('D:\github\state-space-clustering'));
+
+
 %% simulation
-rng(2)
+rng(123)
 n = 10;
 nClus = 3;
 N = n*nClus;
@@ -7,13 +11,10 @@ p = 2;
 T = 1000;
 
 Lab = repelem(1:nClus, n);
-% d = ones(n*nClus,1)*0;
-% C_all = reshape(normrnd(0.08,1e-3,n*nClus*p,1), [], p);
 
 d = randn(n*nClus,1)/5;
 C_trans = zeros(n*nClus, p*nClus);
 for k = 1:length(Lab)
-%     C_trans(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = C_all(k,:);
     C_trans(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = sum(Lab(1:k)==Lab(k))/sum(Lab==Lab(k));
 end
 
@@ -33,34 +34,11 @@ Q2 = 1e-3*eye(p);
 Q3 = 1e-3*eye(p);
 Q = blkdiag(Q1, Q2, Q3);
 
-
-% A = [1 0 0 0 0.4 -0.4;...
-%     0 1 0 0 -0.3 0.305;
-%     0 0 1 0 -0.2 0.19;
-%     0 0 0 1 0.11 -0.1;
-%     0 0 0 0 1 0;
-%     0 0 0 0 0 1];
-
-% 
-% A = eye(size(Q,1));
-% while any(imag(eig(A))==0)
-%     A= randn(size(Q));
-%     A = A-diag(diag(A));
-%     A = A./sqrt(sum((A-diag(diag(A))).^2,2))*0.1;
-%     A = A+eye(size(Q,1))*0.92;
-% end
-
 % Generate X offline (A unspecified)
 for i=1:size(Q,1)
-    k = ceil(rand()*20)+5;
+    k = ceil(rand()*20)+10;
     X(i,:) = interp1(linspace(0,1,k),randn(k,1),linspace(0,1,T),'spline');
 end
-
-% figure(1)
-% imagesc(A)
-% colorbar()
-% xlabel('sending')
-% ylabel('receiving')
 
 % let's generate lambda
 logLam = zeros(n*nClus, T);
@@ -70,21 +48,26 @@ for t=2:T
     logLam(:, t) = d + C_trans*X(:,t);
 end
 
+Y = poissrnd(exp(logLam));
 
-figure(2)
-plot(X')
-
-figure(3)
-% imagesc(logLam)
+figure(1)
 imagesc(exp(logLam))
 colorbar()
 
-Y = poissrnd(exp(logLam));
-figure(4)
-imagesc(Y)
-colorbar()
+figure(2)
+clusterPlot(Y, Lab)
+
+figure(3)
+subplot(1,3,1)
+plot(X(1:p,:)')
+subplot(1,3,2)
+plot(X(p+1:2*p,:)')
+subplot(1,3,3)
+plot(X(2*p+1:3*p,:)')
 
 %%
+nClus = 1;
+Lab = ones(1,N);
 rng(3)
 ng = 100;
 
@@ -102,13 +85,13 @@ Q_fit = zeros(nClus*p, nClus*p, ng);
 
 % priors
 % place-holder...
-Q0 = eye(nClus*p);
+Q0 = eye(nClus*p)*1e-2;
 
 mux00 = zeros(nClus*p, 1);
 Sigx00 = eye(nClus*p);
 
 deltadc0 = zeros(p+1,1);
-Taudc0 = eye(p+1)*1e2;
+Taudc0 = eye(p+1);
 
 Psidc0 = eye(p+1)*1e-4;
 nudc0 = p+1+2;
@@ -291,10 +274,17 @@ end
 idx = 50:ng;
 
 subplot(1,2,1)
-plot(mean(X_fit(:,:,idx), 3)')
+imagesc(exp(C_trans*X + d))
+cLim = caxis;
+title('true')
+colorbar()
 subplot(1,2,2)
-plot(X')
+imagesc(exp(mean(C_fit(:,:,idx), 3)*mean(X_fit(:,:,idx), 3) + sum(mean(d_fit(:,:,idx), 3),2)))
+set(gca,'CLim',cLim)
+title('fit')
+colorbar()
 
+% plot(mean(X_fit(:,:,idx), 3)')
 subplot(3,2,1)
 plot(X(1:p,:)')
 title('true')
@@ -320,17 +310,6 @@ mean(mudc_fit(:,:,idx), 3)
 mean(Sigdc_fit(:,:,:,idx), 4)
 
 
-
-subplot(1,2,1)
-imagesc(exp(C_trans*X + d))
-cLim = caxis;
-title('true')
-colorbar()
-subplot(1,2,2)
-imagesc(exp(mean(C_fit(:,:,idx), 3)*mean(X_fit(:,:,idx), 3) + sum(mean(d_fit(:,:,idx), 3),2)))
-set(gca,'CLim',cLim)
-title('fit')
-colorbar()
 
 
 
