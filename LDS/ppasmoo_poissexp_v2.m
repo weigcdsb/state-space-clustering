@@ -1,4 +1,6 @@
 function [x,W,lam,lamPred] = ppasmoo_poissexp_v2(n,C,d,x0,W0,A,b,Q)
+
+warning('off');
 lastwarn('')
 nCell = size(n, 1);
 T = size(n, 2);
@@ -45,9 +47,7 @@ for i=2:size(n,2)
     
     [~, msgid] = lastwarn;
     if strcmp(msgid,'MATLAB:illConditionedMatrix')
-        disp('error');
-        
-        return;
+        error('Error: singular matrix');
     end
 end
 % lastwarn('')
@@ -63,6 +63,7 @@ for i=(T-1):-1:1
     W(:,:,i) = (W(:,:,i) + W(:,:,i)')/2;
     lam(:,i) = exp(C*x(:,i) + d);
 end
+warning('on');
 
 
 end

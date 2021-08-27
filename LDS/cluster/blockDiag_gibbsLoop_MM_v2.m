@@ -82,7 +82,7 @@ d_new = d_tmp(k);
 Y_tmp2 = Y(idY,:);
 d_tmp2 = d_new(idY);
 x0_tmp2 = x0_tmp(latID);
-X_tmp2 = X_tmp(latID, :);
+% X_tmp2 = X_tmp(latID, :);
 Q0_tmp2 = Q0(latID, latID);
 A_tmp2 = A_tmp(latID, latID);
 b_tmp2 = b_tmp(latID);
@@ -93,18 +93,27 @@ Q_tmp2 = Q_tmp(latID, latID);
 % hess_tmp = hessX(muX(:),d_tmp2,Csort_trans_tmp,Q0_tmp2,Q_tmp2,A_tmp2,Y_tmp2);
 
 % if use Newton-Raphson directly?
-X_tmp = ppasmoo_poissexp_v2(Y_tmp2,Csort_trans_tmp,...
-    d_tmp2,x0_tmp2,Q0_tmp2,A_tmp2,b_tmp2,Q_tmp2);
+% X_tmp = ppasmoo_poissexp_v2(Y_tmp2,Csort_trans_tmp,...
+%     d_tmp2,x0_tmp2,Q0_tmp2,A_tmp2,b_tmp2,Q_tmp2);
+% gradHess = @(vecX) gradHessX(vecX, d_tmp2, Csort_trans_tmp, x0_tmp2, Q0_tmp2, Q_tmp2, A_tmp2, b_tmp2, Y_tmp2);
+% [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp(:),1e-6,1000);
+
+X_tmp2 = X_tmp(latID, :);
 gradHess = @(vecX) gradHessX(vecX, d_tmp2, Csort_trans_tmp, x0_tmp2, Q0_tmp2, Q_tmp2, A_tmp2, b_tmp2, Y_tmp2);
-[muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp(:),1e-6,1000);
+[muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp2(:),1e-6,1000);
 
+if(sum(isnan(muXvec)) ~= 0)
+    disp('use adaptive smoother initial')
+    X_tmp2 = ppasmoo_poissexp_v2(Y_tmp2,Csort_trans_tmp,...
+        d_tmp2,x0_tmp2,Q0_tmp2,A_tmp2,b_tmp2,Q_tmp2);
+    [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp2(:),1e-6,1000);
+end
 
-
-muX = reshape(muXvec, [], T);
+% muX = reshape(muXvec, [], T);
 
 % use Cholesky decomposition to sample efficiently
 R = chol(-hess_tmp,'lower'); % sparse
-z = randn(length(muX(:)), 1) + R'*muX(:);
+z = randn(length(muXvec), 1) + R'*muXvec;
 Xsamp = R'\z;
 XOut(latID, :) = reshape(Xsamp,[], T);
 
@@ -128,6 +137,11 @@ for i = 1:N
     hessdc = @(dc) -X_tmpdc'*diag(lamdc(dc))*X_tmpdc - inv(Sigdc_tmp(:,:,Z_tmp(i)));
     [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
         [d_tmp(i, Z_tmp(i)) C_tmp(i,latentId)]',1e-6,1000);
+    
+    if(sum(isnan(mudc)) ~= 0)
+        [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
+        deltadc0,1e-6,1000);
+    end
     
     % use warm start
 %         invSigdc_star = inv(Sigdc_tmp(:,:,Z_tmp(i))) + X_tmpdc'*diag(lamdc(mudc_tmp(:,Z_tmp(i))))*X_tmpdc;

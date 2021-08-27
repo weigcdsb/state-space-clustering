@@ -48,7 +48,7 @@ if(~isempty(outLab))
         latID_tmp = id2id(k, p);
         QOut(latID_tmp,latID_tmp) = iwishrnd(Psi0,nu0);
     end
-        
+    
     invQ0 = inv(sparse(Q0_f(s_star)));
     R = chol(invQ0,'lower');
     z = randn(s_star*p, 1) + R'*x0Out;
@@ -73,16 +73,29 @@ d_new = d_tmp(k);
 Y_tmp2 = Y(idY,:);
 d_tmp2 = d_new(idY);
 x0_tmp2 = x0_tmp(latID);
-X_tmp2 = X_tmp(latID, :);
 Q0_tmp2 = Q0_f(nClus_tmp);
 A_tmp2 = A_tmp(latID, latID);
 b_tmp2 = b_tmp(latID);
 Q_tmp2 = Q_tmp(latID, latID);
 
-X_tmp = ppasmoo_poissexp_v2(Y_tmp2,Csort_trans_tmp,...
-    d_tmp2,x0_tmp2,Q0_tmp2,A_tmp2,b_tmp2,Q_tmp2);
+% try
+%     X_tmp2 = ppasmoo_poissexp_v2(Y_tmp2,Csort_trans_tmp,...
+%         d_tmp2,x0_tmp2,Q0_tmp2,A_tmp2,b_tmp2,Q_tmp2);
+% catch
+%     disp('adaptive smoother failed, use previous step as initial')
+%     X_tmp2 = X_tmp(latID, :);
+% end
+X_tmp2 = X_tmp(latID, :);
 gradHess = @(vecX) gradHessX(vecX, d_tmp2, Csort_trans_tmp, x0_tmp2, Q0_tmp2, Q_tmp2, A_tmp2, b_tmp2, Y_tmp2);
-[muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp(:),1e-6,1000);
+[muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp2(:),1e-6,1000);
+
+if(sum(isnan(muXvec)) ~= 0)
+    disp('use adaptive smoother initial')
+    X_tmp2 = ppasmoo_poissexp_v2(Y_tmp2,Csort_trans_tmp,...
+        d_tmp2,x0_tmp2,Q0_tmp2,A_tmp2,b_tmp2,Q_tmp2);
+    [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp2(:),1e-6,1000);
+end
+
 
 % use Cholesky decomposition to sample efficiently
 R = chol(-hess_tmp,'lower'); % sparse
@@ -108,6 +121,12 @@ for i = 1:N
     hessdc = @(dc) -X_tmpdc'*diag(lamdc(dc))*X_tmpdc - inv(Sigdc_tmp(:,:,Z_tmp(i)));
     [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
         [d_tmp(i, Z_tmp(i)) C_tmp(i,latentId)]',1e-6,1000);
+%     [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
+%         deltadc0,1e-6,1000);
+    if(sum(isnan(mudc)) ~= 0)
+        [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
+        deltadc0,1e-6,1000);
+    end
     
     R = chol(-niSigdc,'lower'); % sparse
     z = randn(length(mudc), 1) + R'*mudc;
@@ -116,6 +135,9 @@ for i = 1:N
     dOut(i,Z_tmp(i)) = dc(1);
     COut(i,latentId) = dc(2:end);
 end
+
+
+
 
 % (4) update mudc_fit & Sigdc_fit
 dOut_new = zeros(N, s_star);
@@ -133,6 +155,17 @@ for l = uniZsort_tmp(:)'
     nudc = sum(Z_tmp == l) + nudc0;
     SigdcOut(:,:,l) = iwishrnd(Psidc,nudc);
     
+    % dc_samp = mvnrnd(mudcOut(:,l), SigdcOut(:,:,l), N);
+    % dOut_new(:,l) = dc_samp(:,1);
+    % dOut_new(Z_tmp == l, l) = dOut(Z_tmp == l, l);
+    %
+    % COut_new(:,id2id(l,p)) = dc_samp(:,2:end);
+    % COut_new(Z_tmp == l, id2id(l,p)) = COut(Z_tmp == l, id2id(l,p));
+    
+end
+
+
+for l = uniZsort_tmp(:)'
     dc_samp = mvnrnd(mudcOut(:,l), SigdcOut(:,:,l), N);
     dOut_new(:,l) = dc_samp(:,1);
     dOut_new(Z_tmp == l, l) = dOut(Z_tmp == l, l);
@@ -140,6 +173,8 @@ for l = uniZsort_tmp(:)'
     COut_new(:,id2id(l,p)) = dc_samp(:,2:end);
     COut_new(Z_tmp == l, id2id(l,p)) = COut(Z_tmp == l, id2id(l,p));
 end
+
+
 
 dOut = dOut_new;
 COut = COut_new;
@@ -188,15 +223,23 @@ if(~isempty(outLab))
     outLatID = id2id(outLab , p);
     
     for l=outLab(:)'
+        
+        outLatID_tmp = id2id(l,p);
         mudcOuter = mvnrnd(deltadc0, Taudc0);
         SigdcOuter = iwishrnd(Psidc0,nudc0);
-        
         mudcOut(:,l) = mudcOuter;
         SigdcOut(:,:,l) = SigdcOuter;
-        
         dcSampOut = mvnrnd(mudcOuter, SigdcOut(:,:,l), N);
         dOut(:,l) = dcSampOut(:,1);
-        COut(:,id2id(l,p)) = dcSampOut(:,2:end);
+        COut(:,outLatID_tmp) = dcSampOut(:,2:end);
+%         x0Out(outLatID_tmp) = lsqr(COut(:,outLatID_tmp),...
+%             (log(mean(Y(:,1:10),2))-dOut(:,l)));
+%         XOut(outLatID_tmp, 1) = x0Out(outLatID_tmp);
+%         XOut(outLatID_tmp, :) = ppasmoo_poissexp_v2(Y,COut(:,outLatID_tmp),dOut(:,l),...
+%             x0Out(outLatID_tmp),Q0_f(1),...
+%             AOut(outLatID_tmp, outLatID_tmp),...
+%             bOut(outLatID_tmp),QOut(outLatID_tmp, outLatID_tmp));
+        
     end
     
     for t= 2:T
