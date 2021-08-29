@@ -423,15 +423,15 @@ Assume there are \(J\) clusters.
 \end{enumerate}
 
 \section{Simulations}
-There are two set of simulation examples. The first example is generated from LDS model directly, while in the second example the latents are generated directly without explicit specifying linear dynamics. In all of the following results, the covariance of process noise \(\mathbf{Q}\) is assumed to be block diagonal. The code for non-constrained and diagonal \(\mathbf{Q}\) can be found in XXX and XXX. The fitting results for all these three are similar, because the underlying true \(\mathbf{Q}\) is diagonal.
+There are two set of simulation examples. The first example is generated from LDS model directly, while in the second example the latents are generated directly without explicit specifying linear dynamics. In all of the following results, the covariance of process noise \(\mathbf{Q}\) is assumed to be block diagonal. For reference, see the code for \href{https://github.com/weigcdsb/state-space-clustering/blob/main/LDS/old_example/sim_LDS_noConstraint.m}{non-constrained} and \href{https://github.com/weigcdsb/state-space-clustering/blob/main/LDS/old_example/sim_LDS_diag.m}{diagonal} \(\mathbf{Q}\). But these two legacy versions assuming the loading is independent on cluster assignments. If we need to use any of one of them, make sure to replace the updates for loading to be cluster-related. The fitting results for all these three are similar, because the underlying true \(\mathbf{Q}\) is diagonal.
 
 Before doing the clustering, I first assume the cluster labels are known to see the fitting performance. All the fitting results with labels are shown in means from iteration 50 to 100.
 
 \subsection{Simulation 1: Generate from LDS Directly}
-In this simulation, there are 3 clusters with 10 neurons in each cluster. The dimension of latents in each cluster is 2. In the linear dynamics, the bias term \(\mathbf{b}\) is zero. There's no within-population interaction but has some weak between-population interactions. In other words, the linear dynamics matrix \(\mathbf{A}\) is roughly diagonal. The details of simulation can be found in the first section of XXX.
+In this simulation, there are 3 clusters with 10 neurons in each cluster. The dimension of latents in each cluster is 2. In the linear dynamics, the bias term \(\mathbf{b}\) is zero. There's no within-population interaction but has some weak between-population interactions. In other words, the linear dynamics matrix \(\mathbf{A}\) is roughly diagonal. The details of simulation can be found in the first section of the \href{https://github.com/weigcdsb/state-space-clustering/blob/main/LDS/lds_sample.m}{simulation 1}.
 
 \subsubsection{Labeled Data: No Clustering}
-The code for fitting is XXX, and some results are in Figure \ref{fig:LDS labeled}.
+The code for fitting is \href{https://github.com/weigcdsb/state-space-clustering/blob/main/LDS/lds_sample.m}{here}, and some results are in Figure \ref{fig:LDS labeled}.
 
 \begin{figure}[h!]
 	\makebox[\linewidth][c]{%
@@ -461,27 +461,31 @@ But the latent patterns of these three clusters seems quite similar. That means 
 Again, the fitting for overall mean firing rate is perfect. This is why it's important to make the loading, \(\mathbf{d}\) and \(\mathbf{C}\), also be cluster-dependent (loading within clusters are correlated). If the loading only depends on neuron index and will not change for different clustering assignments, it's impossible to do clustering (at least in this case), since the loading is enough to capture all the patterns.
 
 \subsubsection{Unlabeled Data: Clustering}
-To give the full path of clustering, I show results in GIFs. The code for FMM and DPMM can be found in XXX and XXX.
+To give the full path of clustering, I show results in GIFs. Click to see the code for \href{https://github.com/weigcdsb/state-space-clustering/blob/main/LDS/lds_sample_MM.m}{FMM} and \href{https://github.com/weigcdsb/state-space-clustering/blob/main/LDS/lds_sample_DP.m}{DPMM}.
 
 There are three results:
 \begin{enumerate}
 	\def\labelenumi{(\arabic{enumi})}
 	\item
-	Fit by FMM with \(\mathbf{J} = 3\), starting from random cluster assignments: 
+	Fit by FMM with \(J = 3\), starting from random cluster assignments:
+	\href{https://github.com/weigcdsb/state-space-clustering/blob/main/results/gif/lds_samp_10_MM_above.gif}{GIF result 1}
 	\item
-	Fit by FMM with \(\mathbf{J} = 3\), starting from all neurons in single cluster: 
+	Fit by FMM with \(J = 3\), starting from all neurons in single cluster: 
+	\href{https://github.com/weigcdsb/state-space-clustering/blob/main/results/gif/lds_samp_10_MM_below.gif}{GIF result 2}
 	\item
-	Fit by DPMM (\(\alpha = X\)), starting from each neuron forms its own cluster:
+	Fit by DPMM (\(\alpha = 10\)), starting from each neuron forms its own cluster:
+	\href{https://github.com/weigcdsb/state-space-clustering/blob/main/results/gif/lds_samp_10_DP_above_10.gif}{GIF result 3}
+	
 \end{enumerate}
 I didn't show the DPMM starting from single cluster. Since in my current implementation, the cluster generation is not efficient. In other words, the newly generated cluster will usually not be sampled and the algorithm usually gets stuck in 1 or 2 clusters.
 
 This is a big problem... That means if we occasionally combine two clusters into one, we may never correct the mistake. Further, when the data grows, the number of cluster will be hard to grow. Fix that later.
 
 \subsection{Simulation 2: Generate Latents, without Specifying Linear Dynamics}
-In this simulation, there are again 3 clusters with 2 latents in each. Besides set 10 neurons in each cluster, I further simulate 50 neurons in each cluster to see performance in a larger scale. Now, the latents are generated directly without specifying the underlying linear dynamics of latents. However, each latent is generated independently, so the linear dynamics matrix \(\mathbf{A}\) should be roughly diagonal. The details of simulation can be found in the first section of XXX.
+In this simulation, there are again 3 clusters with 2 latents in each. Besides set 10 neurons in each cluster, I further simulate 50 neurons in each cluster to see performance in a larger scale. Now, the latents are generated directly without specifying the underlying linear dynamics of latents. However, each latent is generated independently, so the linear dynamics matrix \(\mathbf{A}\) should be roughly diagonal. The details of simulation can be found in the \href{https://github.com/weigcdsb/state-space-clustering/blob/main/LDS/unspecifiedA_sample.m}{code}.
 
 \subsubsection{Labeled Data: No Clustering}
-As in simulation 1, the data is fitted by the true cluster assignment (3 clusters) and forcing all neurons belong to single cluster. The code can be found in XXX.
+As in simulation 1, the data is fitted by the true cluster assignment (3 clusters) and forcing all neurons belong to single cluster. The code can be found \href{https://github.com/weigcdsb/state-space-clustering/blob/main/LDS/unspecifiedA_sample.m}{here}.
 \begin{enumerate}
 	\def\labelenumi{(\arabic{enumi})}
 	\item
@@ -538,7 +542,8 @@ As in simulation 1, the data is fitted by the true cluster assignment (3 cluster
 \end{enumerate}
 
 \subsubsection{Unlabeled Data: Clustering}
-As previous, in each example, I show results from (1) FMM starting from random cluster assignment \(\left(J = 3\right) \), (2) FMM starting from single cluster and (3) DPMM starting from multiple clusters. The DPMM starting from single cluster need to be fixed later.
+As previous, in each example, I show results from (1) FMM starting from random cluster assignment \(\left(J = 3\right) \), (2) FMM starting from single cluster and (3) DPMM starting from multiple clusters. The DPMM starting from single cluster need to be fixed later. These are code for
+\href{https://github.com/weigcdsb/state-space-clustering/blob/main/LDS/unspecifiedA_sample_MM.m}{FMM} and \href{https://github.com/weigcdsb/state-space-clustering/blob/main/LDS/unspecifiedA_sample_DP.m}{DPMM}.
 
 \begin{enumerate}
 	\def\labelenumi{(\arabic{enumi})}
@@ -547,11 +552,14 @@ As previous, in each example, I show results from (1) FMM starting from random c
 	\begin{enumerate}
 		\def\labelenumi{\alph{enumi}.}
 		\item
-		Fit by FMM with \(\mathbf{J} = 3\), start from random cluster assignments:
+		Fit by FMM with \(J = 3\), start from random cluster assignments:
+		\href{https://github.com/weigcdsb/state-space-clustering/blob/main/results/gif/noA_10_MM_above.gif}{GIF result 4}
 		\item
-		Fit by FMM with \(\mathbf{J} = 3\), start from single cluster:
+		Fit by FMM with \(J = 3\), start from single cluster:
+		\href{https://github.com/weigcdsb/state-space-clustering/blob/main/results/gif/noA_10_MM_below.gif}{GIF result 5}
 		\item
-		Fit by DP (\(\alpha = X\)), start from assuming each neuron forms its own cluster:
+		Fit by DP (\(\alpha = 5\)), start from assuming each neuron forms its own cluster:
+		\href{https://github.com/weigcdsb/state-space-clustering/blob/main/results/gif/noA_10_DP_above_5.gif}{GIF result 6}
 	\end{enumerate}
 	
 	\item
@@ -560,10 +568,13 @@ As previous, in each example, I show results from (1) FMM starting from random c
 		\def\labelenumi{\alph{enumi}.}
 		\item
 		Fit by FMM with \(\mathbf{J} = 3\), start from random cluster assignments:
+		\href{https://github.com/weigcdsb/state-space-clustering/blob/main/results/gif/noA_50_MM_above.gif}{GIF result 7}
 		\item
 		Fit by FMM with \(\mathbf{J} = 3\), start from single cluster:
+		\href{https://github.com/weigcdsb/state-space-clustering/blob/main/results/gif/noA_50_MM_below.gif}{GIF result 8}
 		\item
-		Fit by DP (\(\alpha = X\)), start from random assignment for 10 clusters:
+		Fit by DP (\(\alpha = 1\)), start from random assignment for 10 clusters:
+		\href{https://github.com/weigcdsb/state-space-clustering/blob/main/results/gif/noA_50_DP_above1.gif}{GIF result 9}
 	\end{enumerate}
 \end{enumerate}
 

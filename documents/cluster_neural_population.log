@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.12.6)  29 AUG 2021 13:38
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.12.6)  29 AUG 2021 14:09
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -770,105 +770,104 @@ Overfull \hbox (27.4921pt too wide) detected at line 422
  []
 
 [10]
-<image001.png, id=202, 420.82219pt x 315.42844pt>
+<image001.png, id=206, 420.82219pt x 315.42844pt>
 File: image001.png Graphic file (type png)
 <use image001.png>
 Package pdftex.def Info: image001.png  used on input line 442.
 (pdftex.def)             Requested size: 189.75105pt x 142.23026pt.
-<image002.png, id=204, 420.82219pt x 315.80484pt>
+<image002.png, id=208, 420.82219pt x 315.80484pt>
 File: image002.png Graphic file (type png)
 <use image002.png>
 Package pdftex.def Info: image002.png  used on input line 442.
 (pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<image003.png, id=205, 420.82219pt x 315.80484pt>
+<image003.png, id=209, 420.82219pt x 315.80484pt>
 File: image003.png Graphic file (type png)
 <use image003.png>
 Package pdftex.def Info: image003.png  used on input line 442.
 (pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
  [11 <./image001.png> <./image002.png> <./image003.png>]
-<image004.png, id=220, 420.82219pt x 315.80484pt>
+<image004.png, id=224, 420.82219pt x 315.80484pt>
 File: image004.png Graphic file (type png)
 <use image004.png>
 Package pdftex.def Info: image004.png  used on input line 456.
 (pdftex.def)             Requested size: 241.49895pt x 181.23459pt.
-<image005.png, id=221, 420.82219pt x 315.80484pt>
+<image005.png, id=225, 420.82219pt x 315.80484pt>
 File: image005.png Graphic file (type png)
 <use image005.png>
 Package pdftex.def Info: image005.png  used on input line 456.
 (pdftex.def)             Requested size: 241.49895pt x 181.23459pt.
  [12 <./image004.png> <./image005.png>]
-<image006.png, id=235, 420.82219pt x 315.80484pt>
+<image006.png, id=248, 420.82219pt x 315.80484pt>
 File: image006.png Graphic file (type png)
 <use image006.png>
-Package pdftex.def Info: image006.png  used on input line 496.
+Package pdftex.def Info: image006.png  used on input line 500.
 (pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<image007.png, id=236, 420.82219pt x 315.80484pt>
+<image007.png, id=249, 420.82219pt x 315.80484pt>
 File: image007.png Graphic file (type png)
 <use image007.png>
-Package pdftex.def Info: image007.png  used on input line 496.
+Package pdftex.def Info: image007.png  used on input line 500.
 (pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<image008.png, id=237, 420.82219pt x 315.80484pt>
+<image008.png, id=250, 420.82219pt x 315.80484pt>
 File: image008.png Graphic file (type png)
 <use image008.png>
-Package pdftex.def Info: image008.png  used on input line 496.
+Package pdftex.def Info: image008.png  used on input line 500.
 (pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<image009.png, id=239, 420.82219pt x 315.80484pt>
+<image009.png, id=252, 420.82219pt x 315.80484pt>
 File: image009.png Graphic file (type png)
 <use image009.png>
-Package pdftex.def Info: image009.png  used on input line 506.
+Package pdftex.def Info: image009.png  used on input line 510.
 (pdftex.def)             Requested size: 241.49895pt x 181.23459pt.
-<image010.png, id=240, 420.82219pt x 315.80484pt>
+<image010.png, id=253, 420.82219pt x 315.80484pt>
 File: image010.png Graphic file (type png)
 <use image010.png>
-Package pdftex.def Info: image010.png  used on input line 506.
+Package pdftex.def Info: image010.png  used on input line 510.
 (pdftex.def)             Requested size: 241.49895pt x 181.23459pt.
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<image011.png, id=242, 420.82219pt x 315.80484pt>
-File: image011.png Graphic file (type png)
-<use image011.png>
-Package pdftex.def Info: image011.png  used on input line 522.
-(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<image012.png, id=243, 420.82219pt x 315.80484pt>
-File: image012.png Graphic file (type png)
-<use image012.png>
-Package pdftex.def Info: image012.png  used on input line 522.
-(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<image013.png, id=244, 420.82219pt x 315.80484pt>
-File: image013.png Graphic file (type png)
-<use image013.png>
-Package pdftex.def Info: image013.png  used on input line 522.
-(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<image014.png, id=246, 420.82219pt x 315.80484pt>
-File: image014.png Graphic file (type png)
-<use image014.png>
-Package pdftex.def Info: image014.png  used on input line 532.
-(pdftex.def)             Requested size: 241.49895pt x 181.23459pt.
-<image015.png, id=247, 420.82219pt x 315.80484pt>
-File: image015.png Graphic file (type png)
-<use image015.png>
-Package pdftex.def Info: image015.png  used on input line 532.
-(pdftex.def)             Requested size: 241.49895pt x 181.23459pt.
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [13 <./image006.png> <./image007.png> <./image008.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 546--547
+<image011.png, id=269, 420.82219pt x 315.80484pt>
+File: image011.png Graphic file (type png)
+<use image011.png>
+Package pdftex.def Info: image011.png  used on input line 526.
+(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
+<image012.png, id=270, 420.82219pt x 315.80484pt>
+File: image012.png Graphic file (type png)
+<use image012.png>
+Package pdftex.def Info: image012.png  used on input line 526.
+(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
+<image013.png, id=271, 420.82219pt x 315.80484pt>
+File: image013.png Graphic file (type png)
+<use image013.png>
+Package pdftex.def Info: image013.png  used on input line 526.
+(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
+<image014.png, id=273, 420.82219pt x 315.80484pt>
+File: image014.png Graphic file (type png)
+<use image014.png>
+Package pdftex.def Info: image014.png  used on input line 536.
+(pdftex.def)             Requested size: 241.49895pt x 181.23459pt.
+<image015.png, id=274, 420.82219pt x 315.80484pt>
+File: image015.png Graphic file (type png)
+<use image015.png>
+Package pdftex.def Info: image015.png  used on input line 536.
+(pdftex.def)             Requested size: 241.49895pt x 181.23459pt.
 
- []
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
 
 [14 <./image009.png> <./image010.png> <./image011.png> <./image012.png> <./imag
 e013.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 558--559
+Underfull \hbox (badness 10000) in paragraph at lines 551--552
 
  []
 
-[15 <./image014.png> <./image015.png>] (./cluster_neural_population.aux)
+
+Underfull \hbox (badness 10000) in paragraph at lines 566--567
+
+ []
+
+[15 <./image014.png> <./image015.png>] [16] (./cluster_neural_population.aux)
 Package rerunfilecheck Info: File `cluster_neural_population.out' has not chang
 ed.
 (rerunfilecheck)             Checksum: 9185CC2670E1A8DCEBC6D5ED3390F830;1673.
@@ -878,13 +877,13 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 7612 strings out of 479383
- 111055 string characters out of 5868871
+ 7613 strings out of 479383
+ 111062 string characters out of 5868871
  429177 words of memory out of 5000000
  24421 multiletter control sequences out of 15000+600000
  462733 words of font info for 86 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 66i,14n,72p,601b,472s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 66i,14n,72p,959b,466s stack positions out of 5000i,500n,10000p,200000b,80000s
 {e:/software/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{e:/softwar
 e/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{e:/software/texlive
 /2020/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{e:/software/texlive/2020/tex
@@ -909,10 +908,10 @@ ive/2020/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><e:/software/texlive/2020/
 texmf-dist/fonts/type1/public/lm/lmsy5.pfb><e:/software/texlive/2020/texmf-dist
 /fonts/type1/public/lm/lmsy7.pfb><e:/software/texlive/2020/texmf-dist/fonts/typ
 e1/public/amsfonts/symbols/msbm10.pfb>
-Output written on cluster_neural_population.pdf (15 pages, 1387751 bytes).
+Output written on cluster_neural_population.pdf (16 pages, 1388946 bytes).
 PDF statistics:
- 399 PDF objects out of 1000 (max. 8388607)
- 326 compressed objects within 4 object streams
- 117 named destinations out of 1000 (max. 500000)
+ 424 PDF objects out of 1000 (max. 8388607)
+ 350 compressed objects within 4 object streams
+ 118 named destinations out of 1000 (max. 500000)
  252 words of extra memory for PDF output out of 10000 (max. 10000000)
 
