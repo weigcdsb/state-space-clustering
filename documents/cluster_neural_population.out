@@ -1,0 +1,22 @@
+\BOOKMARK [1][-]{section.1}{Notations}{}% 1
+\BOOKMARK [1][-]{section.2}{Clustering Wrapper}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Finite Mixture Model}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{Dirichlet Process Mixture Model}{section.2}% 4
+\BOOKMARK [1][-]{section.3}{linear Dynamical System Model}{}% 5
+\BOOKMARK [2][-]{subsection.3.1}{Model Details}{section.3}% 6
+\BOOKMARK [2][-]{subsection.3.2}{Conditional Priors for Parameters}{section.3}% 7
+\BOOKMARK [2][-]{subsection.3.3}{MCMC \(Gibbs Sampler\)}{section.3}% 8
+\BOOKMARK [3][-]{subsubsection.3.3.1}{Update \173 xt \175t=1T}{subsection.3.3}% 9
+\BOOKMARK [3][-]{subsubsection.3.3.2}{Update x0}{subsection.3.3}% 10
+\BOOKMARK [3][-]{subsubsection.3.3.3}{Update \173 di \175i = 1N and \173 ci \175i = 1N}{subsection.3.3}% 11
+\BOOKMARK [3][-]{subsubsection.3.3.4}{Update \173 dc\(j\) \175j and \173 dc\(j\) \175j}{subsection.3.3}% 12
+\BOOKMARK [3][-]{subsubsection.3.3.5}{Update A and b}{subsection.3.3}% 13
+\BOOKMARK [3][-]{subsubsection.3.3.6}{Update Q}{subsection.3.3}% 14
+\BOOKMARK [1][-]{section.4}{Simulations}{}% 15
+\BOOKMARK [2][-]{subsection.4.1}{Simulation 1: Generate from LDS Directly}{section.4}% 16
+\BOOKMARK [3][-]{subsubsection.4.1.1}{Labeled Data: No Clustering}{subsection.4.1}% 17
+\BOOKMARK [3][-]{subsubsection.4.1.2}{Unlabeled Data: Clustering}{subsection.4.1}% 18
+\BOOKMARK [2][-]{subsection.4.2}{Simulation 2: Generate Latents, without Specifying Linear Dynamics}{section.4}% 19
+\BOOKMARK [3][-]{subsubsection.4.2.1}{Labeled Data: No Clustering}{subsection.4.2}% 20
+\BOOKMARK [3][-]{subsubsection.4.2.2}{Unlabeled Data: Clustering}{subsection.4.2}% 21
+\BOOKMARK [1][-]{section.5}{TODO}{}% 22

@@ -1,0 +1,588 @@
+
+% load packages
+\documentclass[]{article}
+\usepackage{amsmath,amssymb}
+\usepackage{bm}
+\usepackage{lmodern}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{url}
+\usepackage{parskip}
+\usepackage{graphicx}
+\usepackage{subfigure}
+
+\title{Model-based Clustering for Neural Populations}
+\author{}
+\date{}
+\begin{document}
+\maketitle
+
+The goal for this research is to do model-based clustering for  neural populations, by making use of features for each counting process observation. 
+
+\section{Notations}
+
+Assume we can observe neural activities for \(N\) neurons, with counting observation up to \(T\) steps. Therefore, the observation is a \textsl{N-by-T} matrix, \(\mathbf{Y} \in \mathbb{Z}_{\geq 0}^{N \times T}\) ,with each row represents the recording from single neuron. Denote the recording for neuron \(i\) as
+\(\mathbf{y}_{i} = (y_{i1},\ldots,y_{\text{iT}})'\), \(i = 1,\ldots N.\), with the cluster index for neuron \(i\) as
+\(z_{i} \in \{ 1,\ldots\}\). The number of neurons in cluster \(j\) is
+\(n_{j} = \sum_{i = 1}^{N}{I(z_{i} = j)}\), and
+\(\sum_{j = 1,2,\ldots}^{}n_{j} = N\). The proportion/ probability in
+cluster \(z_{i}\) is \(\rho_{z_{i}}\).
+
+\section{Clustering Wrapper}
+The model-based clustering problem can be transformed into fitting the mixture model (MM). The likelihood for each cluster depends on how we model the counting observation, but fitting strategies for MM are the same for all models. Here, I choose to fit the MM by Gibbs sampler. Depending on whether the number of cluster is finite or not, there are two versions: finite mixture model (FMM) and Dirichlet process mixture model (DPMM).
+
+\subsection{Finite Mixture Model}	
+Assume the number of cluster is \(J\). The full likelihood for these \(N\) neurons is
+\[L = \prod_{i = 1}^{N}{\rho_{z_{i}}f\left( \mathbf{y}_{i}|\mathbf{\Theta}_{z_{i}} \right)} = \prod_{j = 1}^{J}{\rho_{j}^{n_{j}}\left\lbrack \prod_{i:z_{i} = j}^{}{f\left( \mathbf{y}_{i}|\mathbf{\Theta}_{j} \right)} \right\rbrack}\]
+, where \(\mathbf{\Theta}_{j}\) contains all parameters in cluster \(j\) defined by the specific model. Therefore, the parameters need to update are:
+\begin{enumerate}
+	\def\labelenumi{(\arabic{enumi})}
+	\item
+	Cluster indicator: \(\left\{ z_{i} \right\}_{i = 1}^{N}\)
+	\item
+	Cluster proportion: \(\mathbf{\rho} = (\rho_{1},\ldots\rho_{J})'\)
+	\item
+	Model parameters: \(\mathbf{\Theta}_{j}\)
+\end{enumerate}
+The (conditional) priors for clustering-related parameters:
+\begin{enumerate}
+	\def\labelenumi{(\arabic{enumi})}
+	\item
+	Cluster indicator \(\left\{ z_{i} \right\}_{i = 1}^{N}\):
+	\(P\left( z_{i} = j \right) = \rho_{j}\)
+	\item
+	Cluster proportion \(\mathbf{\rho} = (\rho_{1},\ldots\rho_{J})'\):
+	\[\mathbf{\rho} \sim Dir(\delta_{1},\ldots\delta_{J})\]
+	, where \(\delta_{1} = \ldots = \delta_{J} = 1\)
+\end{enumerate}
+
+So, the MCMC( Gibbs sampler) iteration for FMM is:
+\begin{enumerate}
+	\def\labelenumi{(\arabic{enumi})}
+	\item
+	Update \(\left\{ z_{i} \right\}_{i = 1}^{N}\):
+	\[P\left( z_{i} = j \middle| \mathbf{y}_{i},\left\{ \mathbf{\Theta}_{j} \right\}_{j = 1}^{J} \right) \propto \rho_{j}f\left( \mathbf{y}_{i}|\mathbf{\Theta}_{j} \right)\]
+	\item
+	Update \(\mathbf{\rho} = \left( \rho_{1},\ldots\rho_{J} \right)^{'}\):
+	\[\mathbf{\rho}|\ \left\{ \mathbf{y}_{i} \right\}_{i = 1}^{N},\ \left\{ z_{i} \right\}_{i = 1}^{N},\left\{ \mathbf{\Theta}_{j} \right\}_{j = 1}^{J} \sim Dir(\delta_{1} + n_{1},\ldots\delta_{J} + n_{J})\]
+	\item
+	Update \(\mathbf{\Theta}_{j}\): this is defined by the specific model. When there's no
+	\(z_{i} = j\), just sample \(\mathbf{\Theta}_{j}\) from priors or by other observation-independent ways.
+\end{enumerate}
+
+\subsection{Dirichlet Process Mixture Model}
+
+Since calculation of posterior predictive distribution can be hard or even impossible for complicated models, instead of using the popular CRP representation of DP (Neal, 2020), I choose to use the slice sampler (\href{https://www.tandfonline.com/doi/full/10.1080/03610910601096262}{Walker, 2007}).
+
+Use the ''stick-breaking'' construction for cluster proportion, i.e.
+\[\rho_{1} = \eta_{1}\]
+\[\rho_{j} = \left( 1 - \eta_{1} \right) \cdot \ldots \cdot \left( 1 - \eta_{j - 1} \right)\eta_{j}\]
+\[\eta_{j} \sim Beta(1,\alpha)\]
+
+In the slice sampler for DPMM, the parameters need to update are:
+\begin{enumerate}
+	\def\labelenumi{(\arabic{enumi})}
+	\item
+	``stick-breaking'' elements: \(\eta_{j}\)
+	\item
+	Augment latent variable: \(\left\{ u_{i} \right\}_{i = 1}^{N}\)
+	\item
+	Model parameters: \(\mathbf{\Theta}_{j}\)
+	\item
+	Cluster indicator: \(\left\{ z_{i} \right\}_{i = 1}^{N}\)
+\end{enumerate}
+
+So, the MCMC( Gibbs sampler) iteration for DPMM is:
+\begin{enumerate}
+	\def\labelenumi{(\arabic{enumi})}
+	\item
+	update \(\eta_{j}\), for
+	\(j = 1,\ldots,{{z^{*} = max}\left\{ z_{i} \right\}}_{i = 1}^{N}\) as
+	\[\eta_{j}|\left\{ z_{i} \right\}_{i = 1}^{N},\ldots \sim Beta(n_{j} + 1,\ N - \sum_{l = 1}^{j}n_{l} + \alpha)\]
+	\item
+	update \(\left\{ u_{i} \right\}_{i = 1}^{N}\):
+	\[u_{i}|\mathbf{\rho,\ldots} \sim U(0,\ \rho_{z_{i}})\]
+	\item
+	update \(\eta_{j}\), for \(j = z^{*} + 1,\ldots,\ s^{*}\). \(s^{*}\)
+	is the smallest value, s.t.
+	\(\sum_{j = 1}^{s^{*}}\rho_{j} > 1 - \min{\{ u_{1},\ldots,u_{N}\}}\)
+	\[\eta_{j} \sim Beta(1,\alpha)\]
+	\item
+	Update \(\mathbf{\Theta}_{j}\): this is defined by the specific model. When there's no
+	\(z_{i} = j\), just sample \(\mathbf{\Theta}_{j}\) from priors or by other observation-independent ways.
+	\item
+	Update \(\left\{ z_{i} \right\}_{i = 1}^{N}\)
+	\[P\left( z_{i} = j \middle| \mathbf{y}_{i},\left\{ \mathbf{\Theta}_{j} \right\},\mathbf{\rho,}\left\{ u_{i} \right\}_{i = 1}^{N} \right) = \frac{f\left( \mathbf{y}_{i}|\mathbf{\Theta}_{j} \right)}{\sum_{j:\rho_{j} > u_{i}}^{}{f\left( \mathbf{y}_{i}|\mathbf{\Theta}_{j} \right)}}\]
+\end{enumerate}
+
+\section{linear Dynamical System Model}
+Here, I model the observations by a linear dynamical system (LDS) model.
+
+LDS models the multi-dimensional time series using a lower dimensional latent representation of the system, which evolves over time according to linear dynamics. By specifying the linear dynamics and process noise covariance, we can also handle the interactions between different neural populations (clusters).
+
+\subsection{Model Details}
+Denote the latent vector in cluster \(j\) as
+\(\mathbf{x}_{t}^{(j)} \in \mathbb{R}^{p_{j}}\). For simplicity, assume all \(p_{j} = p\). Each observation follows a Poisson distribution:
+\[\log\lambda_{\text{it}} = d_{i} + \mathbf{c'}_{i}\mathbf{x}_{t}^{(z_{i})}\]
+\[y_{\text{it}} \sim Poisson(\lambda_{\text{it}})\]
+, where \(\mathbf{c}_{i} \in \mathbb{R}^{p}\) and
+\(\mathbf{x}_{t}^{(z_{i})} \in \mathbb{R}^{p}\).
+
+Although the loading (\(d_{i}\) and \(\mathbf{c}_{i}\)) is determined by neuron index \(i\), the distribution is also cluster-dependent. That is,
+\[\left( d_{i},\mathbf{c}'_{i} \right)' \sim N(\bm{\mu}_{\text{dc}}^{\left( z_{i} \right)},\mathbf{\Sigma}_{\text{dc}}^{(z_{i})})\]
+By doing this, the loading within each cluster is also correlated.
+
+Denote all latent states as \(\mathbf{x}_{t} = \left( {\mathbf{x'}_{t}^{(1)}},{\mathbf{x'}_{t}^{(2)}},\ldots \right)'\) and they evolve linearly with a Gaussian noise:
+\[\mathbf{x}_{1} \sim N(\mathbf{x}_{0},\mathbf{Q}_{0})\]
+\[\mathbf{x}_{t + 1}|\mathbf{x}_{t} \sim N(\mathbf{A}\mathbf{x}_{t} + \mathbf{b},\mathbf{Q})\]
+For simplicity, assume \(\mathbf{Q}_{0}\) is known (e.g.
+\(\mathbf{Q}_{0} = \mathbf{I} \times 10^{-2}\)).
+
+If we assume process noise covariance is block diagonal (\href{https://papers.nips.cc/paper/2020/hash/aa1f5f73327ba40d47ebce155e785aaf-Abstract.html}{Joshua et al., 2020}), we can write things as:
+\[\mathbf{x}_{t + 1}^{(j)}|\mathbf{x}_{t}^{(1)},\mathbf{x}_{t}^{(2)},\ldots \sim N(\sum_{l = 1,\ldots}^{}\mathbf{A}_{j \leftarrow l}\mathbf{x}_{t}^{(l)} + \mathbf{b}_{j},\mathbf{Q}^{(j)})\]
+
+Notice \(\left\{ \mathbf{A}_{j \leftarrow l} \right\}\) forms the full transition matrix as:
+\[\mathbf{A} = \ \begin{pmatrix}
+	\mathbf{A}_{1 \leftarrow 1} & \mathbf{A}_{1 \leftarrow 2} & \ldots \\
+	\mathbf{A}_{2 \leftarrow 1} & \mathbf{A}_{2 \leftarrow 2} & \ldots \\
+	\ldots\  & \ldots & \ldots \\
+\end{pmatrix}\]
+Denote the \(j^{\text{th}}\) row block of \(\mathbf{A}\) as
+\(\mathbf{A}_{j} = \begin{pmatrix}
+	\mathbf{A}_{j \leftarrow 1} & \mathbf{A}_{j \leftarrow 2} & \ldots \\
+\end{pmatrix}\). Then,
+\(\sum_{l = 1,\ldots}^{}\mathbf{A}_{j \leftarrow l}\mathbf{x}_{t}^{(l)} + \mathbf{b}_{j}\mathbf{=}\mathbf{A}_{j}\mathbf{x}_{t} + \mathbf{b}_{j}\).
+
+If we further let \(\mathbf{Q}\) be diagonal, with the
+\(k^{\text{th}}\) row of \(\mathbf{x}_{t}\), \(\mathbf{A}\),
+\(\mathbf{b}\) denoted as \(x_{\text{kt}}\), \(\mathbf{a}_{k}\), \(b_{k}\). The corresponding process noise variance is \(q_{k}\). Then:
+\[x_{k,t + 1}|x_{\text{kt}} \sim N\left( \mathbf{a}_{k}^{'}\mathbf{x}_{t} + b_{k},q_{k} \right)\]
+
+For completeness, Gibbs samplers for all three versions (no constraint, block diagonal and diagonal \(\mathbf{Q}\)) are shown below. 
+
+Since the progress noise is independent at each step,
+\(f\left( \mathbf{y}_{i}|\mathbf{\Theta}_{j} \right) = \prod_{t = 1}^{T}{P(y_{\text{it}}|\mathbf{\Theta}_{j})}\),
+where \(P( \cdot )\) is the Poisson density and \(\mathbf{\Theta}_{j}\) contains all parameters in cluster \(j\).
+
+\subsection{Conditional Priors for Parameters}
+The parameters need to estimate:
+\begin{enumerate}
+	\def\labelenumi{(\arabic{enumi})}
+	\item
+	Latent vectors: \(\left\{ \mathbf{x}_{t} \right\}_{t=1}^T\)
+	\item
+	Initials: \(\mathbf{x}_{0}\)
+	\item
+	Linear mapping (loading) for latent vectors:
+	\(\left\{ d_{i} \right\}_{i = 1}^{N}\) and
+	\(\left\{ \mathbf{c}_{i} \right\}_{i = 1}^{N}\)
+	\item
+	Mean and covariance for loading in each cluster:
+	\(\left\{ \bm{\mu}_{\text{dc}}^{(j)} \right\}_{j}\) and
+	\(\left\{ \mathbf{\Sigma}_{\text{dc}}^{(j)} \right\}_{j}\)
+	\item
+	Linear dynamics for latent vectors: \(\mathbf{A}\) and \(\mathbf{b}\)
+	\item
+	Process noise: \(\mathbf{Q}\)
+\end{enumerate}
+
+The conditional priors for these parameters:
+\begin{enumerate}
+	\def\labelenumi{(\arabic{enumi})}
+	\item
+	Latent vectors \(\left\{ \mathbf{x}_{t} \right\}_{t=1}^T\): the conditional prior is
+	defined by
+	\[\mathbf{x}_{1} \sim N(\mathbf{x}_{0},\mathbf{Q}_{0})\]
+	\[\mathbf{x}_{t + 1}|\mathbf{x}_{t} \sim N(\mathbf{A}\mathbf{x}_{t} + \mathbf{b},\mathbf{Q})\]
+	\item
+	Initials \(\mathbf{x}_{0}\): assume there are \(J\) clusters,
+	\[\mathbf{x}_{0} \sim N(\bm{\mu}_{\mathbf{x}_{00}},\ \mathbf{\Sigma}_{\mathbf{x}_{00}})\]
+	, where \(\bm{\mu}_{\mathbf{x}_{00}} = \mathbf{0}_{\text{Jp}}\) and \(\mathbf{\Sigma}_{\mathbf{x}_{00}} = \mathbf{I}_{\text{Jp}}\)
+	\item
+	Linear mapping (loading) for latent vectors
+	\(\left\{ d_{i} \right\}_{i = 1}^{N}\) and
+	\(\left\{ \mathbf{c}_{i} \right\}_{i = 1}^{N}\):
+	\[\left( d_{i},\mathbf{c}'_{i} \right)' \sim N(\bm{\mu}_{\text{dc}}^{\left( z_{i} \right)},\mathbf{\Sigma}_{\text{dc}}^{(z_{i})})\]
+	\item
+	Mean and covariance for loading in each cluster
+	\(\left\{ \bm{\mu}_{\text{dc}}^{(j)} \right\}_{j}\) and
+	\(\left\{ \mathbf{\Sigma}_{\text{dc}}^{(j)} \right\}_{j}\):
+	\[\bm{\mu}_{\text{dc}}^{(j)} \sim N(\mathbf{\delta}_{dc0},\mathbf{T}_{dc0})\]
+	, where \(\bm{\delta}_{dc0} = \mathbf{0}_{p + 1}\) and
+	\(\mathbf{T}_{dc0} = \mathbf{I}_{p + 1}\)
+	
+	\[\mathbf{\Sigma}_{\text{dc}}^{(j)} \sim W^{- 1}\left( \Psi_{dc0},\nu_{dc0} \right)\]
+	, where \(\nu_{dc0} = p + 1 + 2\) and
+	\(\Psi_{dc0} = \mathbf{I}_{p + 1} \times 10^{-4}\)
+	\item
+	Linear dynamics for latent vectors \(\mathbf{A}\) and \(\mathbf{b}\): if the number of cluster is \(J\)
+	\begin{enumerate}
+		\def\labelenumi{\alph{enumi}.}
+		\item
+		No constraints on \(\mathbf{Q}\): denote \(\widetilde{\mathbf{A}} = vec(\mathbf{A})\)
+		\[\left( \mathbf{b}',\widetilde{\mathbf{A}} \right)' \sim N\left( \bm{\mu}_{BA_{0}},\mathbf{\Sigma}_{BA_{0}} \right)\]
+		, where \(\bm{\mu}_{BA_{0}} = \left( \mathbf{0}_{\text{Jp}}',vec\left( \mathbf{I}_{\text{Jp}} \right)' \right)'\)
+		and \(\mathbf{\Sigma}_{BA_{0}} = 0.25\mathbf{I}_{Jp(1 + Jp)}\)
+		\item
+		Assume \(\mathbf{Q}\) is block-diagonal: denote
+		\({\widetilde{\mathbf{A}}}_{j} = vec\left( \mathbf{A}_{j} \right)\)
+		\[\left( \mathbf{b}'_{j}, {\widetilde{\mathbf{A}}}'_{j} \right)' \sim N\left( \bm{\mu}_{bA_{0}},\mathbf{\Sigma}_{bA_{0}} \right)\]
+		, where \(\bm{\mu}_{bA_{0}} = \left( \mathbf{0}'_{p + (j - 1)p^{2}}, vec\left( \mathbf{I}_{p} \right)', \mathbf{0}_{(J - j)p^{2}}' \right)'\)
+		and \(\mathbf{\Sigma}_{bA_{0}} = 0.25\mathbf{I}_{p(1 + pJ)}\)
+		\item
+		Assume \(\mathbf{Q}\) is diagonal:
+		\[\left( b_{k},\mathbf{a}'_{k} \right)' \sim N\left( \mathbf{\mu}_{ba_{k}0},\mathbf{\Sigma}_{ba0} \right)\]
+		, where \(\mathbf{\mu}_{ba_{k}0} = \left( 0,\mathbf{e}'_{k} \right)'\) and \(\mathbf{\Sigma}_{ba0} = 0.25\mathbf{I}_{Jp + 1}\)	
+	\end{enumerate}
+	\item
+	Process noise \(\mathbf{Q}\): if the number of cluster is \(J\)
+	\begin{enumerate}
+		\def\labelenumi{\alph{enumi}.}
+		\item
+		No constraints on \(\mathbf{Q}\):
+		\[\mathbf{Q} \sim W^{- 1}(\Psi_{\mathbf{Q}_{0}},\nu_{\mathbf{Q}_{0}})\]
+		, where \(\nu_{\mathbf{Q}_{0}} = Jp + 2\) and
+		\(\Psi_{\mathbf{Q}_{0}} = \mathbf{I}_{\text{Jp}} \times 10^{- 4}\). (To make the mean of \(\mathbf{Q}\) loosely centered around
+		\(\mathbf{I}_{Jp} \times 10^{- 4}\))
+		\item
+		Assume \(\mathbf{Q}\) is block-diagonal:
+		\[\mathbf{Q}^{(j)} \sim W^{- 1}\left( \Psi_{0},\nu_{0} \right)\]
+		, where \(\nu_{0} = p + 2\) and
+		\(\Psi_{0} = \mathbf{I}_{p} \times 10^{- 4}\). (To make the mean of \(\mathbf{Q}^{(j)}\) loosely centered around
+		\(\mathbf{I}_{p} \times 10^{- 4}\))
+		\item
+		Assume \(\mathbf{Q}\) is diagonal:
+		\[q_{k} \sim IG(\frac{\nu_{0}}{2},\frac{\nu_{0}\sigma_{0}^{2}}{2})\]
+		, where \(\nu_{0} = 4\) and \(\sigma_{0}^{2} = 10^{- 4}\).
+	\end{enumerate}
+\end{enumerate}
+
+\subsection{MCMC (Gibbs Sampler)}
+
+\subsubsection{Update \(\left\{ \mathbf{x}_{t} \right\}_{t=1}^T\)}
+Use Laplace approximation and make use of the block tri-diagonal Hessian.
+
+Denote \(t^{\text{th}}\) column of mean firing rate and observation as \({\widetilde{\bm{\lambda}}}_{t} = \left( \lambda_{1t},\ldots,\lambda_{\text{Nt}} \right)'\)
+and \({\widetilde{\mathbf{y}}}_{t} = (y_{1t},\ldots,y_{\text{Nt}})'\).
+The linear mapping matrix for all observations is \(\mathbf{C}\), such that
+\(\log{\widetilde{\bm{\lambda}}}_{t} = \mathbf{d} + \mathbf{C}\mathbf{x}_{t}\).
+Let \(\mathbf{x} = \left( \mathbf{x'}_{1},\ldots,\mathbf{x'}_{T} \right)'\)and
+\(f\left( \mathbf{x} \right) = \log{P(\mathbf{x}|\left\{ \mathbf{y}_{i} \right\}_{i = 1}^{N},\mathbf{C},\mathbf{Q}_{0},\mathbf{A},\mathbf{b},\mathbf{Q},\ldots)}\)
+The first and second derivative with respect to \(\mathbf{x}\), for \(t=2, \ldots, T-1\):
+\begin{align*}
+	\frac{\partial f}{\partial\mathbf{x}_{1}} &= \mathbf{C'}\left( {\widetilde{\mathbf{y}}}_{1} - {\widetilde{\bm{\lambda}}}_{1} \right) - \mathbf{Q}_{0}^{- 1}\left( \mathbf{x}_{1} - \mathbf{x}_{0} \right) + \mathbf{A}'\mathbf{Q}^{- 1}\mathbf{(}\mathbf{x}_{2} - \mathbf{A}\mathbf{x}_{1} - \mathbf{b)} \\
+	\frac{\partial f}{\partial\mathbf{x}_{t}} &= \mathbf{C'}\left( {\widetilde{\mathbf{y}}}_{t} - {\widetilde{\bm{\lambda}}}_{t} \right) - \mathbf{Q}^{- 1}\left( \mathbf{x}_{t} - \mathbf{A}\mathbf{x}_{t - 1} - \mathbf{b} \right) + \mathbf{A}'\mathbf{Q}^{- 1}(\mathbf{x}_{t + 1} - \mathbf{A}\mathbf{x}_{t} -\mathbf{b)}\\
+	\frac{\partial f}{\partial\mathbf{x}_{T}} &= \mathbf{C'}\left( {\widetilde{\mathbf{y}}}_{T} - {\widetilde{\bm{\lambda}}}_{T} \right) - \mathbf{Q}^{- 1}\left( \mathbf{x}_{T} - \mathbf{A}\mathbf{x}_{T - 1} - \mathbf{b} \right)\\
+	\frac{\partial^{2}f}{\partial\mathbf{x}_{1}\partial\mathbf{x}'_{1}} &= - \mathbf{C'}\text{Diag}\left( {\widetilde{\bm{\lambda}}}_{1} \right)\mathbf{C} - \mathbf{Q}_{0}^{- 1} - \mathbf{A}'\mathbf{Q}^{- 1}\mathbf{A}\\
+	\frac{\partial^{2}f}{\partial\mathbf{x}_{t}\partial\mathbf{x}'_{t}} &= - \mathbf{C'}\text{Diag}\left( {\widetilde{\bm{\lambda}}}_{t} \right)\mathbf{C} - \mathbf{Q}^{- 1} - \mathbf{A}'\mathbf{Q}^{- 1}\mathbf{A}\\
+	\frac{\partial^{2}f}{\partial\mathbf{x}_{T}\partial\mathbf{x}'_{T}} &= - \mathbf{C'}\text{Diag}\left( {\widetilde{\bm{\lambda}}}_{T} \right)\mathbf{C} - \mathbf{Q}^{- 1}\\
+	\frac{\partial^{2}f}{\partial\mathbf{x}_{1}\partial\mathbf{x}'_{2}} &= \frac{\partial^{2}f}{\partial\mathbf{x}_{t}\partial\mathbf{x}'_{t + 1}} = \mathbf{A}'\mathbf{Q}^{- 1}
+	&&\frac{\partial^{2}f}{\partial\mathbf{x}_{t}\partial\mathbf{x}'_{t - 1}} = \mathbf{Q}^{- 1}\mathbf{A}
+\end{align*}
+
+So, the gradient is:
+
+\[\nabla = \frac{\partial f}{\partial\mathbf{x}} = \left( \left( \frac{\partial f}{\partial\mathbf{x}_{1}} \right)',\ \ldots,\left( \frac{\partial f}{\partial\mathbf{x}_{T}} \right)' \right)'\]
+
+And the block tri-diagonal Hessian:
+
+\[H = \frac{\partial^{2}f}{\partial\mathbf{x}\partial\mathbf{x}^{'}} = \begin{pmatrix}
+	\frac{\partial^{2}f}{\partial\mathbf{x}_{1}\partial\mathbf{x}'_{1}} & \mathbf{A'}\mathbf{Q}^{- 1} & 0 & \cdots & 0 \\
+	\mathbf{Q}^{- 1}\mathbf{A} & \frac{\partial^{2}f}{\partial\mathbf{x}_{2}\partial\mathbf{x}'_{2}} & \mathbf{A'}\mathbf{Q}^{- 1} & \cdots & \vdots \\
+	0 & \mathbf{Q}^{- 1}\mathbf{A} & \frac{\partial^{2}f}{\partial\mathbf{x}_{3}\partial\mathbf{x}'_{3}} & \cdots & \vdots \\
+	\vdots & \vdots & \vdots & \ddots & \vdots \\
+	0 & \cdots & \cdots & \cdots & \frac{\partial^{2}f}{\partial\mathbf{x}_{T}\partial\mathbf{x}'_{T}} \\
+\end{pmatrix}\]
+
+Use Newton-Raphson to find
+\(\bm{\mu}_{\mathbf{x}} =\text{argmax}_{\mathbf{x}}\left( f\left( \mathbf{x} \right) \right)\)
+and \(\mathbf{\Sigma}_{\mathbf{x}}= -\left\lbrack \frac{\partial^{2}f}{\partial\mathbf{x}\partial\mathbf{x}'}\left. \ \mathbf{} \right|_{\mathbf{X} = \bm{\mu}_{\mathbf{X}}} \right\rbrack^{\mathbf{- 1}}\), such that \((P(\mathbf{x}|\left\{ \mathbf{y}_{i} \right\}_{i = 1}^{N},\ldots)\ \approx N\left(\bm{\mu}_{\mathbf{x}}, \mathbf{\Sigma}_{\mathbf{x}}\right)\).
+When using Newton-Raphson (NR), \(H\backslash\nabla\) in MATLAB will make use
+of block tri-diagonal structure automatically.
+
+However, NR is not robust to bad initials. At the first few iterations, simply using fitting from previous step may lead to infinite Hessian. When the initial from previous step fails, use the approximation at recursive priors, , i.e. the adaptive smoother estimates, as the initial. The adaptive smoother estimates are from backward RTS smoother from adaptive filter, and the details about Poisson adaptive filter can be found in  \href{http://www.stat.columbia.edu/~liam/teaching/neurostat-spr11/papers/brown-et-al/eden2004.pdf}{Eden et al., 2004}.
+
+To sample efficiently and make best use of sparse covariance, use Cholesky decomposition of
+\(\mathbf{\Sigma}_{\mathbf{x}}^{- 1} = \mathbf{R}\mathbf{R}'\):
+sample
+\(\mathbf{Z} \sim N(\mathbf{R}'\mathbf{\mu}_{\mathbf{x}},\mathbf{I})\),
+then
+\(\mathbf{x} = \left( \mathbf{R}' \right)^{- 1}\mathbf{Z} \sim N(\bm{\mu}_{\mathbf{x}},\mathbf{\Sigma}_{\mathbf{x}})\).   
+
+\subsubsection{Update \(\mathbf{x}_{0}\)}
+\[P\left( \mathbf{x}_{0}|\mathbf{x}_{1},\ \mathbf{Q}_{0}\ldots \right) \propto N(\mathbf{x}_{1}|\mathbf{x}_{0},\ \mathbf{Q}_{0})N(\mathbf{x}_{0}|\bm{\mu}_{\mathbf{x}_{00}},\ \mathbf{\Sigma}_{\mathbf{x}_{00}})\]
+By conjugacy, \(\mathbf{x}_{0}|\mathbf{x}_{1},\ \mathbf{Q}_{0}\ldots \sim N(\bm{\mu}_{\mathbf{x}_{0}},\ \mathbf{\Sigma}_{\mathbf{x}_{0}})\)
+\begin{align*}
+	\mathbf{\Sigma}_{\mathbf{x}_{0}} &= \left\lbrack \mathbf{\Sigma}_{\mathbf{x}_{00}}^{- 1} + \mathbf{Q}_{0}^{- 1} \right\rbrack^{- 1}\\
+	\bm{\mu}_{\mathbf{x}_{0}} &= \mathbf{\Sigma}_{\mathbf{x}_{0}}\left( \mathbf{\Sigma}_{\mathbf{x}_{00}}^{- 1}\bm{\mu}_{\mathbf{x}_{00}} + \mathbf{Q}_{0}^{- 1}\mathbf{x}_{1} \right)
+\end{align*}
+
+\subsubsection{Update \(\left\{ d_{i} \right\}_{i = 1}^{N}\) and
+	\(\left\{ \mathbf{c}_{i} \right\}_{i = 1}^{N}\)}
+To update efficiently, use Laplace approximation again. Denote
+\(\left( d_{i},\mathbf{c}'_{i} \right)' = \bm{\zeta}_{i} \in \mathbb{R}^{p + 1}\)
+and \(\left( 1,{\mathbf{x}_{t}'^{\left( z_{i} \right)}} \right) = {{\widetilde{\mathbf{x}}}_{t}'^{\left( z_{i} \right)}}\).
+\begin{align*}
+	P\left( \bm{\zeta}_{i} \middle| \mathbf{y}_{i},\ \left\{ \mathbf{x}_{t}^{\left( z_{i} \right)} \right\}_{t = 1}^{T},\ldots \right) &= \exp{f\left( \bm{\zeta}_{i} \right)} \approx N\left( \bm{\zeta}_{i}|\bm{\mu}_{\bm{\zeta}_{i}},\mathbf{\Sigma}_{\bm{\zeta}_{i}}\  \right)\\
+	\frac{\partial f}{\partial\bm{\zeta}_{i}} &= \frac{\partial l}{\partial\bm{\zeta}_{i}} - {\mathbf{\Sigma}_{\text{dc}}^{\left( z_{i} \right)}}^{- 1}\left( \bm{\zeta}_{i} - \bm{\mu}_{\text{dc}}^{(z_{i})} \right) = \left\lbrack \sum_{t = 1}^{T}{\widetilde{\mathbf{x}}}_{t}^{\left( z_{i} \right)}\left( y_{\text{it}} - \lambda_{\text{it}} \right) \right\rbrack - {\mathbf{\Sigma}_{\text{dc}}^{\left( z_{i} \right)}}^{- 1}\left( \bm{\zeta}_{i} - \bm{\mu}_{\text{dc}}^{(z_{i})} \right)\\
+	\frac{\partial^{2}f}{\partial\bm{\zeta}_{i}\partial\bm{\zeta}'_{i}} &= \frac{\partial^{2}l}{\partial\bm{\zeta}_{i}\partial\bm{\zeta}'_{i}} - {\mathbf{\Sigma}_{\text{dc}}^{\left( z_{i} \right)}}^{- 1} = -\left\lbrack \sum_{t = 1}^{T}{\lambda_{\text{it}}{\widetilde{\mathbf{x}}}_{t}^{\left( z_{i} \right)}{{\widetilde{\mathbf{x}}}_{t}'^{\left( z_{i} \right)}}} \right\rbrack - {\mathbf{\Sigma}_{\text{dc}}^{\left( z_{i} \right)}}^{- 1}
+\end{align*}
+, where \(l\) is Poisson log-likelihood. Then use Newton-Raphson to find
+\(\bm{\mu}_{\bm{\zeta}_{i}} = \text{argmax}_{\bm{\zeta}_{i}}\left( f\left( \bm{\zeta}_{i} \right) \right)\)
+and \(\mathbf{\Sigma}_{\bm{\zeta}_{i}} = -\left\lbrack \frac{\partial^{2}f}{\partial\bm{\zeta}_{i}\partial\bm{\zeta}'_{i}}\left.  \right|_{\bm{\zeta}_{i} = \bm{\mu}_{\bm{\zeta}_{i}}} \right\rbrack^{-1}\). If initial as the previous step fits fails, simply use prior mean of \(\bm{\mu}_{\bm{\zeta}_{i}}\), i.e. \(\bm{\delta}_{dc0}\).
+
+\subsubsection{Update \(\left\{ \mathbf{\mu}_{\text{dc}}^{(j)} \right\}_{j}\) and \(\left\{ \mathbf{\Sigma}_{\text{dc}}^{(j)} \right\}_{j}\)}
+As above, denote \(\left( d_{i},\mathbf{c}'_{i} \right)' = \bm{\zeta}_{i} \in \mathbb{R}^{p + 1}\).
+\begin{enumerate}
+	\def\labelenumi{(\arabic{enumi})}
+	\item
+	Mean \(\left\{ \bm{\mu}_{\text{dc}}^{(j)} \right\}_{j}\): by
+	conjugacy, \(\bm{\mu}_{\text{dc}}^{(j)} \sim N\left( \bm{\delta}_{\text{dc}},\mathbf{T}_{\text{dc}}\  \right)\)
+	\begin{align*}
+		\mathbf{T}_{\text{dc}}^{- 1} &= \left( \mathbf{T}_{dc0}^{- 1} + n_{j}{\mathbf{\Sigma}_{\text{dc}}^{(j)}}^{- 1} \right)^{- 1}\\
+		\bm{\delta}_{\text{dc}} &= \mathbf{T}_{\text{dc}}\left( \mathbf{T}_{dc0}^{- 1}\bm{\delta}_{dc0} + {\mathbf{\Sigma}_{\text{dc}}^{(j)}}^{- 1}\sum_{i:z_{i} = j}^{}\bm{\zeta}_{i} \right)
+	\end{align*}
+	\item
+	Covariance \(\left\{ \mathbf{\Sigma}_{\text{dc}}^{(j)} \right\}_{j}\): by conjugacy, \(\mathbf{\Sigma}_{\text{dc}}^{(j)} \sim W^{- 1}\left( \Psi_{\text{dc}},\nu_{\text{dc}} \right)\)
+	\begin{align*}
+		\nu_{\text{dc}} &= n_{j} + \nu_{dc0}\\
+		\Psi_{\text{dc}} &= \Psi_{dc0} + \sum_{i:z_{i} = j}^{}{\left( \bm{\zeta}_{i} - \bm{\mu}_{\text{dc}}^{(j)} \right)\left( \bm{\zeta}_{i} - \bm{\mu}_{\text{dc}}^{(j)} \right)'}
+	\end{align*}
+\end{enumerate}
+
+\subsubsection{Update \(\mathbf{A}\) and \(\mathbf{b}\)}
+Assume there are \(J\) clusters.
+\begin{enumerate}
+	\def\labelenumi{(\arabic{enumi})}
+	\item
+	No constraints on \(\mathbf{Q}\):
+	\[P\left( \left( \mathbf{b}',{\widetilde{\mathbf{A}}'} \right)' \middle| \left\{ \mathbf{x}_{t} \right\}_{t = 1}^{T},\mathbf{Q},\ldots \right) \propto \left\lbrack \prod_{t = 2}^{T}{N\left( \mathbf{x}_{t}|\mathbf{A}\mathbf{x}_{t - 1} + \mathbf{b},\mathbf{Q} \right)} \right\rbrack P\left( \left( \mathbf{b}',{\widetilde{\mathbf{A}}'} \right)' \right)\]
+	Let
+	\(\left( \mathbf{b'},{\widetilde{\mathbf{A}}'} \right)' = \bm{\gamma} \in \mathbb{R}^{Jp(1 + Jp)}\),
+	\(\left( 1,\ {\mathbf{x}'_{t - 1}} \right)\bigotimes\mathbf{I}_{\text{Jp}}\mathbf{=}{\widetilde{\mathbf{G}}}_{t - 1} \in \mathbb{R}^{Jp \times Jp(1 + pJ)}\)
+	and
+	\(\widetilde{\mathbf{G}} = \left( {\widetilde{\mathbf{G}}'}_{1},\ldots,{\widetilde{\mathbf{G}}'}_{T - 1} \right)'\).
+	By conjugacy, \(\bm{\gamma}|\left\{ \mathbf{x}_{t} \right\}_{t = 1}^{T},\mathbf{Q},\ldots \sim N(\bm{\mu}_{\bm{\gamma}},\mathbf{\Sigma}_{\bm{\gamma}})\)
+	\begin{align*}
+		\mathbf{\Sigma}_{\bm{\gamma}} &= \left\lbrack \mathbf{\Sigma}_{BA_{0}}^{- 1} + {\widetilde{\mathbf{G}}}^{\mathbf{'}}\mathbf{I}_{T - 1}\bigotimes\left( \mathbf{Q} \right)^{- 1}\widetilde{\mathbf{G}} \right\rbrack^{- 1}\\
+		\bm{\mu}_{\bm{\gamma}} &= \mathbf{\Sigma}_{\bm{\gamma}}\left( \mathbf{\Sigma}_{BA_{0}}^{- 1}\bm{\mu}_{BA_{0}} + {\widetilde{\mathbf{G}}}^{'}\mathbf{I}_{T - 1}\bigotimes\left( \mathbf{Q} \right)^{- 1}\left( \mathbf{x}_{2}^{'},\ldots,\mathbf{x}_{T}^{'} \right)' \right)
+	\end{align*}
+	
+	\item
+	Assume \(\mathbf{Q}\) is block-diagonal:
+	\[P\left( \left( \mathbf{b}'_{j}, {\widetilde{\mathbf{A}}'}_{j}\ \right)' \middle| \left\{ \mathbf{x}_{t}^{(j)} \right\}_{t = 1}^{T},\mathbf{Q}^{(j)},\ldots \right) \propto \left\lbrack \prod_{t = 2}^{T}{N\left( \mathbf{x}_{t}^{(j)}|\mathbf{A}_{j}\mathbf{x}_{t - 1} + \mathbf{b}_{j},\mathbf{Q}^{(j)} \right)} \right\rbrack P\left( \left( \mathbf{b}'_{j}, {\widetilde{\mathbf{A}}'}_{j} \right)' \right)\]
+	Notice that \(\mathbf{A}_{j}\mathbf{x}_{t - 1} + \mathbf{b}_{j}\mathbf{=}\left( \left( 1,\ {\mathbf{x}'_{t - 1}} \right)\bigotimes\mathbf{I}_{p} \right)\left( \mathbf{b}_{j}^{\mathbf{'}}\mathbf{,}{\widetilde{\mathbf{A}}'}_{j} \right)'\), then the problem is reduced to Bayesian linear regression. Denote \(\left( 1,\ {\mathbf{x}'_{t - 1}} \right)\bigotimes\mathbf{I}_{p}\mathbf{=}{\widetilde{\mathbf{X}}}_{t - 1} \in \mathbb{R}^{p \times p(1 + pJ)}\),
+	\(\widetilde{\mathbf{X}} = \left({\widetilde{\mathbf{X}}'}_{1},\ldots,{\widetilde{\mathbf{X}}'}_{T - 1} \right)'\)
+	and\(\left( \mathbf{b}'_{j}, {\widetilde{\mathbf{A}}'}_{j} \right)' = \mathbf{\gamma}_{j} \in \mathbb{R}^{p(1 + pJ)}\).
+	Then
+	\begin{align*}
+		\prod_{t = 2}^{T}{N\left( \mathbf{x}_{t}^{(j)}|\mathbf{A}_{j}\mathbf{x}_{t - 1} + \mathbf{b}_{j},\mathbf{Q}^{(j)} \right)} &= \prod_{t = 2}^{T}{N\left( \mathbf{x}_{t}^{(j)}|{\widetilde{\mathbf{X}}}_{t - 1}\mathbf{\gamma}_{j},\mathbf{Q}^{(j)} \right)}\\
+		&= N\left( \left( {\mathbf{x}_{2}'^{(j)}},\ldots,{\mathbf{x}_{T}'^{(j)}} \right)'|\widetilde{\mathbf{X}}\bm{\gamma}_{j},\ \mathbf{I}_{T - 1}\bigotimes\mathbf{Q}^{(j)} \right)
+	\end{align*}
+	By conjugacy, \(P\left( \bm{\gamma}_{j} \middle| \left\{ \mathbf{x}_{t}^{(j)} \right\}_{t = 1}^{T},\mathbf{Q}^{(j)},\ldots \right) = N\left(\bm{\gamma}_{j}|\bm{\mu}_{\bm{\gamma}_{j}},\mathbf{\Sigma}_{\bm{\gamma}_{j}} \right)\)
+	\begin{align*}
+		\mathbf{\Sigma}_{\bm{\gamma}_{j}} &= \left\lbrack \mathbf{\Sigma}_{bA_{0}}^{- 1} + {\widetilde{\mathbf{X}}'}\mathbf{I}_{T - 1}\bigotimes\left( \mathbf{Q}^{(j)} \right)^{- 1}\widetilde{\mathbf{X}} \right\rbrack^{- 1}\\
+		\bm{\mu}_{\bm{\gamma}_{j}} &= \mathbf{\Sigma}_{\bm{\gamma}_{j}}\left( \mathbf{\Sigma}_{bA_{0}}^{- 1}\bm{\mu}_{bA_{0}} + {\widetilde{\mathbf{X}}'}\mathbf{I}_{T - 1}\bigotimes\left( \mathbf{Q}^{(j)} \right)^{- 1}\left( {\mathbf{x}_{2}'^{(j)}},\ldots,{\mathbf{x}_{T}'^{(j)}} \right)' \right)
+	\end{align*}
+
+	\item
+	Assume \(\mathbf{Q}\) is diagonal:
+	\[P\left( \left( b_{k},\mathbf{a}'_{k} \right)'|\left\{ x_{kt} \right\}_{t = 1}^{T},q_{k},\ \ldots \right) \propto \left\lbrack \prod_{t = 2}^{T}{N\left( x_{\text{kt}}|\mathbf{a}'_{k}\mathbf{x}_{t - 1} + b_{k},q_{k} \right)} \right\rbrack P\left( \left( b_{k},\mathbf{a}'_{k} \right)' \right)\]
+	Rewrite \(\mathbf{a}'_{k}\mathbf{x}_{t - 1} + b_{k} = \left( 1,\mathbf{x}'_{t - 1} \right)\left( b_{k},\mathbf{a}'_{k} \right)'\). Then the problem is reduced to Bayesian linear regression. Denote \(\left( b_{k},\mathbf{a}'_{k} \right)' = \bm{\gamma}_{k} \in \mathbb{R}^{Jp + 1}\)
+	and
+	\(\widetilde{\mathbf{X}} = \left( \left( 1,\mathbf{x}'_{1} \right)',\ldots,\left( 1,\mathbf{x}'_{T - 1} \right)' \right)^{'}\). Then by conjugacy, \(P\left( \bm{\gamma}_{k}|\left\{ x_{\text{kt}} \right\}_{t = 1}^{T},q_{k},\ \ldots \right) = N\left( \bm{\gamma}_{k}|\bm{\mu}_{\bm{\gamma}_{k}},\mathbf{\Sigma}_{\bm{\gamma}_{k}} \right)\)
+	\begin{align*}
+		\mathbf{\Sigma}_{\bm{\gamma}_{k}} &= \left\lbrack \mathbf{\Sigma}_{ba0}^{- 1} + \frac{{\widetilde{\mathbf{X}}'}\widetilde{\mathbf{X}}}{q_{k}} \right\rbrack^{- 1}\\
+		\bm{\mu}_{\bm{\gamma}_{k}} &= \mathbf{\Sigma}_{\mathbf{\gamma}_{k}}\left( \mathbf{\Sigma}_{ba0}^{- 1}\mathbf{\mu}_{ba0} + {\widetilde{\mathbf{X}}'}\left( x_{k2},\ldots,x_{\text{kT}} \right)'/q_{k} \right)
+	\end{align*}	
+\end{enumerate}
+
+\subsubsection{Update \(\mathbf{Q}\)}
+\begin{enumerate}
+	\def\labelenumi{(\arabic{enumi})}
+	\item
+	No constraints on \(\mathbf{Q}\):\\
+	Let \(\mathbf{A}\mathbf{x}_{t - 1} + \mathbf{b} = \bm{\mu}_{x_{t}}\)
+	\[P\left( \mathbf{Q} \middle| \left\{ \mathbf{x}_{t} \right\}_{t = 1}^{T},\mathbf{A},\mathbf{b},\ldots \right) \propto \left\lbrack \prod_{t = 2}^{T}{N\left( \mathbf{x}_{t}|\bm{\mu}_{\mathbf{x}_{t}},\ \mathbf{Q} \right)} \right\rbrack W^{- 1}(\mathbf{Q}|\Psi_{\mathbf{Q}_{0}},\nu_{\mathbf{Q}_{0}})\]
+	By conjugacy,
+	\[P\left( \mathbf{Q} \middle| \left\{ \mathbf{x}_{t}^{(j)} \right\}_{t = 1}^{T},\ \mathbf{A},\mathbf{b},\ldots \right) = W^{- 1}\left( \mathbf{Q}|\Psi_{0} + \sum_{t = 2}^{T}{\left( \mathbf{x}_{t} - \bm{\mu}_{\mathbf{x}_{t}} \right)\left( \mathbf{x}_{t} - \bm{\mu}_{\mathbf{x}_{t}} \right)^{'}},\ T - 1 + \nu_{0} \right)\]
+	
+	\item
+	Assume \(\mathbf{Q}\) is block-diagonal:\\
+	Let \(\mathbf{A}_{j}\mathbf{x}_{t - 1} + \mathbf{b}_{j}\mathbf{=}\bm{\mu}_{\mathbf{x}_{t}^{(j)}}\),
+	\[P\left( \mathbf{Q}^{(j)} \middle| \left\{ \mathbf{x}_{t}^{(j)} \right\}_{t = 1}^{T},\ \mathbf{A}_{j},\mathbf{b}_{j},\ldots \right) \propto \left\lbrack \prod_{t = 2}^{T}{N\left( \mathbf{x}_{t}^{(j)}|\bm{\mu}_{\mathbf{x}_{t}^{(j)}},\mathbf{Q}^{(j)} \right)} \right\rbrack W^{- 1}\left( \mathbf{Q}^{(j)}|\Psi_{0},\nu_{0} \right)\]
+	By conjugacy,
+	\[P\left( \mathbf{Q}^{(j)} \middle| \left\{ \mathbf{x}_{t}^{(j)} \right\}_{t = 1}^{T},\ \mathbf{A}_{j},\mathbf{b}_{j},\ldots \right) = W^{- 1}\left( \mathbf{Q}^{(j)}|\Psi_{0} + \sum_{t = 2}^{T}{\left( \mathbf{x}_{t}^{(j)} - \bm{\mu}_{\mathbf{x}_{t}^{(j)}} \right)\left( \mathbf{x}_{t}^{(j)} - \bm{\mu}_{\mathbf{x}_{t}^{(j)}} \right)^{'}},\ T - 1 + \nu_{0} \right)\]
+	
+	\item
+	Assume \(\mathbf{Q}\) is diagonal:\\
+	Let \(\mathbf{a}_{k}^{'}\mathbf{x}_{t - 1} + b_{k} = \mu_{x_{\text{kt}}}\),
+	\[P\left( q_{k}|\left\{ x_{\text{kt}} \right\}_{t = 1}^{T},b_{k},\mathbf{a}_{k}^{'},\ \ldots \right) \propto \left\lbrack \prod_{t = 2}^{T}{N\left( x_{\text{kt}}|\mu_{x_{\text{kt}}},q_{k} \right)} \right\rbrack\text{IG}\left( q_{k} \middle| \frac{\nu_{0}}{2},\frac{\nu_{0}\sigma_{0}^{2}}{2} \right)\]
+	By conjugacy,
+	\[P\left( q_{k}|\left\{ x_{\text{kt}} \right\}_{t = 1}^{T},b_{k},\mathbf{a}_{k}^{'},\ \ldots \right) = IG\left( q_{k}|\frac{\nu_{0} + T - 1}{2},\frac{\nu_{0}\sigma_{0}^{2} + \sum_{t = 2}^{T}\left( x_{\text{kt}} - \mu_{x_{\text{kt}}} \right)^{2}}{2} \right)\]
+\end{enumerate}
+
+\section{Simulations}
+There are two set of simulation examples. The first example is generated from LDS model directly, while in the second example the latents are generated directly without explicit specifying linear dynamics. In all of the following results, the covariance of process noise \(\mathbf{Q}\) is assumed to be block diagonal. The code for non-constrained and diagonal \(\mathbf{Q}\) can be found in XXX and XXX. The fitting results for all these three are similar, because the underlying true \(\mathbf{Q}\) is diagonal.
+
+Before doing the clustering, I first assume the cluster labels are known to see the fitting performance. All the fitting results with labels are shown in means from iteration 50 to 100.
+
+\subsection{Simulation 1: Generate from LDS Directly}
+In this simulation, there are 3 clusters with 10 neurons in each cluster. The dimension of latents in each cluster is 2. In the linear dynamics, the bias term \(\mathbf{b}\) is zero. There's no within-population interaction but has some weak between-population interactions. In other words, the linear dynamics matrix \(\mathbf{A}\) is roughly diagonal. The details of simulation can be found in the first section of XXX.
+
+\subsubsection{Labeled Data: No Clustering}
+The code for fitting is XXX, and some results are in Figure \ref{fig:LDS labeled}.
+
+\begin{figure}[h!]
+	\makebox[\linewidth][c]{%
+		\centering
+		\subfigure[overall mean firing rate]{\label{fig:a}\includegraphics[width=0.55\textwidth]{image001.png}}%
+		\subfigure[latents]{\label{fig:b}\includegraphics[width=0.55\textwidth]{image002.png}}%
+		\subfigure[dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{image003.png}}%
+	}
+	\caption{LDS sample with labels}
+	\label{fig:LDS labeled}
+\end{figure}
+
+The fitting for overall mean firing rate is perfect and the dynamics pattern is mostly recovered. The fitting of latents is OK up to scale. In other words, the model captures the oscillating pattern of latents.
+
+But the latent patterns of these three clusters seems quite similar. That means the differences in the mean firing rates may be purely explained by the loading, i.e. \(\mathbf{d}\) and \(\mathbf{C}\). To see that, I set the number of cluster to be 1 and the results are shown in Figure \ref{fig:LDS labeled one cluster}.
+
+\begin{figure}[h!]
+	\makebox[\linewidth][c]{%
+		\centering
+		\subfigure[overall mean firing rate]{\label{fig:a}\includegraphics[width=0.7\textwidth]{image004.png}}%
+		\subfigure[latents]{\label{fig:b}\includegraphics[width=0.7\textwidth]{image005.png}}%
+	}
+	\caption{LDS sample with labels, one cluster}
+	\label{fig:LDS labeled one cluster}
+\end{figure}
+
+Again, the fitting for overall mean firing rate is perfect. This is why it's important to make the loading, \(\mathbf{d}\) and \(\mathbf{C}\), also be cluster-dependent (loading within clusters are correlated). If the loading only depends on neuron index and will not change for different clustering assignments, it's impossible to do clustering (at least in this case), since the loading is enough to capture all the patterns.
+
+\subsubsection{Unlabeled Data: Clustering}
+To give the full path of clustering, I show results in GIFs. The code for FMM and DPMM can be found in XXX and XXX.
+
+There are three results:
+\begin{enumerate}
+	\def\labelenumi{(\arabic{enumi})}
+	\item
+	Fit by FMM with \(\mathbf{J} = 3\), starting from random cluster assignments: 
+	\item
+	Fit by FMM with \(\mathbf{J} = 3\), starting from all neurons in single cluster: 
+	\item
+	Fit by DPMM (\(\alpha = X\)), starting from each neuron forms its own cluster:
+\end{enumerate}
+I didn't show the DPMM starting from single cluster. Since in my current implementation, the cluster generation is not efficient. In other words, the newly generated cluster will usually not be sampled and the algorithm usually gets stuck in 1 or 2 clusters.
+
+This is a big problem... That means if we occasionally combine two clusters into one, we may never correct the mistake. Further, when the data grows, the number of cluster will be hard to grow. Fix that later.
+
+\subsection{Simulation 2: Generate Latents, without Specifying Linear Dynamics}
+In this simulation, there are again 3 clusters with 2 latents in each. Besides set 10 neurons in each cluster, I further simulate 50 neurons in each cluster to see performance in a larger scale. Now, the latents are generated directly without specifying the underlying linear dynamics of latents. However, each latent is generated independently, so the linear dynamics matrix \(\mathbf{A}\) should be roughly diagonal. The details of simulation can be found in the first section of XXX.
+
+\subsubsection{Labeled Data: No Clustering}
+As in simulation 1, the data is fitted by the true cluster assignment (3 clusters) and forcing all neurons belong to single cluster. The code can be found in XXX.
+\begin{enumerate}
+	\def\labelenumi{(\arabic{enumi})}
+	\item
+	Smaller dataset (10 neurons each):\\
+	The results with true cluster assignment is shown in Figure \ref{fig:no A labeled 10}
+	\begin{figure}[h!]
+		\makebox[\linewidth][c]{%
+			\centering
+			\subfigure[overall mean firing rate]{\label{fig:a}\includegraphics[width=0.55\textwidth]{image006.png}}%
+			\subfigure[latents]{\label{fig:b}\includegraphics[width=0.55\textwidth]{image007.png}}%
+			\subfigure[dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{image008.png}}%
+		}
+		\caption{unspecified dynamics with labels, 10 neurons each}
+		\label{fig:no A labeled 10}
+	\end{figure}
+	And results by forcing all neurons to be in single cluster (Figure \ref{fig:no A labeled one cluster 10})
+	\begin{figure}[h!]
+		\makebox[\linewidth][c]{%
+			\centering
+			\subfigure[overall mean firing rate]{\label{fig:a}\includegraphics[width=0.7\textwidth]{image009.png}}%
+			\subfigure[latents]{\label{fig:b}\includegraphics[width=0.7\textwidth]{image010.png}}%
+		}
+		\caption{unspecified dynamics with labels, one cluster, 10 neurons each}
+		\label{fig:no A labeled one cluster 10}
+	\end{figure}
+
+	Again, the fittings for overall mean firing rate are perfect in both cases and the dynamics is roughly diagonal. The oscillating pattern of fitted latents with true cluster index is not significant, because of plot scaling. The pattern is easier to see in the second fitting.
+	
+	\item
+	Larger dataset (50 neurons each):\\
+	The results with true cluster assignment is shown in Figure \ref{fig:no A labeled 50}
+	\begin{figure}[h!]
+		\makebox[\linewidth][c]{%
+			\centering
+			\subfigure[overall mean firing rate]{\label{fig:a}\includegraphics[width=0.55\textwidth]{image011.png}}%
+			\subfigure[latents]{\label{fig:b}\includegraphics[width=0.55\textwidth]{image012.png}}%
+			\subfigure[dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{image013.png}}%
+		}
+		\caption{unspecified dynamics with labels, 50 neurons each}
+		\label{fig:no A labeled 50}
+	\end{figure}
+	And results by forcing all neurons to be in single cluster (Figure \ref{fig:no A labeled one cluster 50})
+	\begin{figure}[h!]
+		\makebox[\linewidth][c]{%
+			\centering
+			\subfigure[overall mean firing rate]{\label{fig:a}\includegraphics[width=0.7\textwidth]{image014.png}}%
+			\subfigure[latents]{\label{fig:b}\includegraphics[width=0.7\textwidth]{image015.png}}%
+		}
+		\caption{unspecified dynamics with labels, one cluster, 50 neurons each}
+		\label{fig:no A labeled one cluster 50}
+	\end{figure}
+
+	Now we can see the pattern more clearly.
+\end{enumerate}
+
+\subsubsection{Unlabeled Data: Clustering}
+As previous, in each example, I show results from (1) FMM starting from random cluster assignment \(\left(J = 3\right) \), (2) FMM starting from single cluster and (3) DPMM starting from multiple clusters. The DPMM starting from single cluster need to be fixed later.
+
+\begin{enumerate}
+	\def\labelenumi{(\arabic{enumi})}
+	\item
+	Smaller dataset (10 neurons each):\\
+	\begin{enumerate}
+		\def\labelenumi{\alph{enumi}.}
+		\item
+		Fit by FMM with \(\mathbf{J} = 3\), start from random cluster assignments:
+		\item
+		Fit by FMM with \(\mathbf{J} = 3\), start from single cluster:
+		\item
+		Fit by DP (\(\alpha = X\)), start from assuming each neuron forms its own cluster:
+	\end{enumerate}
+	
+	\item
+	Larger dataset (50 neurons each):\\
+	\begin{enumerate}
+		\def\labelenumi{\alph{enumi}.}
+		\item
+		Fit by FMM with \(\mathbf{J} = 3\), start from random cluster assignments:
+		\item
+		Fit by FMM with \(\mathbf{J} = 3\), start from single cluster:
+		\item
+		Fit by DP (\(\alpha = X\)), start from random assignment for 10 clusters:
+	\end{enumerate}
+\end{enumerate}
+
+The performance is not bad. The neuron at top of each cluster cannot be clustered correctly by its nature: the signals are too weak to be clearly clustered.
+
+\section{TODO}
+\begin{enumerate}
+	\def\labelenumi{(\arabic{enumi})}
+	\item
+	Find a more efficient way to generate new cluster parameters, otherwise the newly generated ones will always be rejected.
+	\item
+	improve DPMM
+\end{enumerate}
+
+
+\end{document}
+
+
+
+
+
+
