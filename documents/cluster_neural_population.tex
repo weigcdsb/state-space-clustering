@@ -567,10 +567,10 @@ As previous, in each example, I show results from (1) FMM starting from random c
 	\begin{enumerate}
 		\def\labelenumi{\alph{enumi}.}
 		\item
-		Fit by FMM with \(\mathbf{J} = 3\), start from random cluster assignments:
+		Fit by FMM with \(J = 3\), start from random cluster assignments:
 		\href{https://github.com/weigcdsb/state-space-clustering/blob/main/results/gif/noA_50_MM_above.gif}{GIF result 7}
 		\item
-		Fit by FMM with \(\mathbf{J} = 3\), start from single cluster:
+		Fit by FMM with \(J = 3\), start from single cluster:
 		\href{https://github.com/weigcdsb/state-space-clustering/blob/main/results/gif/noA_50_MM_below.gif}{GIF result 8}
 		\item
 		Fit by DP (\(\alpha = 1\)), start from random assignment for 10 clusters:
@@ -586,7 +586,7 @@ The performance is not bad. The neuron at top of each cluster cannot be clustere
 	\item
 	Find a more efficient way to generate new cluster parameters, otherwise the newly generated ones will always be rejected.
 	\item
-	improve DPMM
+	improve DPMM. In current brute force implementation, the number of potential clusters can even go beyond number of neurons (\(N\)). Delete the empty cluster later.
 \end{enumerate}
 
 
