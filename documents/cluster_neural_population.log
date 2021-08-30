@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.12.6)  30 AUG 2021 10:04
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.12.6)  30 AUG 2021 11:05
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -908,10 +908,10 @@ ive/2020/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><e:/software/texlive/2020/
 texmf-dist/fonts/type1/public/lm/lmsy5.pfb><e:/software/texlive/2020/texmf-dist
 /fonts/type1/public/lm/lmsy7.pfb><e:/software/texlive/2020/texmf-dist/fonts/typ
 e1/public/amsfonts/symbols/msbm10.pfb>
-Output written on cluster_neural_population.pdf (16 pages, 1388942 bytes).
+Output written on cluster_neural_population.pdf (16 pages, 1389210 bytes).
 PDF statistics:
- 424 PDF objects out of 1000 (max. 8388607)
- 350 compressed objects within 4 object streams
+ 428 PDF objects out of 1000 (max. 8388607)
+ 354 compressed objects within 4 object streams
  118 named destinations out of 1000 (max. 500000)
  252 words of extra memory for PDF output out of 10000 (max. 10000000)
 
