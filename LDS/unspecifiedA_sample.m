@@ -66,8 +66,8 @@ subplot(1,3,3)
 plot(X(2*p+1:3*p,:)')
 
 %%
-nClus = 1;
-Lab = ones(1,N);
+% nClus = 1;
+% Lab = ones(1,N);
 rng(3)
 ng = 100;
 
