@@ -14,7 +14,7 @@ Lab = repelem(1:nClus, n);
 pLab = repelem(1:nClus, p);
 
 d = randn(N,1);
-C_trans = zeros(n*nClus, p*nClus);
+C_trans = zeros(N, p*nClus);
 for k = 1:length(Lab)
     C_trans(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = sum(Lab(1:k)==Lab(k))/sum(Lab==Lab(k))+1;
 end
@@ -45,7 +45,7 @@ while any(imag(eig(A))==0)
 end
 
 % let's generate lambda
-logLam = zeros(n*nClus, T);
+logLam = zeros(N, T);
 logLam(:,1) = d + C_trans*X(:,1);
 
 for t=2:T
@@ -54,30 +54,30 @@ for t=2:T
 end
 
 Y = poissrnd(exp(logLam));
-ng = 50;
-idx = 30:ng;
+clusterPlot(Y, Lab)
+ng = 1000;
+idx = 900:ng;
 
 %% fitting: MCMC, no update prior
 X_fit = zeros(nClus*p, T, ng);
-d_fit = zeros(n*nClus, ng);
-C_fit = zeros(n*nClus, p, ng);
+d_fit = zeros(N, ng);
+C_fit = zeros(N, p, ng);
 x0_fit = zeros(nClus*p, ng);
 A_fit = repmat(A,1,1,ng); % true
 b_fit = repmat(b,1,ng); % true
 Q_fit = repmat(Q,1,1,ng); % true
 
-
 % priors
 Q0 = eye(nClus*p)*1e-2;
 mux00 = zeros(nClus*p, 1);
-Sigx00 = eye(nClus*p)*1e2;
+Sigx00 = eye(nClus*p);
 mudc0 = zeros(p+1,1);
 Sigdc0 = eye(p+1);
 
 % initials
 % initial for d_fit: 0
-C_fit(:,:,1) = reshape(normrnd(0,1e-2,n*nClus*p,1), [], p);
-C_trans_tmp = zeros(n*nClus, p*nClus);
+C_fit(:,:,1) = reshape(normrnd(0,1e-2,N*p,1), [], p);
+C_trans_tmp = zeros(N, p*nClus);
 for k = 1:length(Lab)
     C_trans_tmp(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = C_fit(k,:,1);
 end
@@ -91,7 +91,7 @@ for g = 2:ng
     
     % (1) update X_fit
     % adaptive smoothing
-    C_trans_tmp = zeros(n*nClus, p*nClus);
+    C_trans_tmp = zeros(N, p*nClus);
     for k = 1:length(Lab)
         C_trans_tmp(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = C_fit(k,:,g-1);
     end
@@ -147,31 +147,53 @@ for g = 2:ng
         d_fit(i,g) = dc(1);
         C_fit(i,:,g) = dc(2:end);
     end
+    
+    
 end
 
 figure
 subplot(1,3,1)
 plot(d,mean(d_fit(:,idx), 2),'rx');
-title('true vs estimated d')
+ylabel('estimate')
+title('d')
 C_fit_mean = mean(C_fit(:,:,idx), 3);
 subplot(1,3,2)
 plot(sum(C_trans(:,1:p:end), 2),C_fit_mean(:,1),'rx');
-title('true vs estimated 1st column of C')
+title('1st column of C')
+xlabel('true')
 subplot(1,3,3)
 plot(sum(C_trans(:,2:p:end), 2),C_fit_mean(:,2),'rx');
-title('true vs estimated 2nd column of C')
+title('2nd column of C')
+sgtitle('No Update of Prior')
+
+figure
+subplot(3,2,1)
+plot(X(1:p,:)')
+title('true')
+subplot(3,2,2)
+plot(mean(X_fit(1:p,:,idx), 3)')
+title('fit')
+subplot(3,2,3)
+plot(X(p+1:2*p,:)')
+subplot(3,2,4)
+plot(mean(X_fit(p+1:2*p,:,idx), 3)')
+subplot(3,2,5)
+plot(X(2*p+1:3*p,:)')
+subplot(3,2,6)
+plot(mean(X_fit(2*p+1:3*p,:,idx), 3)')
+
 
 %% fitting: MCMC, update priors
 
-X_fit = zeros(nClus*p, T, ng);
-d_fit = zeros(N, nClus, ng);
-C_fit = zeros(N, nClus*p, ng);
-mudc_fit = zeros(p+1, nClus, ng);
-Sigdc_fit = zeros(p+1, p+1, nClus, ng);
-x0_fit = zeros(nClus*p, ng);
-A_fit = repmat(A,1,1,ng); % true
-b_fit = repmat(b,1,ng); % true
-Q_fit = repmat(Q,1,1,ng); % true
+X_fit2 = zeros(nClus*p, T, ng);
+d_fit2 = zeros(N, nClus, ng);
+C_fit2 = zeros(N, nClus*p, ng);
+mudc_fit2 = zeros(p+1, nClus, ng);
+Sigdc_fit2 = zeros(p+1, p+1, nClus, ng);
+x0_fit2 = zeros(nClus*p, ng);
+A_fit2 = repmat(A,1,1,ng); % true
+b_fit2 = repmat(b,1,ng); % true
+Q_fit2 = repmat(Q,1,1,ng); % true
 
 % priors
 % place-holder...
@@ -187,43 +209,43 @@ Psidc0 = eye(p+1);
 nudc0 = p+1+2;
 
 % initials
-% initial for d_fit: 0
+% initial for d_fit2: 0
 C_raw = reshape(normrnd(0,1e-2,N*p,1), [], p);
 d_tmp = zeros(N,1);
 for k = unique(Lab)
     ladid_tmp = id2id(k, p);
-    C_fit(Lab == k, ladid_tmp, 1) = C_raw(Lab == k, :);
-    d_tmp(Lab == k) = d_fit(Lab ==k, k);
+    C_fit2(Lab == k, ladid_tmp, 1) = C_raw(Lab == k, :);
+    d_tmp(Lab == k) = d_fit2(Lab ==k, k);
 end
 
-Sigdc_fit(:,:,1:nClus,1) = repmat(eye(p+1)*1e-2,1,1,nClus);
+Sigdc_fit2(:,:,1:nClus,1) = repmat(eye(p+1)*1e-2,1,1,nClus);
 
 
-x0_fit(:,1) = lsqr(C_fit(:,:,1),(log(mean(Y(:,1:10),2))-d_tmp));
-[X_tmp,~,~] = ppasmoo_poissexp_v2(Y,C_fit(:,:,1),d_tmp,...
-    x0_fit(:,1),Q0,A_fit(:,:,1),b_fit(:,1),Q_fit(:,:,1));
-gradHess = @(vecX) gradHessX(vecX, d_tmp, C_fit(:,:,1), x0_fit(:,1), Q0,...
-    Q_fit(:,:,1), A_fit(:,:,1), b_fit(:,1), Y);
+x0_fit2(:,1) = lsqr(C_fit2(:,:,1),(log(mean(Y(:,1:10),2))-d_tmp));
+[X_tmp,~,~] = ppasmoo_poissexp_v2(Y,C_fit2(:,:,1),d_tmp,...
+    x0_fit2(:,1),Q0,A_fit2(:,:,1),b_fit2(:,1),Q_fit2(:,:,1));
+gradHess = @(vecX) gradHessX(vecX, d_tmp, C_fit2(:,:,1), x0_fit2(:,1), Q0,...
+    Q_fit2(:,:,1), A_fit2(:,:,1), b_fit2(:,1), Y);
 [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp(:),1e-10,1000);
-X_fit(:,:,1) = reshape(muXvec, [], T);
+X_fit2(:,:,1) = reshape(muXvec, [], T);
 
 for g = 2:ng
     
     disp(g)
     
-    % (1) update X_fit
+    % (1) update X_fit2
     
-    d_raw = d_fit(:,:,g-1);
+    d_raw = d_fit2(:,:,g-1);
     I = (1 : size(d_raw, 1)) .';
     k = sub2ind(size(d_raw), I, Lab');
     d_tmp = d_raw(k);
-    C_tmp = C_fit(:,:,g-1);
+    C_tmp = C_fit2(:,:,g-1);
     
-    x0_tmp = x0_fit(:,g-1);
-    A_tmp = A_fit(:,:,g-1);
-    b_tmp = b_fit(:,g-1);
-    Q_tmp = Q_fit(:,:,g-1);
-    X_tmp = X_fit(:,:,g-1);
+    x0_tmp = x0_fit2(:,g-1);
+    A_tmp = A_fit2(:,:,g-1);
+    b_tmp = b_fit2(:,g-1);
+    Q_tmp = Q_fit2(:,:,g-1);
+    X_tmp = X_fit2(:,:,g-1);
     
     gradHess = @(vecX) gradHessX(vecX, d_tmp, C_tmp, x0_tmp, Q0, Q_tmp, A_tmp, b_tmp, Y);
     [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp(:),1e-8,1000);
@@ -238,29 +260,29 @@ for g = 2:ng
     R = chol(-hess_tmp,'lower'); % sparse
     z = randn(length(muXvec), 1) + R'*muXvec;
     Xsamp = R'\z;
-    X_fit(:,:,g) = reshape(Xsamp,[], T);
+    X_fit2(:,:,g) = reshape(Xsamp,[], T);
     % toc;
     
-    % (2) update x0_fit
+    % (2) update x0_fit2
     Sigx0 = inv(inv(Sigx00) + inv(Q0));
-    mux0 = Sigx0*(Sigx00\mux00 + Q0\X_fit(:,1,g));
-    x0_fit(:,g) = mvnrnd(mux0, Sigx0)';
-    % disp(x0_fit(:,g))
+    mux0 = Sigx0*(Sigx00\mux00 + Q0\X_fit2(:,1,g));
+    x0_fit2(:,g) = mvnrnd(mux0, Sigx0)';
+    % disp(x0_fit2(:,g))
     
-    % (3) update d_fit & C_fit
+    % (3) update d_fit2 & C_fit2
     % Laplace approximation
     
     for i = 1:N
         l = Lab(i);
         latentId = id2id(l,p);
-        X_tmp = [ones(1, T) ;X_fit(latentId,:,g)]';
+        X_tmp = [ones(1, T) ;X_fit2(latentId,:,g)]';
         
         lamdc = @(dc) exp(X_tmp*dc);
         
-        derdc = @(dc) X_tmp'*(Y(i,:)' - lamdc(dc)) - Sigdc_fit(:,:,l,g-1)\(dc - mudc_fit(:,l,g-1));
-        hessdc = @(dc) -X_tmp'*diag(lamdc(dc))*X_tmp - inv(Sigdc_fit(:,:,l,g-1));
+        derdc = @(dc) X_tmp'*(Y(i,:)' - lamdc(dc)) - Sigdc_fit2(:,:,l,g-1)\(dc - mudc_fit2(:,l,g-1));
+        hessdc = @(dc) -X_tmp'*diag(lamdc(dc))*X_tmp - inv(Sigdc_fit2(:,:,l,g-1));
         [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
-            [d_fit(i,l, g-1) C_fit(i,latentId,g-1)]',1e-8,1000);
+            [d_fit2(i,l, g-1) C_fit2(i,latentId,g-1)]',1e-8,1000);
         if(sum(isnan(mudc)) ~= 0)
             [mudc,~,niSigdc,~] = newton(derdc,hessdc,deltadc0,1e-8,1000);
         end
@@ -269,37 +291,56 @@ for g = 2:ng
         Sigdc = (Sigdc + Sigdc')/2;
         dc = mvnrnd(mudc, Sigdc);
         
-        d_fit(i,l,g) = dc(1);
-        C_fit(i,latentId,g) = dc(2:end);
+        d_fit2(i,l,g) = dc(1);
+        C_fit2(i,latentId,g) = dc(2:end);
     end
     
     
-    % (4) update mudc_fit & Sigdc_fit
+    % (4) update mudc_fit2 & Sigdc_fit2
     for l = unique(Lab)
-        dc_tmp = [d_fit(Lab == l, l, g) C_fit(Lab == l, id2id(l,p), g)];
-        invTaudc = inv(Taudc0) + sum(Lab == l)*inv(Sigdc_fit(:,:,l,g-1));
-        deltadc = invTaudc\(Taudc0\deltadc0 + Sigdc_fit(:,:,l,g-1)\sum(dc_tmp,1)');
-        mudc_fit(:,l,g) = mvnrnd(deltadc, inv(invTaudc));
+        dc_tmp = [d_fit2(Lab == l, l, g) C_fit2(Lab == l, id2id(l,p), g)];
+        invTaudc = inv(Taudc0) + sum(Lab == l)*inv(Sigdc_fit2(:,:,l,g-1));
+        deltadc = invTaudc\(Taudc0\deltadc0 + Sigdc_fit2(:,:,l,g-1)\sum(dc_tmp,1)');
+        mudc_fit2(:,l,g) = mvnrnd(deltadc, inv(invTaudc));
         
         % assume different covariances
-        dcRes = dc_tmp' - mudc_fit(:,l,g);
+        dcRes = dc_tmp' - mudc_fit2(:,l,g);
         Psidc = Psidc0 + dcRes*dcRes';
         nudc = sum(Lab == l) + nudc0;
-        Sigdc_fit(:,:,l,g) = iwishrnd(Psidc,nudc);
+        Sigdc_fit2(:,:,l,g) = iwishrnd(Psidc,nudc);
     end
     
 end
 
 figure
 subplot(1,3,1)
-plot(d,sum(mean(d_fit(:,:,idx), 3),2),'rx');
-title('true vs estimated d')
-C_fit_mean = mean(C_fit(:,:,idx), 3);
+plot(d,sum(mean(d_fit2(:,:,idx), 3),2),'rx');
+ylabel('estimate')
+title('d')
+C_fit2_mean = mean(C_fit2(:,:,idx), 3);
 subplot(1,3,2)
-plot(sum(C_trans(:,1:p:end), 2),sum(C_fit_mean(:,1:p:end), 2),'rx');
-title('true vs estimated 1st column of C')
+plot(sum(C_trans(:,1:p:end), 2),sum(C_fit2_mean(:,1:p:end), 2),'rx');
+xlabel('true')
+title('1st column of C')
 subplot(1,3,3)
-plot(sum(C_trans(:,2:p:end), 2),sum(C_fit_mean(:,2:p:end), 2),'rx');
-title('true vs estimated 2nd column of C')
+plot(sum(C_trans(:,2:p:end), 2),sum(C_fit2_mean(:,2:p:end), 2),'rx');
+title('2nd column of C')
+sgtitle('with Update of Prior')
+
+figure
+subplot(3,2,1)
+plot(X(1:p,:)')
+title('true')
+subplot(3,2,2)
+plot(mean(X_fit2(1:p,:,idx), 3)')
+title('fit')
+subplot(3,2,3)
+plot(X(p+1:2*p,:)')
+subplot(3,2,4)
+plot(mean(X_fit2(p+1:2*p,:,idx), 3)')
+subplot(3,2,5)
+plot(X(2*p+1:3*p,:)')
+subplot(3,2,6)
+plot(mean(X_fit2(2*p+1:3*p,:,idx), 3)')
 
 

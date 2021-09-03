@@ -331,7 +331,7 @@ and \(\left( 1,{\mathbf{x}_{t}'^{\left( z_{i} \right)}} \right) = {{\widetilde{\
 \(\bm{\mu}_{\bm{\zeta}_{i}} = \text{argmax}_{\bm{\zeta}_{i}}\left( f\left( \bm{\zeta}_{i} \right) \right)\)
 and \(\mathbf{\Sigma}_{\bm{\zeta}_{i}} = -\left\lbrack \frac{\partial^{2}f}{\partial\bm{\zeta}_{i}\partial\bm{\zeta}'_{i}}\left.  \right|_{\bm{\zeta}_{i} = \bm{\mu}_{\bm{\zeta}_{i}}} \right\rbrack^{-1}\). If initial as the previous step fits fails, simply use prior mean of \(\bm{\mu}_{\bm{\zeta}_{i}}\), i.e. \(\bm{\delta}_{dc0}\).
 
-\subsubsection{Update \(\left\{ \mathbf{\mu}_{\text{dc}}^{(j)} \right\}_{j}\) and \(\left\{ \mathbf{\Sigma}_{\text{dc}}^{(j)} \right\}_{j}\)}
+\subsubsection{Update \(\left\{ \mathbf{\mu}_{\text{dc}}^{(j)} \right\}_{j}\) and \(\left\{ \mathbf{\Sigma}_{\text{dc}}^{(j)} \right\}_{j}\)} \label{loading prior}
 As above, denote \(\left( d_{i},\mathbf{c}'_{i} \right)' = \bm{\zeta}_{i} \in \mathbb{R}^{p + 1}\).
 \begin{enumerate}
 	\def\labelenumi{(\arabic{enumi})}
@@ -350,8 +350,8 @@ As above, denote \(\left( d_{i},\mathbf{c}'_{i} \right)' = \bm{\zeta}_{i} \in \m
 	\end{align*}
 \end{enumerate}
 
-\subsubsection{Update \(\mathbf{A}\) and \(\mathbf{b}\)}
-Assume there are \(J\) clusters.
+\subsubsection{Update \(\mathbf{A}\) and \(\mathbf{b}\)} \label{dynamics update}
+
 \begin{enumerate}
 	\def\labelenumi{(\arabic{enumi})}
 	\item
@@ -423,9 +423,11 @@ Assume there are \(J\) clusters.
 \end{enumerate}
 
 \section{Simulations}
+\textcolor{red}{\textbf{Currently, the latent \(x_t\) estimation is not accurate enough. This may come from bad simulation/ slow convergence or other sources. See details in section \ref{problems}}}\\
+
 There are two set of simulation examples. The first example is generated from LDS model directly, while in the second example the latents are generated directly without explicit specifying linear dynamics. In all of the following results, the covariance of process noise \(\mathbf{Q}\) is assumed to be block diagonal. For reference, see the code for \href{https://github.com/weigcdsb/state-space-clustering/blob/main/LDS/old_example/sim_LDS_noConstraint.m}{non-constrained} and \href{https://github.com/weigcdsb/state-space-clustering/blob/main/LDS/old_example/sim_LDS_diag.m}{diagonal} \(\mathbf{Q}\). But these two legacy versions assuming the loading is independent on cluster assignments. If we need to use any of one of them, make sure to replace the updates for loading to be cluster-related. The fitting results for all these three are similar, because the underlying true \(\mathbf{Q}\) is diagonal.
 
-Before doing the clustering, I first assume the cluster labels are known to see the fitting performance. All the fitting results with labels are shown in means from iteration 50 to 100.
+Before doing the clustering, I first assume the cluster labels are known to see the fitting performance. All the fitting results with labels are shown in means from iteration 50 to 100 (\textcolor{red}{\textbf{The iteration number is not enough to achieve stationary distribution}}).
 
 \subsection{Simulation 1: Generate from LDS Directly}
 In this simulation, there are 3 clusters with 10 neurons in each cluster. The dimension of latents in each cluster is 2. In the linear dynamics, the bias term \(\mathbf{b}\) is zero. There's no within-population interaction but has some weak between-population interactions. In other words, the linear dynamics matrix \(\mathbf{A}\) is roughly diagonal. The details of simulation can be found in the first section of the \href{https://github.com/weigcdsb/state-space-clustering/blob/main/LDS/lds_sample.m}{simulation 1}.
@@ -444,7 +446,7 @@ The code for fitting is \href{https://github.com/weigcdsb/state-space-clustering
 	\label{fig:LDS labeled}
 \end{figure}
 
-The fitting for overall mean firing rate is perfect and the dynamics pattern is mostly recovered. The fitting of latents is OK up to scale. In other words, the model captures the oscillating pattern of latents.
+The fitting for overall mean firing rate is perfect and the dynamics pattern is mostly recovered. The fitting of latents is OK (\textcolor{red}{\textbf{may not be accurate enough}}\\) up to scale. In other words, the model captures the oscillating pattern of latents.
 
 But the latent patterns of these three clusters seems quite similar. That means the differences in the mean firing rates may be purely explained by the loading, i.e. \(\mathbf{d}\) and \(\mathbf{C}\). To see that, I set the number of cluster to be 1 and the results are shown in Figure \ref{fig:LDS labeled one cluster}.
 
@@ -580,9 +582,161 @@ As previous, in each example, I show results from (1) FMM starting from random c
 
 The performance is not bad. The neuron at top of each cluster cannot be clustered correctly by its nature: the signals are too weak to be clearly clustered.
 
+\section{PROBLEMS} \label{problems}
+This section shows what cause the inaccuracy in the latent estimation. 
+
+\subsection{Estimation of \(\mathbf{d}\) and \(\mathbf{C}\) alone}
+At first, as guessed by Ian, this may be caused by bad estimation of loading (\(\mathbf{d}\) and \(\mathbf{C}\)). So I first turn off all others except for loading (related) parameters and set them to be true values. There are 2 versions: (1) update priors as in subsection \ref{loading prior} and (2) no update of priors, and just set the prior for each as the standard normal.
+For the estimation with prior update, the results are mean from iteration 50 to 100 (Figure \ref{loading alone}).
+\begin{figure}[h!]
+	\makebox[\linewidth][c]{%
+		\centering
+		\subfigure[]{\includegraphics[width=0.6\textwidth]{image016.png}}%
+		\subfigure[]{\includegraphics[width=0.6\textwidth]{image017.png}}%
+	}
+	\caption{estimation of loading}
+	\label{loading alone}
+\end{figure}
+ 
+The mixing of convergence for loading priors (in subsection \ref{loading prior}) are fine. The update of priors don't influence results a lot, but this will help clustering a lot. It seems estimation of loading is fine. Let's see what happens when estimation of latents \(\mathbf{x}_t\) is on at the same time.
+
+\subsection{Estimation of \(\mathbf{d}\), \(\mathbf{C}\) and \(\mathbf{x}_{t}\)}
+When the estimation of \(\mathbf{x}_t\) is on, we need more iterations. The results are mean from iteration 500 to 1000 (Figure \ref{loading and latent}).
+
+The estimation of loading:
+\begin{figure}[h!]
+	\makebox[\linewidth][c]{%
+		\centering
+		\subfigure[]{\includegraphics[width=0.6\textwidth]{image018.png}}%
+		\subfigure[]{\includegraphics[width=0.6\textwidth]{image020.png}}%
+	}
+	\caption{estimation of loading, with latents on}
+	\label{loading and latent}
+\end{figure}
+
+And the estimation of corresponding latents (Figure \ref{loading and latents}):
+\begin{figure}[h!]
+	\makebox[\linewidth][c]{%
+		\centering
+		\subfigure[no update of prior]{\includegraphics[width=0.6\textwidth]{image019.png}}%
+		\subfigure[with update of prior]{\includegraphics[width=0.6\textwidth]{image021.png}}%
+	}
+	\caption{estimation of loading}
+	\label{loading and latents}
+\end{figure}
+
+Things are still fine. The remaining parts may influence latent estimations are dynamics (\(\mathbf{b}\), \(\mathbf{A}\)) and prior process noise \(\mathbf{Q}\).
+
+I've checked update of (1) dynamics alone, (2) \(\mathbf{Q}\) and (3) \(\mathbf{Q}\) and \(\mathbf{x}_{t}\). All of them are fine. \textbf{So the problem must come from estimations of dynamics and \(\mathbf{x}_t\)}.
+
+\subsection{Estimation of \(\mathbf{b}\), \(\mathbf{A}\) and \(\mathbf{x}_t\)}
+I first estimate dynamics by assuming block diagonal \(\mathbf{Q}\) (as in subsection \ref{dynamics update}). When turning on (1) latents \(\mathbf{x}_t\) and (2) dynamics (\(\mathbf{b}\) and \(\mathbf{A}\)), the trace of \(\mathbf{b}\) and \(\mathbf{A}\) are (Figure \ref{trace of dynamics, blk}):\\
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width = .7\textwidth]{image022.png}
+	\caption{trace of dynamics, block diagonal}
+	\label{trace of dynamics, blk}
+\end{figure}
+
+The mixing is not good, and we may haven't achieve stationary distribution yet. Anyway, I average results from iteration 5000 to 10000, and the results are shown in Figure \ref{lat and dyn, blk}).
+\begin{figure}[h!]
+	\makebox[\linewidth][c]{%
+		\centering
+		\subfigure[latent]{\includegraphics[width=0.6\textwidth]{image023.png}}%
+		\subfigure[dynamics]{\includegraphics[width=0.6\textwidth]{image024.png}}%
+	}
+	\caption{estimation of latents and dynamics, block diagonal}
+	\label{lat and dyn, blk}
+\end{figure}
+
+OK, things are not perfect now. What if I don't assume block diagonal \(\mathbf{Q}\)? For the non-constraint version, the trace plot of \(\mathbf{b}\) and \(\mathbf{A}\) are in Figure \ref{trace of dynamics, full}.
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width = .7\textwidth]{image025.png}
+	\caption{trace of dynamics, no constraint}
+	\label{trace of dynamics, full}
+\end{figure}\\
+
+
+Again, the average from iteration 5000 to 10000 is in Figure \ref{lat and dyn, full}).\\
+\begin{figure}[h!]
+	\makebox[\linewidth][c]{%
+		\centering
+		\subfigure[latent]{\includegraphics[width=0.6\textwidth]{image026.png}}%
+		\subfigure[dynamics]{\includegraphics[width=0.6\textwidth]{image027.png}}%
+	}
+	\caption{estimation of latents and dynamics, no constraint}
+	\label{lat and dyn, full}
+\end{figure}
+
+Based on trace plot and latent, things look a bit better. But it's still not good enough. The dynamics is even worse, although the latent is better.
+
+\textbf{Another Observation}:
+Even with these inaccurate latent, the overall mean firing rate still looks perfect (with true loading \(\mathbf{d}\) and \(\mathbf{C}\)), because of small loading. See Figure \ref{mfr, blk and full}
+
+\begin{figure}[h!]
+	\makebox[\linewidth][c]{%
+		\centering
+		\subfigure[block diagonal]{\includegraphics[width=0.6\textwidth]{image028.png}}%
+		\subfigure[no constraint]{\includegraphics[width=0.6\textwidth]{image029.png}}%
+	}
+	\caption{overall mean firing rate, block diagonal and no constraint}
+	\label{mfr, blk and full}
+\end{figure}
+
+In PLDS, they use EM, so there's no noise. But here I tackle things by MCMC: if the simulation is not very identifiable, then there will be a lot of noise by its nature.
+
+Anyway, the clustering is based on the overall mean firing rate pattern. Although the estimation of latent may not be accurate enough, this should not influence the clustering result.
+
+Maybe the next step is to test the current algorithm by a more identifiable simulation. For example, use a larger loading to make the latent effect become more significant.
+
+\subsection{Simulation 1 Revisit}
+The results above remind me that the 100 iterations is not enough to achieve stationary distribution. I need to check the sampling trace.
+Here, I rerun the MCMC for simulation 1, but use the no-constraint \(\mathbf{Q}\) version. Since no constraint version is better than block-diagonal one.
+
+First, I show the trace of sampling (Frobenius) norm for \(\mathbf{d}\), \(\mathbf{C}\), \(\mathbf{b}\) and \(\mathbf{A}\) as in Figure \ref{norms}.
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width = .8\textwidth]{image030.png}
+	\caption{(Frobenius) norm for \(\mathbf{d}\), \(\mathbf{C}\), \(\mathbf{b}\) and \(\mathbf{A}\)}
+	\label{norms}
+\end{figure}\\
+
+It seems we may have not achieved stationary yet. And I show the average from iteration 8000 to 10000 as in Figure \ref{fig:LDS labeled revisit}
+
+\begin{figure}[h!]
+	\makebox[\linewidth][c]{%
+		\centering
+		\subfigure[overall mean firing rate]{\label{fig:a}\includegraphics[width=0.55\textwidth]{image031.png}}%
+		\subfigure[latents]{\label{fig:b}\includegraphics[width=0.55\textwidth]{image032.png}}%
+		\subfigure[dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{image033.png}}%
+	}
+	\caption{LDS sample with labels}
+	\label{fig:LDS labeled revisit}
+\end{figure}
+
+Things look much better! That means we need to improve the mixing of \(\mathbf{b}\) and \(\mathbf{A}\) later. (Also see if the mixing will be better for a more identifiable simulation)
+
+\clearpage
 \section{TODO}
 \begin{enumerate}
 	\def\labelenumi{(\arabic{enumi})}
+	\item
+	Use a more identifiable simulation, e.g. larger loading, to see the performance
+	\item
+	Currently, the mixing of \(\mathbf{b}\) and \(\mathbf{A}\) is terrible, and I need find a way to break the dependence between dynamics (\(\mathbf{b}\) and \(\mathbf{A}\)) and latent (\(\mathbf{x}_t\)). For example, see if it's possible to do collapsed Gibbs sampler? Or switch to EM as in PLDS? If I switch to EM, then the DPMM should also be done in EM. (That would be more challenging). \\
+	
+	Basically the question is
+	\[y_{\text{it}} \sim Poisson(\lambda_{\text{it}})\]
+	\[\log\lambda_{\text{it}} = d_{i} + \mathbf{c'}_{i}\mathbf{x}_{t}^{(z_{i})}\]
+	\[\mathbf{x}_{1} \sim N(\mathbf{x}_{0},\mathbf{Q}_{0})\]
+	\[\mathbf{x}_{t + 1}|\mathbf{x}_{t} \sim N(\mathbf{A}\mathbf{x}_{t} + \mathbf{b},\mathbf{Q})\]
+	And we need to sample \(\mathbf{x}_t\), \(\mathbf{b}\), \(\mathbf{A}\) and \(\mathbf{Q}\) efficiently. (Assume loading is known now).
+	
+	Or even a more basic question: how to efficiently sample state-space and transition matrix at the same time in Kalman filter? The dependency between transition matrix and state vectors causes bad mixing.
+	
+	\item
+	Check sampling trace and mixing.
 	\item
 	Find a more efficient way to generate new cluster parameters, otherwise the newly generated ones will always be rejected.
 	\item

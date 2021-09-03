@@ -19,4 +19,9 @@
 \BOOKMARK [2][-]{subsection.4.2}{Simulation 2: Generate Latents, without Specifying Linear Dynamics}{section.4}% 19
 \BOOKMARK [3][-]{subsubsection.4.2.1}{Labeled Data: No Clustering}{subsection.4.2}% 20
 \BOOKMARK [3][-]{subsubsection.4.2.2}{Unlabeled Data: Clustering}{subsection.4.2}% 21
-\BOOKMARK [1][-]{section.5}{TODO}{}% 22
+\BOOKMARK [1][-]{section.5}{PROBLEMS}{}% 22
+\BOOKMARK [2][-]{subsection.5.1}{Estimation of d and C alone}{section.5}% 23
+\BOOKMARK [2][-]{subsection.5.2}{Estimation of d, C and xt}{section.5}% 24
+\BOOKMARK [2][-]{subsection.5.3}{Estimation of b, A and xt}{section.5}% 25
+\BOOKMARK [2][-]{subsection.5.4}{Simulation 1 Revisit}{section.5}% 26
+\BOOKMARK [1][-]{section.6}{TODO}{}% 27
