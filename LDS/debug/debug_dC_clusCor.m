@@ -33,12 +33,12 @@ Q2 = 1e-3*eye(p);
 Q3 = 1e-3*eye(p);
 Q = blkdiag(Q1, Q2, Q3);
 
-% 
+%
 A = eye(size(Q,1));
 while any(imag(eig(A))==0)
     A= randn(size(Q));
     A = A-diag(diag(A));
-	A(squareform(pdist(pLab'))==0)=0;
+    A(squareform(pdist(pLab'))==0)=0;
     A = A./sqrt(sum((A-diag(diag(A))).^2,2))*0.1;
     A = A+eye(size(Q,1))*0.92;
 end
@@ -76,6 +76,7 @@ A_fit = repmat(A,1,1,ng); % true
 b_fit = repmat(b,1,ng); % true
 Q_fit = repmat(Q,1,1,ng); % true
 
+tic;
 for g = 2:ng
     
     disp(g)
@@ -85,30 +86,41 @@ for g = 2:ng
         N_clus = sum(Lab == l);
         Y_dc = Y(Lab == l,:)';
         X_dc_blk = [ones(T,1) X_fit(latentId,:,g)'];
+        
+        dc_mat = [d_fit(Lab == l, g-1) C_fit(Lab == l,:,g-1)]';
+        mudc_all = zeros(N_clus*(p+1),1);
+        for i = 1:N_clus
+            
+            lamdc = @(dc) exp(X_dc_blk*dc);
+            
+            derdc = @(dc) X_dc_blk'*(Y_dc(:,i) - lamdc(dc)) -...
+                (Sigdc0_sing)\(dc - mudc0_sing);
+            hessdc = @(dc) -X_dc_blk'*diag(lamdc(dc))*X_dc_blk - inv(Sigdc0_sing);
+            [mudc,~,~,~] = newton(derdc,hessdc,...
+                dc_mat(:,i),1e-8,1000);
+            mudc_all(id2id(i, p+1)) = mudc;
+        end
+        
         X_dc = sparse(kron(eye(N_clus), X_dc_blk));
-        
-        
-        lamdc = @(dc) exp(X_dc*dc);
-        
+        lamdc_all = @(dc) exp(X_dc*dc);
         Sigdc0 = sparse(kron(eye(N_clus), Sigdc0_sing));
         mudc0 = repmat(mudc0_sing, N_clus, 1);
         
-        derdc = @(dc) X_dc'*(Y_dc(:) - lamdc(dc)) - (Sigdc0)\(dc - mudc0);
-        hessdc = @(dc) -sparse(X_dc'*diag(lamdc(dc))*X_dc - inv(Sigdc0));
+        hessdc_all = @(dc) -sparse(X_dc'*diag(lamdc_all(dc))*X_dc - inv(Sigdc0));
+        niSigdc_all = hessdc_all(mudc_all);
         
-        dc_mat = [d_fit(Lab == l, g-1) C_fit(Lab == l,:,g-1)]';
-        [mudc,~,niSigdc,~] = newton(derdc,hessdc,dc_mat(:),1e-6,1000);
-        
-         % use Cholesky decomposition to sample efficiently
-        R = chol(-niSigdc,'lower'); % sparse
-        z = randn(length(mudc), 1) + R'*mudc;
-        dcSamp = reshape(dcSamp,[], N_clus)';
+        % use Cholesky decomposition to sample efficiently
+        R = chol(-niSigdc_all,'lower'); % sparse
+        z = randn(length(mudc_all), 1) + R'*mudc_all;
+        dcSamp = reshape(R'\z,[], N_clus)';
         d_fit(Lab == l,g) = dcSamp(:,1);
         C_fit(Lab == l,:,g) = dcSamp(:,2:end);
     end
 end
+toc;
 
-% worse...
+% equivalent to independent update, because of block diagonal design matrix
+% X_dc = sparse(kron(eye(N_clus), X_dc_blk))
 
 idx = 2;
 figure
@@ -125,4 +137,3 @@ subplot(1,3,3)
 plot(sum(C_trans(:,2:p:end), 2),C_fit_mean(:,2),'rx');
 title('2nd column of C')
 sgtitle('cluster dC')
-

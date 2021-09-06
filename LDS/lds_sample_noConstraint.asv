@@ -293,7 +293,7 @@ title('Frobenius norm of A')
 
 
 %%
-idx = 1500:ng;
+idx = 8000:ng;
 
 subplot(1,2,1)
 imagesc(exp(C_trans*X + d))
@@ -308,7 +308,6 @@ colorbar()
 
 % plot(mean(X_fit(:,:,idx), 3)')
 
-figure;
 subplot(3,2,1)
 plot(X(1:p,:)')
 title('true')

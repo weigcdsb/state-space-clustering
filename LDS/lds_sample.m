@@ -79,7 +79,7 @@ plot(X(2*p+1:3*p,:)')
 % nClus = 1;
 % Lab = ones(1,N);
 rng(3)
-ng = 100;
+ng = 2000;
 
 % pre-allocation
 X_fit = zeros(nClus*p, T, ng);
@@ -265,8 +265,37 @@ for g = 2:ng
         A_fit(latentId,:,g) = BAsamp(:,2:end);
     end
 end
+
 %%
-idx = 50:ng;
+d_norm = zeros(g, 1);
+C_norm_fro = zeros(g, 1);
+b_norm = zeros(g, 1);
+A_norm_fro = zeros(g, 1);
+
+for k = 1:g
+    d_norm(k) = norm(d_fit(:,:,k), 'fro');
+    C_norm_fro(k) = norm(C_fit(:,:,k), 'fro');
+    b_norm(k) = norm(b_fit(:,k));
+    A_norm_fro(k) = norm(A_fit(:,:,k), 'fro');
+end
+
+figure
+subplot(2,2,1)
+plot(d_norm)
+title('norm of d')
+subplot(2,2,2)
+plot(C_norm_fro)
+title('Frobenius norm of C')
+subplot(2,2,3)
+plot(b_norm)
+title('norm of b')
+subplot(2,2,4)
+plot(A_norm_fro)
+title('Frobenius norm of A')
+
+
+%%
+idx = 1000:ng;
 
 subplot(1,2,1)
 imagesc(exp(C_trans*X + d))
@@ -313,3 +342,16 @@ mean(Q_fit(:,:,idx), 3)
 mean(mudc_fit(:,:,idx), 3)
 mean(Sigdc_fit(:,:,:,idx), 4)
 
+figure
+subplot(1,3,1)
+plot(d,sum(mean(d_fit(:,:,idx), 3),2),'rx');
+ylabel('estimate')
+title('d')
+C_fit_mean = mean(C_fit(:,:,idx), 3);
+subplot(1,3,2)
+plot(sum(C_trans(:,1:p:end), 2),sum(C_fit_mean(:,1:p:end), 2),'rx');
+xlabel('true')
+title('1st column of C')
+subplot(1,3,3)
+plot(sum(C_trans(:,2:p:end), 2),sum(C_fit_mean(:,2:p:end), 2),'rx');
+title('2nd column of C')
