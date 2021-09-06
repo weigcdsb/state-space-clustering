@@ -1,47 +1,43 @@
 addpath(genpath('C:\Users\gaw19004\Documents\GitHub\state-space-clustering'));
 % addpath(genpath('D:\github\state-space-clustering'));
 
+
 %% simulation
-clear all;close all;clc;
-rng(1)
-n = 10;
+rng(123)
+n = 10; % 50
 nClus = 3;
 N = n*nClus;
 p = 2;
 T = 1000;
 
 Lab = repelem(1:nClus, n);
-pLab = repelem(1:nClus, p);
 
-d = randn(n*nClus,1)*0;
+d = randn(n*nClus,1)/5;
 C_trans = zeros(n*nClus, p*nClus);
 for k = 1:length(Lab)
-    C_trans(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = sum(Lab(1:k)==Lab(k))/sum(Lab==Lab(k))+1;
+    C_trans(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = sum(Lab(1:k)==Lab(k))/sum(Lab==Lab(k));
 end
 
 X = zeros(p*nClus, T);
-x0 = zeros(p*nClus, 1);
+x0 = [1.2 1.2 0.5 0.5 1 1]*10*0;
 Q0 = eye(nClus*p)*1e-2;
 X(:,1) = mvnrnd(x0, Q0)';
 
-b1 = ones(p,1)*0;
+b1 = ones(p,1)*0.01;
 b2 = ones(p,1)*0;
-b3 = ones(p,1)*0;
+b3 = ones(p,1)*-0.03;
 b = [b1;b2;b3];
+b = b*0;
 
 Q1 = 1e-3*eye(p);
 Q2 = 1e-3*eye(p);
 Q3 = 1e-3*eye(p);
 Q = blkdiag(Q1, Q2, Q3);
 
-% 
-A = eye(size(Q,1));
-while any(imag(eig(A))==0)
-    A= randn(size(Q));
-    A = A-diag(diag(A));
-	A(squareform(pdist(pLab'))==0)=0;
-    A = A./sqrt(sum((A-diag(diag(A))).^2,2))*0.1;
-    A = A+eye(size(Q,1))*0.92;
+% Generate X offline (A unspecified)
+for i=1:size(Q,1)
+    k = ceil(rand()*20)+10;
+    X(i,:) = interp1(linspace(0,1,k),randn(k,1),linspace(0,1,T),'spline');
 end
 
 % let's generate lambda
@@ -49,32 +45,14 @@ logLam = zeros(n*nClus, T);
 logLam(:,1) = d + C_trans*X(:,1);
 
 for t=2:T
-    X(:, t) = mvnrnd(A*X(:, t-1) + b, Q)';
     logLam(:, t) = d + C_trans*X(:,t);
 end
 
 Y = poissrnd(exp(logLam));
 
 figure(1)
-imagesc(A)
-colorbar()
-xlabel('sending')
-ylabel('receiving')
-
-figure(2)
-imagesc(exp(logLam))
-colorbar()
-
-figure(3)
 clusterPlot(Y, Lab)
 
-figure(4)
-subplot(1,3,1)
-plot(X(1:p,:)')
-subplot(1,3,2)
-plot(X(p+1:2*p,:)')
-subplot(1,3,3)
-plot(X(2*p+1:3*p,:)')
 
 %%
 % nClus = 1;
@@ -104,6 +82,7 @@ Sigx00 = eye(nClus*p);
 deltadc0 = zeros(p+1,1);
 Taudc0 = eye(p+1);
 
+% Psidc0 = eye(p+1);
 Psidc0 = eye(p+1)*1e-4;
 nudc0 = p+1+2;
 
@@ -260,10 +239,11 @@ for g = 2:ng
     BAsamp = reshape(BAvec,[], nClus*p)';
     b_fit(:,g) = BAsamp(:,1);
     A_fit(:,:,g) = BAsamp(:,2:end);
+    
 end
 
-
 %%
+
 d_norm = zeros(g, 1);
 C_norm_fro = zeros(g, 1);
 b_norm = zeros(g, 1);
@@ -290,10 +270,8 @@ subplot(2,2,4)
 plot(A_norm_fro)
 title('Frobenius norm of A')
 
-
-
 %%
-idx = 8000:ng;
+idx = 1500:ng;
 
 subplot(1,2,1)
 imagesc(exp(C_trans*X + d))
@@ -307,7 +285,6 @@ title('fit')
 colorbar()
 
 % plot(mean(X_fit(:,:,idx), 3)')
-
 subplot(3,2,1)
 plot(X(1:p,:)')
 title('true')
@@ -323,22 +300,15 @@ plot(X(2*p+1:3*p,:)')
 subplot(3,2,6)
 plot(mean(X_fit(2*p+1:3*p,:,idx), 3)')
 
-subplot(1,2,1)
-imagesc(A)
-colorbar()
-cLim = caxis;
-title('true')
-subplot(1,2,2)
 imagesc(mean(A_fit(:,:,idx), 3))
 colorbar()
-set(gca,'CLim',cLim)
-title('fit')
 
 mean(d_fit(:,:,idx), 3)
 mean(C_fit(:,:,idx), 3)
 mean(Q_fit(:,:,idx), 3)
 mean(mudc_fit(:,:,idx), 3)
 mean(Sigdc_fit(:,:,:,idx), 4)
+
 
 figure
 subplot(1,3,1)
@@ -353,3 +323,7 @@ title('1st column of C')
 subplot(1,3,3)
 plot(sum(C_trans(:,2:p:end), 2),sum(C_fit_mean(:,2:p:end), 2),'rx');
 title('2nd column of C')
+
+
+
+

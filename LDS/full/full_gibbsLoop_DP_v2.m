@@ -1,11 +1,11 @@
 function [XOut,x0Out,dOut,COut,...
     mudcOut, SigdcOut,...
     bOut,AOut,QOut] =...
-    blockDiag_gibbsLoop_DP_v2(Y,X_tmp, Z_tmp, d_tmp, C_tmp,...
+    full_gibbsLoop_DP_v2(Y,X_tmp, Z_tmp, d_tmp, C_tmp,...
     mudc_tmp, Sigdc_tmp,...
     x0_tmp, b_tmp, A_tmp, Q_tmp, s_star,...
     Q0_f, mux00_f, Sigx00_f, deltadc0, Taudc0,Psidc0,nudc0,...
-    mubA0_all_f, SigbA0_f, Psi0,nu0)
+    BA0_all_f, Lamb0_f, Psi0_f,nu0_f)
 
 % for development & debug...
 % Z_tmp = Z_fit(:,g-1);
@@ -44,10 +44,7 @@ outLab = setdiff(1:s_star, uniZsort_tmp);
 if(~isempty(outLab))
     
     x0Out =  mvnrnd(mux00_f(s_star), Sigx00_f(s_star))';
-    for k =1:s_star
-        latID_tmp = id2id(k, p);
-        QOut(latID_tmp,latID_tmp) = iwishrnd(Psi0,nu0);
-    end
+    QOut = iwishrnd(Psi0_f(s_star), nu0_f(s_star));
     
     invQ0 = inv(sparse(Q0_f(s_star)));
     R = chol(invQ0,'lower');
@@ -96,7 +93,6 @@ if(sum(isnan(muXvec)) ~= 0)
     [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp2(:),1e-6,1000);
 end
 
-
 % use Cholesky decomposition to sample efficiently
 R = chol(-hess_tmp,'lower'); % sparse
 z = randn(length(muXvec), 1) + R'*muXvec;
@@ -137,8 +133,6 @@ for i = 1:N
 end
 
 
-
-
 % (4) update mudc_fit & Sigdc_fit
 dOut_new = zeros(N, s_star);
 COut_new = zeros(N, p*s_star);
@@ -155,68 +149,42 @@ for l = uniZsort_tmp(:)'
     nudc = sum(Z_tmp == l) + nudc0;
     SigdcOut(:,:,l) = iwishrnd(Psidc,nudc);
     
-    % dc_samp = mvnrnd(mudcOut(:,l), SigdcOut(:,:,l), N);
-    % dOut_new(:,l) = dc_samp(:,1);
-    % dOut_new(Z_tmp == l, l) = dOut(Z_tmp == l, l);
-    %
-    % COut_new(:,id2id(l,p)) = dc_samp(:,2:end);
-    % COut_new(Z_tmp == l, id2id(l,p)) = COut(Z_tmp == l, id2id(l,p));
-    
-end
-
-
-for l = uniZsort_tmp(:)'
     dc_samp = mvnrnd(mudcOut(:,l), SigdcOut(:,:,l), N);
     dOut_new(:,l) = dc_samp(:,1);
     dOut_new(Z_tmp == l, l) = dOut(Z_tmp == l, l);
     
     COut_new(:,id2id(l,p)) = dc_samp(:,2:end);
     COut_new(Z_tmp == l, id2id(l,p)) = COut(Z_tmp == l, id2id(l,p));
+    
 end
-
-
 
 dOut = dOut_new;
 COut = COut_new;
 
-% (4) update b_fit & A_fit
-SigbA0 = SigbA0_f(nClus_tmp);
-mubA0_all = mubA0_all_f(s_star);
-for l = uniZsort_tmp(:)'
-    
-    latentId = id2id(l,p);
-    mubA0 = mubA0_all(latentId, [1; latID+1]);
-    mubA0 = mubA0(:);
-    
-    Xpost_tmp = XOut(latentId, 2:T);
-    Xpost_tmp2 = Xpost_tmp(:);
-    
-    XbA_tmp = kron([ones(1,T-1); XOut(latID, 1:(T-1))]', eye(p));
-    invSigbA_tmp = sparse(inv(SigbA0) +...
-        XbA_tmp'*kron(eye(T-1), inv(Q_tmp(latentId,latentId)))*XbA_tmp);
-    
-    mubA_tmp = invSigbA_tmp\(SigbA0\mubA0 +...
-        XbA_tmp'*kron(eye(T-1), inv(Q_tmp(latentId,latentId)))*Xpost_tmp2);
-    
-    
-    R = chol(invSigbA_tmp,'lower');
-    z = randn(length(mubA_tmp), 1) + R'*mubA_tmp;
-    bAtmp = reshape(R'\z, [], 1+nClus_tmp*p);
-    
-    bOut(latentId) = bAtmp(:,1);
-    AOut(latentId, latID) = bAtmp(:,2:end);
-end
 
-% (5) update Q
-for l = uniZsort_tmp(:)'
-    latentId = id2id(l,p);
-    mux = AOut(latentId, latID)*XOut(latID, 1:(T-1)) + bOut(latentId);
-    xq = XOut(latentId, 2:T) -mux;
-    
-    PsiQ = Psi0 + xq*xq';
-    nuQ = T-1 + nu0;
-    QOut(latentId,latentId) = iwishrnd(PsiQ,nuQ);
-end
+
+% (4)update Q
+Y_BA = XOut(latID,2:T)';
+X_BA = [ones(T-1,1) XOut(latID,1:(T-1))'];
+Lamb0 = Lamb0_f(nClus_tmp);
+BA0_all = BA0_all_f(s_star);
+
+BA0 = BA0_all([1; latID+1],latID);
+Psi0 = Psi0_f(nClus_tmp);
+nu0 = nu0_f(nClus_tmp);
+
+BAn = (X_BA'*X_BA + Lamb0)\(X_BA'*Y_BA + Lamb0*BA0);
+PsiQ = Psi0 + (Y_BA - X_BA*BAn)'*(Y_BA - X_BA*BAn) +...
+    (BAn - BA0)'*Lamb0*(BAn - BA0);
+nuQ = T-1 + nu0;
+QOut(latID,latID) = iwishrnd(PsiQ,nuQ);
+
+% (5) update b_fit & A_fit
+Lambn = X_BA'*X_BA + Lamb0;
+BAvec = mvnrnd(BAn(:), kron(QOut(latID,latID), inv(Lambn)))';
+BAsamp = reshape(BAvec,[], nClus_tmp*p)';
+bOut(latID) = BAsamp(:,1);
+AOut(latID, latID) = BAsamp(:,2:end);
 
 % labels without obs.: generate things by prior (remain XOut)
 if(~isempty(outLab))

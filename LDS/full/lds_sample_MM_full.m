@@ -1,5 +1,8 @@
+addpath(genpath('C:\Users\gaw19004\Documents\GitHub\state-space-clustering'));
+% addpath(genpath('D:\github\state-space-clustering'));
+
 %% simulation
-rng(123)
+rng(1)
 n = 10;
 nClus = 3;
 N = n*nClus;
@@ -7,33 +10,37 @@ p = 2;
 T = 1000;
 
 Lab = repelem(1:nClus, n);
+pLab = repelem(1:nClus, p);
 
-d = randn(n*nClus,1)/5;
+d = randn(n*nClus,1)*0;
 C_trans = zeros(n*nClus, p*nClus);
 for k = 1:length(Lab)
-    C_trans(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = sum(Lab(1:k)==Lab(k))/sum(Lab==Lab(k));
+    C_trans(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = sum(Lab(1:k)==Lab(k))/sum(Lab==Lab(k))+1;
 end
 
 X = zeros(p*nClus, T);
-x0 = [1.2 1.2 0.5 0.5 1 1]*10*0;
+x0 = zeros(p*nClus, 1);
 Q0 = eye(nClus*p)*1e-2;
 X(:,1) = mvnrnd(x0, Q0)';
 
-b1 = ones(p,1)*0.01;
+b1 = ones(p,1)*0;
 b2 = ones(p,1)*0;
-b3 = ones(p,1)*-0.03;
+b3 = ones(p,1)*0;
 b = [b1;b2;b3];
-b = b*0;
 
 Q1 = 1e-3*eye(p);
 Q2 = 1e-3*eye(p);
 Q3 = 1e-3*eye(p);
 Q = blkdiag(Q1, Q2, Q3);
 
-% Generate X offline (A unspecified)
-for i=1:size(Q,1)
-    k = ceil(rand()*20)+10;
-    X(i,:) = interp1(linspace(0,1,k),randn(k,1),linspace(0,1,T),'spline');
+% 
+A = eye(size(Q,1));
+while any(imag(eig(A))==0)
+    A= randn(size(Q));
+    A = A-diag(diag(A));
+	A(squareform(pdist(pLab'))==0)=0;
+    A = A./sqrt(sum((A-diag(diag(A))).^2,2))*0.1;
+    A = A+eye(size(Q,1))*0.92;
 end
 
 % let's generate lambda
@@ -41,25 +48,16 @@ logLam = zeros(n*nClus, T);
 logLam(:,1) = d + C_trans*X(:,1);
 
 for t=2:T
+    X(:, t) = mvnrnd(A*X(:, t-1) + b, Q)';
     logLam(:, t) = d + C_trans*X(:,t);
 end
 
-figure(1)
 Y = poissrnd(exp(logLam));
 clusterPlot(Y, Lab)
 
-figure(2)
-subplot(1,3,1)
-plot(X(1:p,:)')
-subplot(1,3,2)
-plot(X(p+1:2*p,:)')
-subplot(1,3,3)
-plot(X(2*p+1:3*p,:)')
-
-
-%% MCMC setting
-rng(3)
-ng = 100;
+%%
+rng(2)
+ng = 30;
 kMM = 3;
 
 % pre-allocation
@@ -77,7 +75,6 @@ X_fit = zeros(kMM*p, T, ng);
 
 % priors
 delta0 = ones(1, kMM);
-
 Q0 = eye(kMM*p)*1e-2;
 
 mux00 = zeros(kMM*p, 1);
@@ -89,14 +86,14 @@ Taudc0 = eye(p+1);
 Psidc0 = eye(p+1)*1e-4;
 nudc0 = p+1+2;
 
-mubA0_mat = [zeros(kMM*p,1) eye(kMM*p)];
-SigbA0_f = @(nClus) sparse(eye(p*(1+p*nClus))*0.25);
+BA0_all = [zeros(kMM*p,1) eye(kMM*p)]';
+Lamb0_f = @(nClus) eye(nClus*p + 1);
+Psi0_f = @(nClus) eye(nClus*p)*1e-4;
+nu0_f = @(nClus) nClus*p+2;
 
-Psi0 = eye(p)*1e-4;
-nu0 = p+2;
 
 % initials
-Z_fit(:,1) = ones(N,1);
+Z_fit(:,1) = ones(1, N);
 % Z_fit(:,1) = randsample(kMM, N, true);
 RHO_fit(:,1) = ones(kMM,1)/kMM;
 
@@ -148,8 +145,9 @@ if(~isempty(outLab))
     end
 end
 
-% assume Sigdc is known?
-% Sigdc_fit = repmat(eye(p+1)*1e-3,1,1,kMM,ng);
+
+% check
+% Sigdc_fit = repmat(eye(p+1)*1e-4,1,1,kMM,ng);
 
 %% MCMC
 for g = 2:ng
@@ -166,9 +164,7 @@ for g = 2:ng
     
     logp_tmp = repmat(log(RHO_fit(:,g-1)'), N, 1) + LLHD;
     clus_tmp = mnrnd(ones(N, 1), softmax(logp_tmp')');
-    Z_fit(:,g) = Z_fit(:,g-1);
-    [Z_fit(~isnan(clus_tmp(:,1)),g), ~] = find(clus_tmp(~isnan(clus_tmp(:,1)),:)');
-%     [Z_fit(:,g), ~] = find(clus_tmp');
+    [Z_fit(:,g), ~] = find(clus_tmp');
     
     % (2) update RHO_fit
     nClus = histc(Z_fit(:,g),1:kMM);
@@ -178,12 +174,13 @@ for g = 2:ng
     [X_fit(:,:,g),x0_fit(:,g),d_fit(:,:,g),C_fit(:,:,g),...
     mudc_fit(:,:,g), Sigdc_fit(:,:,:,g),...
     b_fit(:,g),A_fit(:,:,g),Q_fit(:,:,g)] =...
-    blockDiag_gibbsLoop_MM_v2(Y,X_fit(:,:,g-1), Z_fit(:,g), d_fit(:,:,g-1), C_fit(:,:,g-1),... % cluster-invariant
+    full_gibbsLoop_MM_v2(Y,X_fit(:,:,g-1), Z_fit(:,g), d_fit(:,:,g-1), C_fit(:,:,g-1),... % cluster-invariant
     mudc_fit(:,:,g-1), Sigdc_fit(:,:,:,g-1),...
     x0_fit(:,g-1), b_fit(:,g-1), A_fit(:,:,g-1), Q_fit(:,:,g-1), kMM,... % cluster-related
     Q0, mux00, Sigx00, deltadc0, Taudc0,Psidc0,nudc0,...
-    mubA0_mat, SigbA0_f, Psi0,nu0);
+    BA0_all, Lamb0_f, Psi0_f,nu0_f);
     
-    figure(3)
+    figure(1)
     clusterPlot(Y, Z_fit(:,g)')
 end
+

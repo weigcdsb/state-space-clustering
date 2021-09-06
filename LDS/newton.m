@@ -11,6 +11,10 @@ for k = 1:MaxIter
     dx = -dfdx\fx;
     xx(:,k+1) = xx(:,k)+dx;
     fx = feval(f,xx(:,k+1));
+    
+    if(sum(isnan(xx(:,k+1)))>0)
+        break;
+    end
 %     disp(norm(fx))
     if(norm(fx)<TolFun || norm(dx) < TolX)
         break;

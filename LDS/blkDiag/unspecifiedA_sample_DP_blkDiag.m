@@ -1,6 +1,6 @@
 %% simulation
 rng(123)
-n = 50;
+n = 10;
 nClus = 3;
 N = n*nClus;
 p = 2;
@@ -48,19 +48,10 @@ figure(1)
 Y = poissrnd(exp(logLam));
 clusterPlot(Y, Lab)
 
-figure(2)
-subplot(1,3,1)
-plot(X(1:p,:)')
-subplot(1,3,2)
-plot(X(p+1:2*p,:)')
-subplot(1,3,3)
-plot(X(2*p+1:3*p,:)')
-
-
 %% MCMC setting
 rng(3)
 alphaDP = 1;
-ng = 100;
+ng = 50;
 
 % pre-allocation
 Z_fit = zeros(N, ng);
@@ -74,22 +65,20 @@ Sigx00_f = @(nClus) eye(nClus*p);
 deltadc0 = zeros(p+1,1);
 Taudc0 = eye(p+1);
 
-Psidc0 = eye(p+1)*1e-4;
+Psidc0 = eye(p+1)*1e-2;
 nudc0 = p+1+2;
 
-mubA0_all_f = @(nClus) sparse([zeros(nClus*p,1) eye(nClus*p)]);
-SigbA0_f = @(nClus) sparse(eye(p*(1+p*nClus))*0.25);
-
+BA0_all_f = @(nClus) [zeros(nClus*p,1) eye(nClus*p)]';
+Lamb0_f = @(nClus) sparse(eye(nClus*p + 1));
 Psi0 = eye(p)*1e-4;
 nu0 = p+2;
 
 % initials
 % single cluster
-Z_fit(:,1) = ones(N, 1);
+% Z_fit(:,1) = ones(N, 1);
 % N cluster
-% Z_fit(:,1) = 1:N;
-%
-% Z_fit(:,1) = randsample(10, N, true);
+Z_fit(:,1) = 1:N;
+
 
 % reorder Y by labels
 clusMax = max(Z_fit(:,1));
@@ -155,13 +144,13 @@ for g = 2:ng
     
     % (4) update THETA: model related parameters
     [X_fit{g},x0_fit{g},d_fit{g},C_fit{g},...
-    mudc_fit{g}, Sigdc_fit{g},...
-    b_fit{g},A_fit{g},Q_fit{g}] =...
-    blockDiag_gibbsLoop_DP_v2(Y,X_fit{g-1}, Z_fit(:,g-1), d_fit{g-1}, C_fit{g-1},...
-    mudc_fit{g-1}, Sigdc_fit{g-1},...
-    x0_fit{g-1}, b_fit{g-1}, A_fit{g-1}, Q_fit{g-1}, s_star,...
-    Q0_f, mux00_f, Sigx00_f, deltadc0, Taudc0,Psidc0,nudc0,...
-    mubA0_all_f, SigbA0_f, Psi0,nu0);
+        mudc_fit{g}, Sigdc_fit{g},...
+        b_fit{g},A_fit{g},Q_fit{g}] =...
+        blockDiag_gibbsLoop_DP_v2(Y,X_fit{g-1}, Z_fit(:,g-1), d_fit{g-1}, C_fit{g-1},...
+        mudc_fit{g-1}, Sigdc_fit{g-1},...
+        x0_fit{g-1}, b_fit{g-1}, A_fit{g-1}, Q_fit{g-1}, s_star,...
+        Q0_f, mux00_f, Sigx00_f, deltadc0, Taudc0,Psidc0,nudc0,...
+        BA0_all_f, Lamb0_f, Psi0,nu0);
     
     
     % (5) update Z
@@ -180,7 +169,7 @@ for g = 2:ng
     Z_fit(:,g) = Z_fit(:,g-1);
     [Z_fit(~isnan(clus_tmp(:,1)),g), ~] = find(clus_tmp(~isnan(clus_tmp(:,1)),:)');
     
-    figure(3)
+    figure(2)
     clusterPlot(Y, Z_fit(:,g)')
-    title("k = " + g)
+    
 end

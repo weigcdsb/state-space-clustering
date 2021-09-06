@@ -33,12 +33,12 @@ Q2 = 1e-3*eye(p);
 Q3 = 1e-3*eye(p);
 Q = blkdiag(Q1, Q2, Q3);
 
-% 
+%
 A = eye(size(Q,1));
 while any(imag(eig(A))==0)
     A= randn(size(Q));
     A = A-diag(diag(A));
-	A(squareform(pdist(pLab'))==0)=0;
+    A(squareform(pdist(pLab'))==0)=0;
     A = A./sqrt(sum((A-diag(diag(A))).^2,2))*0.1;
     A = A+eye(size(Q,1))*0.92;
 end
@@ -73,12 +73,11 @@ Sigx00_f = @(nClus) eye(nClus*p);
 deltadc0 = zeros(p+1,1);
 Taudc0 = eye(p+1);
 
-Psidc0 = eye(p+1)*1e-4;
+Psidc0 = eye(p+1)*1e-2;
 nudc0 = p+1+2;
 
-mubA0_all_f = @(nClus) sparse([zeros(nClus*p,1) eye(nClus*p)]);
-SigbA0_f = @(nClus) sparse(eye(p*(1+p*nClus))*0.25);
-
+BA0_all_f = @(nClus) [zeros(nClus*p,1) eye(nClus*p)]';
+Lamb0_f = @(nClus) sparse(eye(nClus*p + 1));
 Psi0 = eye(p)*1e-4;
 nu0 = p+2;
 
@@ -153,13 +152,13 @@ for g = 2:ng
     
     % (4) update THETA: model related parameters
     [X_fit{g},x0_fit{g},d_fit{g},C_fit{g},...
-    mudc_fit{g}, Sigdc_fit{g},...
-    b_fit{g},A_fit{g},Q_fit{g}] =...
-    blockDiag_gibbsLoop_DP_v2(Y,X_fit{g-1}, Z_fit(:,g-1), d_fit{g-1}, C_fit{g-1},...
-    mudc_fit{g-1}, Sigdc_fit{g-1},...
-    x0_fit{g-1}, b_fit{g-1}, A_fit{g-1}, Q_fit{g-1}, s_star,...
-    Q0_f, mux00_f, Sigx00_f, deltadc0, Taudc0,Psidc0,nudc0,...
-    mubA0_all_f, SigbA0_f, Psi0,nu0);
+        mudc_fit{g}, Sigdc_fit{g},...
+        b_fit{g},A_fit{g},Q_fit{g}] =...
+        blockDiag_gibbsLoop_DP_v2(Y,X_fit{g-1}, Z_fit(:,g-1), d_fit{g-1}, C_fit{g-1},...
+        mudc_fit{g-1}, Sigdc_fit{g-1},...
+        x0_fit{g-1}, b_fit{g-1}, A_fit{g-1}, Q_fit{g-1}, s_star,...
+        Q0_f, mux00_f, Sigx00_f, deltadc0, Taudc0,Psidc0,nudc0,...
+        BA0_all_f, Lamb0_f, Psi0,nu0);
     
     
     % (5) update Z
@@ -182,16 +181,6 @@ for g = 2:ng
     clusterPlot(Y, Z_fit(:,g)')
     
 end
-
-
-
-
-
-
-
-
-
-
 
 
 
