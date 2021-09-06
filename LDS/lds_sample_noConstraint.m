@@ -107,10 +107,8 @@ Taudc0 = eye(p+1);
 Psidc0 = eye(p+1)*1e-4;
 nudc0 = p+1+2;
 
-muBA0_mat = [zeros(nClus*p,1) eye(nClus*p)];
-muBA0 = muBA0_mat(:);
-SigBA0 = sparse(eye(length(muBA0))*0.1);
-
+BA0 = [zeros(nClus*p,1) eye(nClus*p)]';
+Lamb0 = eye(nClus*p + 1);
 Psi0 = eye(nClus*p)*1e-4;
 nu0 = nClus*p+2;
 
@@ -246,34 +244,22 @@ for g = 2:ng
 %     mudc_fit(:,:,g)
 %     Sigdc_fit(:,:,:,g)
     
+    % (4)update Q
+    Y_BA = X_fit(:,2:T,g)';
+    X_BA = [ones(T-1,1) X_fit(:,1:(T-1),g)'];
+    
+    BAn = (X_BA'*X_BA + Lamb0)\(X_BA'*Y_BA + Lamb0*BA0);
+    PsiQ = Psi0 + (Y_BA - X_BA*BAn)'*(Y_BA - X_BA*BAn) +...
+        (BAn - BA0)'*Lamb0*(BAn - BA0);
+    nuQ = T-1 + nu0;
+    Q_fit(:,:,g) = iwishrnd(PsiQ,nuQ);
+    
     % (5) update b_fit & A_fit
-    Z_tmp = X_fit(:,2:T,g);
-    Z_tmp2 = Z_tmp(:);
-    
-    G_tmp = sparse(kron([ones(1,T-1); X_fit(:, 1:(T-1), g)]', eye(nClus*p)));
-    invSigBA_tmp = sparse(inv(SigBA0) + G_tmp'*kron(eye(T-1), inv(Q_fit(:,:,g-1)))*G_tmp);
-    
-    muBA_tmp = invSigBA_tmp\(SigBA0\muBA0 +...
-        G_tmp'*kron(eye(T-1), inv(Q_fit(:,:,g-1)))*Z_tmp2);
-    
-    % use Cholesky decomposition
-    R = chol(invSigBA_tmp, 'lower');
-    z = randn(length(muBA_tmp), 1) + R'*muBA_tmp;
-    BAsamp = reshape(R'\z, nClus*p, []);
+    Lambn = X_BA'*X_BA + Lamb0;
+    BAvec = mvnrnd(BAn(:), kron(Q_fit(:,:,g), inv(Lambn)))';
+    BAsamp = reshape(BAvec,[], nClus*p)';
     b_fit(:,g) = BAsamp(:,1);
     A_fit(:,:,g) = BAsamp(:,2:end);
-    
-    %     [b_fit(:,g) b]
-    %     imagesc(abs(A_fit(:,:,g) - A))
-    %     colorbar()
-    
-    % (6) update Q_fit
-    mux = A_fit(:,:,g)*X_fit(:,1:(T-1),g) + b_fit(:,g);
-    xq = X_fit(:,2:T,g) - mux;
-    
-    PsiQ = Psi0 + xq*xq';
-    nuQ = T-1+nu0;
-    Q_fit(:,:,g) = iwishrnd(PsiQ,nuQ);
 end
 
 

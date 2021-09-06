@@ -1,7 +1,6 @@
 addpath(genpath('C:\Users\gaw19004\Documents\GitHub\state-space-clustering'));
 % addpath(genpath('D:\github\state-space-clustering'));
 
-
 %% simulation
 rng(1)
 n = 40;
@@ -55,11 +54,11 @@ end
 
 Y = poissrnd(exp(logLam));
 clusterPlot(Y, Lab)
-ng = 1000;
-% idx = 1000:ng;
+
 
 %% fitting: MCMC
 rng(3)
+ng = 100;
 X_fit = zeros(nClus*p, T, ng);
 x0_fit = zeros(nClus*p, ng);
 d_fit = repmat(d,1,ng); % true
@@ -67,28 +66,22 @@ C_fit = repmat([sum(C_trans(:,1:p:end), 2) sum(C_trans(:,2:p:end), 2)],...
     1,1,ng); % true
 A_fit = zeros(nClus*p, nClus*p, ng);
 b_fit = zeros(nClus*p, ng);
-
-% A_fit = repmat(A,1,1,ng); % true
-% b_fit = repmat(b,1,ng); % true
-
-Q_fit = repmat(Q,1,1,ng); % true
-% Q_fit = zeros(nClus*p, nClus*p, ng);
+Q_fit = zeros(nClus*p, nClus*p, ng);
 
 
 % priors
 Q0 = eye(nClus*p)*1e-2;
 mux00 = zeros(nClus*p, 1);
 Sigx00 = eye(nClus*p);
-muBA0_mat = [zeros(nClus*p,1) eye(nClus*p)];
-muBA0 = muBA0_mat(:);
-SigBA0 = sparse(eye(length(muBA0))*0.1);
-% Psi0 = eye(p)*1e-4;
-% nu0 = p+2;
+BA0_all = [zeros(nClus*p,1) eye(nClus*p)]';
+Lamb0 = eye(nClus*p + 1);
+Psi0 = eye(p)*1e-4;
+nu0 = p+2;
 
 % initials
 % initial for b_fit: 0
 A_fit(:,:,1) = eye(nClus*p);
-% Q_fit(:,:,1) = eye(nClus*p)*1e-4;
+Q_fit(:,:,1) = eye(nClus*p)*1e-4;
 
 C_trans_tmp = zeros(N, p*nClus);
 for k = 1:length(Lab)
@@ -143,34 +136,27 @@ for g = 2:ng
     mux0 = Sigx0*(Sigx00\mux00 + Q0\X_fit(:,1,g));
     x0_fit(:,g) = mvnrnd(mux0, Sigx0)';
     
-    % (4) update b_fit & A_fit
-    Z_tmp = X_fit(:,2:T,g);
-    Z_tmp2 = Z_tmp(:);
-    
-    G_tmp = sparse(kron([ones(1,T-1); X_fit(:, 1:(T-1), g)]', eye(nClus*p)));
-    invSigBA_tmp = sparse(inv(SigBA0) + G_tmp'*kron(eye(T-1), inv(Q_fit(:,:,g-1)))*G_tmp);
-    
-    muBA_tmp = invSigBA_tmp\(SigBA0\muBA0 +...
-        G_tmp'*kron(eye(T-1), inv(Q_fit(:,:,g-1)))*Z_tmp2);
-    
-    % use Cholesky decomposition
-    R = chol(invSigBA_tmp, 'lower');
-    z = randn(length(muBA_tmp), 1) + R'*muBA_tmp;
-    BAsamp = reshape(R'\z, nClus*p, []);
-    b_fit(:,g) = BAsamp(:,1);
-    A_fit(:,:,g) = BAsamp(:,2:end);
-    
-    % (5) update Q_fit
-%     for l = unique(Lab)
-%         latentId = ((l-1)*p+1):(l*p);
-%         mux = A_fit(latentId,:,g)*X_fit(:,1:(T-1),g) +...
-%             repmat(b_fit(latentId, g), 1, T-1);
-%         xq = X_fit(latentId,2:T,g) - mux;
-%         
-%         PsiQ = Psi0 + xq*xq';
-%         nuQ = T-1 + nu0;
-%         Q_fit(latentId,latentId,g) = iwishrnd(PsiQ,nuQ);
-%     end
+    for l = unique(Lab)
+        latentId = id2id(l,p);
+        
+        % (4)update Q
+        Y_BA = X_fit(latentId,2:T,g)';
+        X_BA = [ones(T-1,1) X_fit(:,1:(T-1),g)'];
+        
+        BA0 = BA0_all(:,latentId);
+        BAn = (X_BA'*X_BA + Lamb0)\(X_BA'*Y_BA + Lamb0*BA0);
+        PsiQ = Psi0 + (Y_BA - X_BA*BAn)'*(Y_BA - X_BA*BAn) +...
+            (BAn - BA0)'*Lamb0*(BAn - BA0);
+        nuQ = T-1 + nu0;
+        Q_fit(latentId,latentId,g) = iwishrnd(PsiQ,nuQ);
+        
+        % (5) update b_fit & A_fit
+        Lambn = X_BA'*X_BA + Lamb0;
+        BAvec = mvnrnd(BAn(:), kron(Q_fit(latentId,latentId,g), inv(Lambn)))';
+        BAsamp = reshape(BAvec,[], p)';
+        b_fit(latentId,g) = BAsamp(:,1);
+        A_fit(latentId,:,g) = BAsamp(:,2:end);
+    end
     
     b_fit_norm(g) = norm(b_fit(:,g));
     A_fit_norm(g) = norm(A_fit(:,:,g));
@@ -193,9 +179,9 @@ title('norm of b')
 subplot(1,2,2)
 plot(A_fit_fro(1:ng))
 title('Frobenius norm of A')
-% idx = 800:1000;
+% idx = 50:100;
 % idx = 500:1000;
-idx = 5000:ng;
+% idx = 5000:ng;
 
 figure
 subplot(3,2,1)

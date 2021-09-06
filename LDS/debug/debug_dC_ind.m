@@ -1,7 +1,6 @@
 addpath(genpath('C:\Users\gaw19004\Documents\GitHub\state-space-clustering'));
 % addpath(genpath('D:\github\state-space-clustering'));
 
-
 %% simulation
 rng(1)
 n = 10;

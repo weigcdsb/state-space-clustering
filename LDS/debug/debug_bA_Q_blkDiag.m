@@ -65,40 +65,48 @@ x0_fit = repmat(x0,1,ng); %true
 d_fit = repmat(d,1,ng); % true
 C_fit = repmat([sum(C_trans(:,1:p:end), 2) sum(C_trans(:,2:p:end), 2)],...
     1,1,ng); % true
+
+% need to estimate
 A_fit = zeros(nClus*p, nClus*p, ng);
 b_fit = zeros(nClus*p, ng);
-Q_fit = repmat(Q,1,1,ng); % true
+Q_fit = zeros(nClus*p, nClus*p, ng);
 
 % priors
-mubA0_mat = [zeros(nClus*p,1) eye(nClus*p)];
-SigbA0 = eye(p*(1+p*nClus));
+BA0_all = [zeros(nClus*p,1) eye(nClus*p)]';
+Lamb0 = eye(nClus*p + 1);
+Psi0 = eye(p)*1e-4;
+nu0 = p+2;
 
 % initials
 % initial for b_fit: 0
 A_fit(:,:,1) = eye(nClus*p);
+Q_fit(:,:,1) = eye(nClus*p)*1e-4;
 
 for g = 2:ng
     
     disp(g)
-    % (4) update b_fit & A_fit
-    for l = unique(Lab)
-        
-        latentId = ((l-1)*p+1):(l*p);
-        mubA0 = mubA0_mat(latentId, :);
-        mubA0 = mubA0(:);
-        Z_tmp = X_fit(latentId,2:T,g);
-        Z_tmp2 = Z_tmp(:);
-        
-        X_tmp = kron([ones(1,T-1); X_fit(:, 1:(T-1), g)]', eye(p));
-        SigbA_tmp = inv(inv(SigbA0) + X_tmp'*kron(eye(T-1), inv(Q_fit(latentId,latentId,g-1)))*X_tmp);
-        SigbA_tmp = (SigbA_tmp + SigbA_tmp')/2;
-        mubA_tmp = SigbA_tmp*(inv(SigbA0)*mubA0 +...
-            X_tmp'*kron(eye(T-1), inv(Q_fit(latentId,latentId,g-1)))*Z_tmp2);
-        bAtmp = reshape(mvnrnd(mubA_tmp, SigbA_tmp)', [], 1+nClus*p);
-        b_fit(latentId,g) = bAtmp(:,1);
-        A_fit(latentId,:,g) = bAtmp(:,2:end);
-    end
     
+    for l = unique(Lab)
+        latentId = id2id(l,p);
+        
+        % (4)update Q
+        Y_BA = X_fit(latentId,2:T,g)';
+        X_BA = [ones(T-1,1) X_fit(:,1:(T-1),g)'];
+        
+        BA0 = BA0_all(:,latentId);
+        BAn = (X_BA'*X_BA + Lamb0)\(X_BA'*Y_BA + Lamb0*BA0);
+        PsiQ = Psi0 + (Y_BA - X_BA*BAn)'*(Y_BA - X_BA*BAn) +...
+            (BAn - BA0)'*Lamb0*(BAn - BA0);
+        nuQ = T-1 + nu0;
+        Q_fit(latentId,latentId,g) = iwishrnd(PsiQ,nuQ);
+        
+        % (5) update b_fit & A_fit
+        Lambn = X_BA'*X_BA + Lamb0;
+        BAvec = mvnrnd(BAn(:), kron(Q_fit(latentId,latentId,g), inv(Lambn)))';
+        BAsamp = reshape(BAvec,[], p)';
+        b_fit(latentId,g) = BAsamp(:,1);
+        A_fit(latentId,:,g) = BAsamp(:,2:end);
+    end
 end
 
 figure
