@@ -200,61 +200,24 @@ The conditional priors for these parameters:
 	, where \(\bm{\mu}_{\mathbf{x}_{00}} = \mathbf{0}_{\text{Jp}}\) and \(\mathbf{\Sigma}_{\mathbf{x}_{00}} = \mathbf{I}_{\text{Jp}}\)
 	\item
 	Linear mapping (loading) for latent vectors
-	\(\left\{ d_{i} \right\}_{i = 1}^{N}\) and
-	\(\left\{ \mathbf{c}_{i} \right\}_{i = 1}^{N}\):
-	\[\left( d_{i},\mathbf{c}'_{i} \right)' \sim N(\bm{\mu}_{\text{dc}}^{\left( z_{i} \right)},\mathbf{\Sigma}_{\text{dc}}^{(z_{i})})\]
+	
+	\textcolor{red}{\textbf{I just ignore that it is just multivariate GLM problem. Do it later...}}\\
+	
 	\item
 	Mean and covariance for loading in each cluster
-	\(\left\{ \bm{\mu}_{\text{dc}}^{(j)} \right\}_{j}\) and
-	\(\left\{ \mathbf{\Sigma}_{\text{dc}}^{(j)} \right\}_{j}\):
-	\[\bm{\mu}_{\text{dc}}^{(j)} \sim N(\mathbf{\delta}_{dc0},\mathbf{T}_{dc0})\]
-	, where \(\bm{\delta}_{dc0} = \mathbf{0}_{p + 1}\) and
-	\(\mathbf{T}_{dc0} = \mathbf{I}_{p + 1}\)
 	
-	\[\mathbf{\Sigma}_{\text{dc}}^{(j)} \sim W^{- 1}\left( \Psi_{dc0},\nu_{dc0} \right)\]
-	, where \(\nu_{dc0} = p + 1 + 2\) and
-	\(\Psi_{dc0} = \mathbf{I}_{p + 1} \times 10^{-4}\)
+	\textcolor{red}{\textbf{MV-GLM...}}\\
+	
 	\item
 	Linear dynamics for latent vectors \(\mathbf{A}\) and \(\mathbf{b}\): if the number of cluster is \(J\)
-	\begin{enumerate}
-		\def\labelenumi{\alph{enumi}.}
-		\item
-		No constraints on \(\mathbf{Q}\): denote \(\widetilde{\mathbf{A}} = vec(\mathbf{A})\)
-		\[\left( \mathbf{b}',\widetilde{\mathbf{A}} \right)' \sim N\left( \bm{\mu}_{BA_{0}},\mathbf{\Sigma}_{BA_{0}} \right)\]
-		, where \(\bm{\mu}_{BA_{0}} = \left( \mathbf{0}_{\text{Jp}}',vec\left( \mathbf{I}_{\text{Jp}} \right)' \right)'\)
-		and \(\mathbf{\Sigma}_{BA_{0}} = 0.25\mathbf{I}_{Jp(1 + Jp)}\)
-		\item
-		Assume \(\mathbf{Q}\) is block-diagonal: denote
-		\({\widetilde{\mathbf{A}}}_{j} = vec\left( \mathbf{A}_{j} \right)\)
-		\[\left( \mathbf{b}'_{j}, {\widetilde{\mathbf{A}}}'_{j} \right)' \sim N\left( \bm{\mu}_{bA_{0}},\mathbf{\Sigma}_{bA_{0}} \right)\]
-		, where \(\bm{\mu}_{bA_{0}} = \left( \mathbf{0}'_{p + (j - 1)p^{2}}, vec\left( \mathbf{I}_{p} \right)', \mathbf{0}_{(J - j)p^{2}}' \right)'\)
-		and \(\mathbf{\Sigma}_{bA_{0}} = 0.25\mathbf{I}_{p(1 + pJ)}\)
-		\item
-		Assume \(\mathbf{Q}\) is diagonal:
-		\[\left( b_{k},\mathbf{a}'_{k} \right)' \sim N\left( \mathbf{\mu}_{ba_{k}0},\mathbf{\Sigma}_{ba0} \right)\]
-		, where \(\mathbf{\mu}_{ba_{k}0} = \left( 0,\mathbf{e}'_{k} \right)'\) and \(\mathbf{\Sigma}_{ba0} = 0.25\mathbf{I}_{Jp + 1}\)	
-	\end{enumerate}
+	
+	\textcolor{red}{\textbf{MV-GLM...}}\\
+	
 	\item
 	Process noise \(\mathbf{Q}\): if the number of cluster is \(J\)
-	\begin{enumerate}
-		\def\labelenumi{\alph{enumi}.}
-		\item
-		No constraints on \(\mathbf{Q}\):
-		\[\mathbf{Q} \sim W^{- 1}(\Psi_{\mathbf{Q}_{0}},\nu_{\mathbf{Q}_{0}})\]
-		, where \(\nu_{\mathbf{Q}_{0}} = Jp + 2\) and
-		\(\Psi_{\mathbf{Q}_{0}} = \mathbf{I}_{\text{Jp}} \times 10^{- 4}\). (To make the mean of \(\mathbf{Q}\) loosely centered around
-		\(\mathbf{I}_{Jp} \times 10^{- 4}\))
-		\item
-		Assume \(\mathbf{Q}\) is block-diagonal:
-		\[\mathbf{Q}^{(j)} \sim W^{- 1}\left( \Psi_{0},\nu_{0} \right)\]
-		, where \(\nu_{0} = p + 2\) and
-		\(\Psi_{0} = \mathbf{I}_{p} \times 10^{- 4}\). (To make the mean of \(\mathbf{Q}^{(j)}\) loosely centered around
-		\(\mathbf{I}_{p} \times 10^{- 4}\))
-		\item
-		Assume \(\mathbf{Q}\) is diagonal:
-		\[q_{k} \sim IG(\frac{\nu_{0}}{2},\frac{\nu_{0}\sigma_{0}^{2}}{2})\]
-		, where \(\nu_{0} = 4\) and \(\sigma_{0}^{2} = 10^{- 4}\).
-	\end{enumerate}
+	
+	\textcolor{red}{\textbf{MV-GLM...}}\\
+	
 \end{enumerate}
 
 \subsection{MCMC (Gibbs Sampler)}
@@ -320,109 +283,25 @@ By conjugacy, \(\mathbf{x}_{0}|\mathbf{x}_{1},\ \mathbf{Q}_{0}\ldots \sim N(\bm{
 \subsubsection{Update \(\left\{ d_{i} \right\}_{i = 1}^{N}\) and
 	\(\left\{ \mathbf{c}_{i} \right\}_{i = 1}^{N}\)}
 To update efficiently, use Laplace approximation again. Denote
-\(\left( d_{i},\mathbf{c}'_{i} \right)' = \bm{\zeta}_{i} \in \mathbb{R}^{p + 1}\)
-and \(\left( 1,{\mathbf{x}_{t}'^{\left( z_{i} \right)}} \right) = {{\widetilde{\mathbf{x}}}_{t}'^{\left( z_{i} \right)}}\).
-\begin{align*}
-	P\left( \bm{\zeta}_{i} \middle| \mathbf{y}_{i},\ \left\{ \mathbf{x}_{t}^{\left( z_{i} \right)} \right\}_{t = 1}^{T},\ldots \right) &= \exp{f\left( \bm{\zeta}_{i} \right)} \approx N\left( \bm{\zeta}_{i}|\bm{\mu}_{\bm{\zeta}_{i}},\mathbf{\Sigma}_{\bm{\zeta}_{i}}\  \right)\\
-	\frac{\partial f}{\partial\bm{\zeta}_{i}} &= \frac{\partial l}{\partial\bm{\zeta}_{i}} - {\mathbf{\Sigma}_{\text{dc}}^{\left( z_{i} \right)}}^{- 1}\left( \bm{\zeta}_{i} - \bm{\mu}_{\text{dc}}^{(z_{i})} \right) = \left\lbrack \sum_{t = 1}^{T}{\widetilde{\mathbf{x}}}_{t}^{\left( z_{i} \right)}\left( y_{\text{it}} - \lambda_{\text{it}} \right) \right\rbrack - {\mathbf{\Sigma}_{\text{dc}}^{\left( z_{i} \right)}}^{- 1}\left( \bm{\zeta}_{i} - \bm{\mu}_{\text{dc}}^{(z_{i})} \right)\\
-	\frac{\partial^{2}f}{\partial\bm{\zeta}_{i}\partial\bm{\zeta}'_{i}} &= \frac{\partial^{2}l}{\partial\bm{\zeta}_{i}\partial\bm{\zeta}'_{i}} - {\mathbf{\Sigma}_{\text{dc}}^{\left( z_{i} \right)}}^{- 1} = -\left\lbrack \sum_{t = 1}^{T}{\lambda_{\text{it}}{\widetilde{\mathbf{x}}}_{t}^{\left( z_{i} \right)}{{\widetilde{\mathbf{x}}}_{t}'^{\left( z_{i} \right)}}} \right\rbrack - {\mathbf{\Sigma}_{\text{dc}}^{\left( z_{i} \right)}}^{- 1}
-\end{align*}
-, where \(l\) is Poisson log-likelihood. Then use Newton-Raphson to find
-\(\bm{\mu}_{\bm{\zeta}_{i}} = \text{argmax}_{\bm{\zeta}_{i}}\left( f\left( \bm{\zeta}_{i} \right) \right)\)
-and \(\mathbf{\Sigma}_{\bm{\zeta}_{i}} = -\left\lbrack \frac{\partial^{2}f}{\partial\bm{\zeta}_{i}\partial\bm{\zeta}'_{i}}\left.  \right|_{\bm{\zeta}_{i} = \bm{\mu}_{\bm{\zeta}_{i}}} \right\rbrack^{-1}\). If initial as the previous step fits fails, simply use prior mean of \(\bm{\mu}_{\bm{\zeta}_{i}}\), i.e. \(\bm{\delta}_{dc0}\).
+
+\textcolor{red}{\textbf{MV-GLM...}}\\
 
 \subsubsection{Update \(\left\{ \mathbf{\mu}_{\text{dc}}^{(j)} \right\}_{j}\) and \(\left\{ \mathbf{\Sigma}_{\text{dc}}^{(j)} \right\}_{j}\)} \label{loading prior}
-As above, denote \(\left( d_{i},\mathbf{c}'_{i} \right)' = \bm{\zeta}_{i} \in \mathbb{R}^{p + 1}\).
-\begin{enumerate}
-	\def\labelenumi{(\arabic{enumi})}
-	\item
-	Mean \(\left\{ \bm{\mu}_{\text{dc}}^{(j)} \right\}_{j}\): by
-	conjugacy, \(\bm{\mu}_{\text{dc}}^{(j)} \sim N\left( \bm{\delta}_{\text{dc}},\mathbf{T}_{\text{dc}}\  \right)\)
-	\begin{align*}
-		\mathbf{T}_{\text{dc}}^{- 1} &= \left( \mathbf{T}_{dc0}^{- 1} + n_{j}{\mathbf{\Sigma}_{\text{dc}}^{(j)}}^{- 1} \right)^{- 1}\\
-		\bm{\delta}_{\text{dc}} &= \mathbf{T}_{\text{dc}}\left( \mathbf{T}_{dc0}^{- 1}\bm{\delta}_{dc0} + {\mathbf{\Sigma}_{\text{dc}}^{(j)}}^{- 1}\sum_{i:z_{i} = j}^{}\bm{\zeta}_{i} \right)
-	\end{align*}
-	\item
-	Covariance \(\left\{ \mathbf{\Sigma}_{\text{dc}}^{(j)} \right\}_{j}\): by conjugacy, \(\mathbf{\Sigma}_{\text{dc}}^{(j)} \sim W^{- 1}\left( \Psi_{\text{dc}},\nu_{\text{dc}} \right)\)
-	\begin{align*}
-		\nu_{\text{dc}} &= n_{j} + \nu_{dc0}\\
-		\Psi_{\text{dc}} &= \Psi_{dc0} + \sum_{i:z_{i} = j}^{}{\left( \bm{\zeta}_{i} - \bm{\mu}_{\text{dc}}^{(j)} \right)\left( \bm{\zeta}_{i} - \bm{\mu}_{\text{dc}}^{(j)} \right)'}
-	\end{align*}
-\end{enumerate}
+
+\textcolor{red}{\textbf{MV-GLM...}}\\
 
 \subsubsection{Update \(\mathbf{A}\) and \(\mathbf{b}\)} \label{dynamics update}
 
-\begin{enumerate}
-	\def\labelenumi{(\arabic{enumi})}
-	\item
-	No constraints on \(\mathbf{Q}\):
-	\[P\left( \left( \mathbf{b}',{\widetilde{\mathbf{A}}'} \right)' \middle| \left\{ \mathbf{x}_{t} \right\}_{t = 1}^{T},\mathbf{Q},\ldots \right) \propto \left\lbrack \prod_{t = 2}^{T}{N\left( \mathbf{x}_{t}|\mathbf{A}\mathbf{x}_{t - 1} + \mathbf{b},\mathbf{Q} \right)} \right\rbrack P\left( \left( \mathbf{b}',{\widetilde{\mathbf{A}}'} \right)' \right)\]
-	Let
-	\(\left( \mathbf{b'},{\widetilde{\mathbf{A}}'} \right)' = \bm{\gamma} \in \mathbb{R}^{Jp(1 + Jp)}\),
-	\(\left( 1,\ {\mathbf{x}'_{t - 1}} \right)\bigotimes\mathbf{I}_{\text{Jp}}\mathbf{=}{\widetilde{\mathbf{G}}}_{t - 1} \in \mathbb{R}^{Jp \times Jp(1 + pJ)}\)
-	and
-	\(\widetilde{\mathbf{G}} = \left( {\widetilde{\mathbf{G}}'}_{1},\ldots,{\widetilde{\mathbf{G}}'}_{T - 1} \right)'\).
-	By conjugacy, \(\bm{\gamma}|\left\{ \mathbf{x}_{t} \right\}_{t = 1}^{T},\mathbf{Q},\ldots \sim N(\bm{\mu}_{\bm{\gamma}},\mathbf{\Sigma}_{\bm{\gamma}})\)
-	\begin{align*}
-		\mathbf{\Sigma}_{\bm{\gamma}} &= \left\lbrack \mathbf{\Sigma}_{BA_{0}}^{- 1} + {\widetilde{\mathbf{G}}}^{\mathbf{'}}\mathbf{I}_{T - 1}\bigotimes\left( \mathbf{Q} \right)^{- 1}\widetilde{\mathbf{G}} \right\rbrack^{- 1}\\
-		\bm{\mu}_{\bm{\gamma}} &= \mathbf{\Sigma}_{\bm{\gamma}}\left( \mathbf{\Sigma}_{BA_{0}}^{- 1}\bm{\mu}_{BA_{0}} + {\widetilde{\mathbf{G}}}^{'}\mathbf{I}_{T - 1}\bigotimes\left( \mathbf{Q} \right)^{- 1}\left( \mathbf{x}_{2}^{'},\ldots,\mathbf{x}_{T}^{'} \right)' \right)
-	\end{align*}
-	
-	\item
-	Assume \(\mathbf{Q}\) is block-diagonal:
-	\[P\left( \left( \mathbf{b}'_{j}, {\widetilde{\mathbf{A}}'}_{j}\ \right)' \middle| \left\{ \mathbf{x}_{t}^{(j)} \right\}_{t = 1}^{T},\mathbf{Q}^{(j)},\ldots \right) \propto \left\lbrack \prod_{t = 2}^{T}{N\left( \mathbf{x}_{t}^{(j)}|\mathbf{A}_{j}\mathbf{x}_{t - 1} + \mathbf{b}_{j},\mathbf{Q}^{(j)} \right)} \right\rbrack P\left( \left( \mathbf{b}'_{j}, {\widetilde{\mathbf{A}}'}_{j} \right)' \right)\]
-	Notice that \(\mathbf{A}_{j}\mathbf{x}_{t - 1} + \mathbf{b}_{j}\mathbf{=}\left( \left( 1,\ {\mathbf{x}'_{t - 1}} \right)\bigotimes\mathbf{I}_{p} \right)\left( \mathbf{b}_{j}^{\mathbf{'}}\mathbf{,}{\widetilde{\mathbf{A}}'}_{j} \right)'\), then the problem is reduced to Bayesian linear regression. Denote \(\left( 1,\ {\mathbf{x}'_{t - 1}} \right)\bigotimes\mathbf{I}_{p}\mathbf{=}{\widetilde{\mathbf{X}}}_{t - 1} \in \mathbb{R}^{p \times p(1 + pJ)}\),
-	\(\widetilde{\mathbf{X}} = \left({\widetilde{\mathbf{X}}'}_{1},\ldots,{\widetilde{\mathbf{X}}'}_{T - 1} \right)'\)
-	and\(\left( \mathbf{b}'_{j}, {\widetilde{\mathbf{A}}'}_{j} \right)' = \mathbf{\gamma}_{j} \in \mathbb{R}^{p(1 + pJ)}\).
-	Then
-	\begin{align*}
-		\prod_{t = 2}^{T}{N\left( \mathbf{x}_{t}^{(j)}|\mathbf{A}_{j}\mathbf{x}_{t - 1} + \mathbf{b}_{j},\mathbf{Q}^{(j)} \right)} &= \prod_{t = 2}^{T}{N\left( \mathbf{x}_{t}^{(j)}|{\widetilde{\mathbf{X}}}_{t - 1}\mathbf{\gamma}_{j},\mathbf{Q}^{(j)} \right)}\\
-		&= N\left( \left( {\mathbf{x}_{2}'^{(j)}},\ldots,{\mathbf{x}_{T}'^{(j)}} \right)'|\widetilde{\mathbf{X}}\bm{\gamma}_{j},\ \mathbf{I}_{T - 1}\bigotimes\mathbf{Q}^{(j)} \right)
-	\end{align*}
-	By conjugacy, \(P\left( \bm{\gamma}_{j} \middle| \left\{ \mathbf{x}_{t}^{(j)} \right\}_{t = 1}^{T},\mathbf{Q}^{(j)},\ldots \right) = N\left(\bm{\gamma}_{j}|\bm{\mu}_{\bm{\gamma}_{j}},\mathbf{\Sigma}_{\bm{\gamma}_{j}} \right)\)
-	\begin{align*}
-		\mathbf{\Sigma}_{\bm{\gamma}_{j}} &= \left\lbrack \mathbf{\Sigma}_{bA_{0}}^{- 1} + {\widetilde{\mathbf{X}}'}\mathbf{I}_{T - 1}\bigotimes\left( \mathbf{Q}^{(j)} \right)^{- 1}\widetilde{\mathbf{X}} \right\rbrack^{- 1}\\
-		\bm{\mu}_{\bm{\gamma}_{j}} &= \mathbf{\Sigma}_{\bm{\gamma}_{j}}\left( \mathbf{\Sigma}_{bA_{0}}^{- 1}\bm{\mu}_{bA_{0}} + {\widetilde{\mathbf{X}}'}\mathbf{I}_{T - 1}\bigotimes\left( \mathbf{Q}^{(j)} \right)^{- 1}\left( {\mathbf{x}_{2}'^{(j)}},\ldots,{\mathbf{x}_{T}'^{(j)}} \right)' \right)
-	\end{align*}
-
-	\item
-	Assume \(\mathbf{Q}\) is diagonal:
-	\[P\left( \left( b_{k},\mathbf{a}'_{k} \right)'|\left\{ x_{kt} \right\}_{t = 1}^{T},q_{k},\ \ldots \right) \propto \left\lbrack \prod_{t = 2}^{T}{N\left( x_{\text{kt}}|\mathbf{a}'_{k}\mathbf{x}_{t - 1} + b_{k},q_{k} \right)} \right\rbrack P\left( \left( b_{k},\mathbf{a}'_{k} \right)' \right)\]
-	Rewrite \(\mathbf{a}'_{k}\mathbf{x}_{t - 1} + b_{k} = \left( 1,\mathbf{x}'_{t - 1} \right)\left( b_{k},\mathbf{a}'_{k} \right)'\). Then the problem is reduced to Bayesian linear regression. Denote \(\left( b_{k},\mathbf{a}'_{k} \right)' = \bm{\gamma}_{k} \in \mathbb{R}^{Jp + 1}\)
-	and
-	\(\widetilde{\mathbf{X}} = \left( \left( 1,\mathbf{x}'_{1} \right)',\ldots,\left( 1,\mathbf{x}'_{T - 1} \right)' \right)^{'}\). Then by conjugacy, \(P\left( \bm{\gamma}_{k}|\left\{ x_{\text{kt}} \right\}_{t = 1}^{T},q_{k},\ \ldots \right) = N\left( \bm{\gamma}_{k}|\bm{\mu}_{\bm{\gamma}_{k}},\mathbf{\Sigma}_{\bm{\gamma}_{k}} \right)\)
-	\begin{align*}
-		\mathbf{\Sigma}_{\bm{\gamma}_{k}} &= \left\lbrack \mathbf{\Sigma}_{ba0}^{- 1} + \frac{{\widetilde{\mathbf{X}}'}\widetilde{\mathbf{X}}}{q_{k}} \right\rbrack^{- 1}\\
-		\bm{\mu}_{\bm{\gamma}_{k}} &= \mathbf{\Sigma}_{\mathbf{\gamma}_{k}}\left( \mathbf{\Sigma}_{ba0}^{- 1}\mathbf{\mu}_{ba0} + {\widetilde{\mathbf{X}}'}\left( x_{k2},\ldots,x_{\text{kT}} \right)'/q_{k} \right)
-	\end{align*}	
-\end{enumerate}
+\textcolor{red}{\textbf{MV-GLM...}}\\
 
 \subsubsection{Update \(\mathbf{Q}\)}
-\begin{enumerate}
-	\def\labelenumi{(\arabic{enumi})}
-	\item
-	No constraints on \(\mathbf{Q}\):\\
-	Let \(\mathbf{A}\mathbf{x}_{t - 1} + \mathbf{b} = \bm{\mu}_{x_{t}}\)
-	\[P\left( \mathbf{Q} \middle| \left\{ \mathbf{x}_{t} \right\}_{t = 1}^{T},\mathbf{A},\mathbf{b},\ldots \right) \propto \left\lbrack \prod_{t = 2}^{T}{N\left( \mathbf{x}_{t}|\bm{\mu}_{\mathbf{x}_{t}},\ \mathbf{Q} \right)} \right\rbrack W^{- 1}(\mathbf{Q}|\Psi_{\mathbf{Q}_{0}},\nu_{\mathbf{Q}_{0}})\]
-	By conjugacy,
-	\[P\left( \mathbf{Q} \middle| \left\{ \mathbf{x}_{t}^{(j)} \right\}_{t = 1}^{T},\ \mathbf{A},\mathbf{b},\ldots \right) = W^{- 1}\left( \mathbf{Q}|\Psi_{0} + \sum_{t = 2}^{T}{\left( \mathbf{x}_{t} - \bm{\mu}_{\mathbf{x}_{t}} \right)\left( \mathbf{x}_{t} - \bm{\mu}_{\mathbf{x}_{t}} \right)^{'}},\ T - 1 + \nu_{0} \right)\]
-	
-	\item
-	Assume \(\mathbf{Q}\) is block-diagonal:\\
-	Let \(\mathbf{A}_{j}\mathbf{x}_{t - 1} + \mathbf{b}_{j}\mathbf{=}\bm{\mu}_{\mathbf{x}_{t}^{(j)}}\),
-	\[P\left( \mathbf{Q}^{(j)} \middle| \left\{ \mathbf{x}_{t}^{(j)} \right\}_{t = 1}^{T},\ \mathbf{A}_{j},\mathbf{b}_{j},\ldots \right) \propto \left\lbrack \prod_{t = 2}^{T}{N\left( \mathbf{x}_{t}^{(j)}|\bm{\mu}_{\mathbf{x}_{t}^{(j)}},\mathbf{Q}^{(j)} \right)} \right\rbrack W^{- 1}\left( \mathbf{Q}^{(j)}|\Psi_{0},\nu_{0} \right)\]
-	By conjugacy,
-	\[P\left( \mathbf{Q}^{(j)} \middle| \left\{ \mathbf{x}_{t}^{(j)} \right\}_{t = 1}^{T},\ \mathbf{A}_{j},\mathbf{b}_{j},\ldots \right) = W^{- 1}\left( \mathbf{Q}^{(j)}|\Psi_{0} + \sum_{t = 2}^{T}{\left( \mathbf{x}_{t}^{(j)} - \bm{\mu}_{\mathbf{x}_{t}^{(j)}} \right)\left( \mathbf{x}_{t}^{(j)} - \bm{\mu}_{\mathbf{x}_{t}^{(j)}} \right)^{'}},\ T - 1 + \nu_{0} \right)\]
-	
-	\item
-	Assume \(\mathbf{Q}\) is diagonal:\\
-	Let \(\mathbf{a}_{k}^{'}\mathbf{x}_{t - 1} + b_{k} = \mu_{x_{\text{kt}}}\),
-	\[P\left( q_{k}|\left\{ x_{\text{kt}} \right\}_{t = 1}^{T},b_{k},\mathbf{a}_{k}^{'},\ \ldots \right) \propto \left\lbrack \prod_{t = 2}^{T}{N\left( x_{\text{kt}}|\mu_{x_{\text{kt}}},q_{k} \right)} \right\rbrack\text{IG}\left( q_{k} \middle| \frac{\nu_{0}}{2},\frac{\nu_{0}\sigma_{0}^{2}}{2} \right)\]
-	By conjugacy,
-	\[P\left( q_{k}|\left\{ x_{\text{kt}} \right\}_{t = 1}^{T},b_{k},\mathbf{a}_{k}^{'},\ \ldots \right) = IG\left( q_{k}|\frac{\nu_{0} + T - 1}{2},\frac{\nu_{0}\sigma_{0}^{2} + \sum_{t = 2}^{T}\left( x_{\text{kt}} - \mu_{x_{\text{kt}}} \right)^{2}}{2} \right)\]
-\end{enumerate}
+
+\textcolor{red}{\textbf{MV-GLM...}}\\
 
 \section{Simulations}
+
+\textcolor{red}{\textbf{Old results}}\\
+
 \textcolor{red}{\textbf{Currently, the latent \(x_t\) estimation is not accurate enough. This may come from bad simulation/ slow convergence or other sources. See details in section \ref{problems}}}\\
 
 There are two set of simulation examples. The first example is generated from LDS model directly, while in the second example the latents are generated directly without explicit specifying linear dynamics. In all of the following results, the covariance of process noise \(\mathbf{Q}\) is assumed to be block diagonal. For reference, see the code for \href{https://github.com/weigcdsb/state-space-clustering/blob/main/LDS/old_example/sim_LDS_noConstraint.m}{non-constrained} and \href{https://github.com/weigcdsb/state-space-clustering/blob/main/LDS/old_example/sim_LDS_diag.m}{diagonal} \(\mathbf{Q}\). But these two legacy versions assuming the loading is independent on cluster assignments. If we need to use any of one of them, make sure to replace the updates for loading to be cluster-related. The fitting results for all these three are similar, because the underlying true \(\mathbf{Q}\) is diagonal.
@@ -722,25 +601,16 @@ Things look much better! That means we need to improve the mixing of \(\mathbf{b
 \begin{enumerate}
 	\def\labelenumi{(\arabic{enumi})}
 	\item
-	Use a more identifiable simulation, e.g. larger loading, to see the performance
-	\item
-	Currently, the mixing of \(\mathbf{b}\) and \(\mathbf{A}\) is terrible, and I need find a way to break the dependence between dynamics (\(\mathbf{b}\) and \(\mathbf{A}\)) and latent (\(\mathbf{x}_t\)). For example, see if it's possible to do collapsed Gibbs sampler? Or switch to EM as in PLDS? If I switch to EM, then the DPMM should also be done in EM. (That would be more challenging). \\
-	
-	Basically the question is
-	\[y_{\text{it}} \sim Poisson(\lambda_{\text{it}})\]
-	\[\log\lambda_{\text{it}} = d_{i} + \mathbf{c'}_{i}\mathbf{x}_{t}^{(z_{i})}\]
-	\[\mathbf{x}_{1} \sim N(\mathbf{x}_{0},\mathbf{Q}_{0})\]
-	\[\mathbf{x}_{t + 1}|\mathbf{x}_{t} \sim N(\mathbf{A}\mathbf{x}_{t} + \mathbf{b},\mathbf{Q})\]
-	And we need to sample \(\mathbf{x}_t\), \(\mathbf{b}\), \(\mathbf{A}\) and \(\mathbf{Q}\) efficiently. (Assume loading is known now).
-	
-	Or even a more basic question: how to efficiently sample state-space and transition matrix at the same time in Kalman filter? The dependency between transition matrix and state vectors causes bad mixing.
-	
+	\textcolor{red}{\textbf{Do MV-GLM}}\\
 	\item
 	Check sampling trace and mixing.
 	\item
 	Find a more efficient way to generate new cluster parameters, otherwise the newly generated ones will always be rejected.
 	\item
 	improve DPMM. In current brute force implementation, the number of potential clusters can even go beyond number of neurons (\(N\)). There are several improvements, e.g. \href{https://link.springer.com/article/10.1007/s11222-009-9150-y}{Kalli et al., 2011}, \href{http://proceedings.mlr.press/v37/gea15.html}{Ge et al., 2015} and \href{https://link.springer.com/article/10.1007/s11222-014-9471-3}{Hastie et al, 2015}. Check them later.
+	\item
+	After all of them are resolved, switch to GP version
+	
 \end{enumerate}
 
 

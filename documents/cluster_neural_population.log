@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.12.6)  3 SEP 2021 10:14
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.12.6)  6 SEP 2021 10:24
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -552,520 +552,485 @@ L/lmm/m/it/10 f [] \OT1/lmr/m/n/10 = [][] []$,
  []
 
 [4]
-Overfull \hbox (18.8834pt too wide) in paragraph at lines 229--233
-\OT1/lmr/m/n/10 , where $\OML/cmm/b/it/10 ^^V[] \OT1/lmr/m/n/10 = [][]$ and $\O
-T1/lmr/bx/n/10 ^^F[] \OT1/lmr/m/n/10 = 0\OML/lmm/m/it/10 :\OT1/lmr/m/n/10 25\OT
-1/lmr/bx/n/10 I[]$ 
+Underfull \hbox (badness 10000) in paragraph at lines 204--205
+
  []
 
-[5]
 
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 262.
+Underfull \hbox (badness 10000) in paragraph at lines 209--210
 
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\left' on input line 262.
+ []
 
 
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 262.
+Underfull \hbox (badness 10000) in paragraph at lines 214--215
+
+ []
 
 
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\right' on input line 262.
+Underfull \hbox (badness 10000) in paragraph at lines 219--220
+
+ []
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 262.
+(hyperref)                removing `math shift' on input line 225.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `superscript' on input line 262.
+(hyperref)                removing `\left' on input line 225.
 
 
-Overfull \hbox (83.72377pt too wide) in paragraph at lines 265--272
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `subscript' on input line 225.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\right' on input line 225.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `subscript' on input line 225.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `superscript' on input line 225.
+
+
+Overfull \hbox (83.72377pt too wide) in paragraph at lines 228--235
 \OT1/lmr/m/n/10 such that $[] [] = \OT1/lmr/bx/n/10 d \OT1/lmr/m/n/10 + \OT1/lm
 r/bx/n/10 Cx[]$\OT1/lmr/m/n/10 . Let $\OT1/lmr/bx/n/10 x \OT1/lmr/m/n/10 = [][]
 $and $\OML/lmm/m/it/10 f [] \OT1/lmr/m/n/10 = [] []$
  []
 
 
-Overfull \hbox (88.60704pt too wide) detected at line 281
+Overfull \hbox (88.60704pt too wide) detected at line 244
 []
  []
 
-[6]
-Overfull \hbox (13.27101pt too wide) in paragraph at lines 297--302
+[5]
+Overfull \hbox (13.27101pt too wide) in paragraph at lines 260--265
 []\OT1/lmr/m/n/10 Use Newton-Raphson to find $\OML/cmm/b/it/10 ^^V[] \OT1/lmr/m
 /n/10 = [][] []$ and $\OT1/lmr/bx/n/10 ^^F[] \OT1/lmr/m/n/10 = \OMS/lmsy/m/n/10
  ^^@ [][]$\OT1/lmr/m/n/10 ,
  []
 
+[6]
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 312.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 312.
+(hyperref)                removing `math shift' on input line 275.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 321.
+(hyperref)                removing `subscript' on input line 275.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\left' on input line 321.
+(hyperref)                removing `math shift' on input line 284.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 321.
+(hyperref)                removing `\left' on input line 284.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\right' on input line 321.
+(hyperref)                removing `subscript' on input line 284.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 321.
+(hyperref)                removing `\right' on input line 284.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `superscript' on input line 321.
+(hyperref)                removing `subscript' on input line 284.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 321.
+(hyperref)                removing `superscript' on input line 284.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\left' on input line 321.
+(hyperref)                removing `math shift' on input line 284.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 321.
+(hyperref)                removing `\left' on input line 284.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\right' on input line 321.
+(hyperref)                removing `subscript' on input line 284.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 321.
+(hyperref)                removing `\right' on input line 284.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `superscript' on input line 321.
+(hyperref)                removing `subscript' on input line 284.
 
 
-Overfull \hbox (108.04376pt too wide) detected at line 329
-[]
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `superscript' on input line 284.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 287--288
+
+ []
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 289.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\left' on input line 289.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\mu' on input line 289.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `subscript' on input line 289.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `superscript' on input line 289.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\right' on input line 289.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `subscript' on input line 289.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 289.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\left' on input line 289.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\Sigma' on input line 289.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `subscript' on input line 289.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `superscript' on input line 289.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `\right' on input line 289.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `subscript' on input line 289.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 291--292
+
+ []
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 293.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 293.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 295--296
+
+ []
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 297.
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 299--300
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 303--304
+
+ []
+
+
+Underfull \hbox (badness 10000) in paragraph at lines 305--306
+
  []
 
 [7]
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 334.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\left' on input line 334.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\mu' on input line 334.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 334.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `superscript' on input line 334.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\right' on input line 334.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 334.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 334.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\left' on input line 334.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\Sigma' on input line 334.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 334.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `superscript' on input line 334.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `\right' on input line 334.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 334.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 353.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 353.
-
-
-Overfull \hbox (8.2355pt too wide) detected at line 359
-\OML/lmm/m/it/10 P [] \OMS/lmsy/m/n/10 / [] \OML/lmm/m/it/10 P []
- []
-
-
-Overfull \hbox (2.41693pt too wide) in paragraph at lines 359--366
-\OT1/lmr/m/n/10 and $[] = [][]$. By con-ju-gacy, $\OML/cmm/b/it/10 ^^M\OMS/lmsy
-/m/n/10 j [][] \OML/lmm/m/it/10 ; \OT1/lmr/bx/n/10 Q\OML/lmm/m/it/10 ; [] \OMS/
-lmsy/m/n/10 ^^X \OML/lmm/m/it/10 N\OT1/lmr/m/n/10 (\OML/cmm/b/it/10 ^^V[]\OML/l
-mm/m/it/10 ; \OT1/lmr/bx/n/10 ^^F[]\OT1/lmr/m/n/10 )$ 
- []
-
-[8]
-Overfull \hbox (68.05693pt too wide) detected at line 373
-\OML/lmm/m/it/10 P [] \OMS/lmsy/m/n/10 / [] \OML/lmm/m/it/10 P []
- []
-
-
-Overfull \hbox (19.11035pt too wide) detected at line 381
-[]
- []
-
-
-Overfull \hbox (12.6606pt too wide) detected at line 390
-\OML/lmm/m/it/10 P [] \OMS/lmsy/m/n/10 / [] \OML/lmm/m/it/10 P []
- []
-
-
-Overfull \hbox (5.36314pt too wide) in paragraph at lines 390--394
-[][]$\OT1/lmr/m/n/10 . Then by con-ju-gacy, $\OML/lmm/m/it/10 P [] \OT1/lmr/m/n
-/10 =
- []
-
-[9]
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 400.
-
-
-Overfull \hbox (58.52583pt too wide) detected at line 408
-\OML/lmm/m/it/10 P [] \OT1/lmr/m/n/10 = \OML/lmm/m/it/10 W[] []
- []
-
-
-Overfull \hbox (35.55075pt too wide) detected at line 413
-\OML/lmm/m/it/10 P [] \OMS/lmsy/m/n/10 / [] \OML/lmm/m/it/10 W[] []
- []
-
-
-Overfull \hbox (121.8834pt too wide) detected at line 415
-\OML/lmm/m/it/10 P [] \OT1/lmr/m/n/10 = \OML/lmm/m/it/10 W[] []
- []
-
-
-Overfull \hbox (27.4921pt too wide) detected at line 422
-\OML/lmm/m/it/10 P [] \OT1/lmr/m/n/10 = \OML/lmm/m/it/10 IG []
- []
-
-
-Underfull \hbox (badness 10000) in paragraph at lines 426--427
-
- []
-
-[10]
-<image001.png, id=227, 420.82219pt x 315.42844pt>
+<image001.png, id=200, 420.82219pt x 315.42844pt>
 File: image001.png Graphic file (type png)
 <use image001.png>
-Package pdftex.def Info: image001.png  used on input line 444.
+Package pdftex.def Info: image001.png  used on input line 323.
 (pdftex.def)             Requested size: 189.75105pt x 142.23026pt.
-<image002.png, id=229, 420.82219pt x 315.80484pt>
+<image002.png, id=202, 420.82219pt x 315.80484pt>
 File: image002.png Graphic file (type png)
 <use image002.png>
-Package pdftex.def Info: image002.png  used on input line 444.
+Package pdftex.def Info: image002.png  used on input line 323.
 (pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<image003.png, id=230, 420.82219pt x 315.80484pt>
+<image003.png, id=203, 420.82219pt x 315.80484pt>
 File: image003.png Graphic file (type png)
 <use image003.png>
-Package pdftex.def Info: image003.png  used on input line 444.
+Package pdftex.def Info: image003.png  used on input line 323.
 (pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<image004.png, id=232, 420.82219pt x 315.80484pt>
+ [8 <./image001.png> <./image002.png> <./image003.png>]
+<image004.png, id=218, 420.82219pt x 315.80484pt>
 File: image004.png Graphic file (type png)
 <use image004.png>
-Package pdftex.def Info: image004.png  used on input line 458.
+Package pdftex.def Info: image004.png  used on input line 337.
 (pdftex.def)             Requested size: 241.49895pt x 181.23459pt.
-<image005.png, id=233, 420.82219pt x 315.80484pt>
+<image005.png, id=219, 420.82219pt x 315.80484pt>
 File: image005.png Graphic file (type png)
 <use image005.png>
-Package pdftex.def Info: image005.png  used on input line 458.
+Package pdftex.def Info: image005.png  used on input line 337.
 (pdftex.def)             Requested size: 241.49895pt x 181.23459pt.
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-[11] [12 <./image001.png> <./image002.png> <./image003.png> <./image004.png> <.
-/image005.png>]
-<image006.png, id=264, 420.82219pt x 315.80484pt>
+ [9 <./image004.png> <./image005.png>]
+<image006.png, id=242, 420.82219pt x 315.80484pt>
 File: image006.png Graphic file (type png)
 <use image006.png>
-Package pdftex.def Info: image006.png  used on input line 502.
+Package pdftex.def Info: image006.png  used on input line 381.
 (pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<image007.png, id=265, 420.82219pt x 315.80484pt>
+<image007.png, id=243, 420.82219pt x 315.80484pt>
 File: image007.png Graphic file (type png)
 <use image007.png>
-Package pdftex.def Info: image007.png  used on input line 502.
+Package pdftex.def Info: image007.png  used on input line 381.
 (pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<image008.png, id=266, 420.82219pt x 315.80484pt>
+<image008.png, id=244, 420.82219pt x 315.80484pt>
 File: image008.png Graphic file (type png)
 <use image008.png>
-Package pdftex.def Info: image008.png  used on input line 502.
+Package pdftex.def Info: image008.png  used on input line 381.
 (pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<image009.png, id=268, 420.82219pt x 315.80484pt>
+<image009.png, id=246, 420.82219pt x 315.80484pt>
 File: image009.png Graphic file (type png)
 <use image009.png>
-Package pdftex.def Info: image009.png  used on input line 512.
+Package pdftex.def Info: image009.png  used on input line 391.
 (pdftex.def)             Requested size: 241.49895pt x 181.23459pt.
-<image010.png, id=269, 420.82219pt x 315.80484pt>
+<image010.png, id=247, 420.82219pt x 315.80484pt>
 File: image010.png Graphic file (type png)
 <use image010.png>
-Package pdftex.def Info: image010.png  used on input line 512.
+Package pdftex.def Info: image010.png  used on input line 391.
 (pdftex.def)             Requested size: 241.49895pt x 181.23459pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<image011.png, id=271, 420.82219pt x 315.80484pt>
+[10 <./image006.png> <./image007.png> <./image008.png>]
+<image011.png, id=262, 420.82219pt x 315.80484pt>
 File: image011.png Graphic file (type png)
 <use image011.png>
-Package pdftex.def Info: image011.png  used on input line 528.
+Package pdftex.def Info: image011.png  used on input line 407.
 (pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<image012.png, id=272, 420.82219pt x 315.80484pt>
+<image012.png, id=263, 420.82219pt x 315.80484pt>
 File: image012.png Graphic file (type png)
 <use image012.png>
-Package pdftex.def Info: image012.png  used on input line 528.
+Package pdftex.def Info: image012.png  used on input line 407.
 (pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<image013.png, id=273, 420.82219pt x 315.80484pt>
+<image013.png, id=264, 420.82219pt x 315.80484pt>
 File: image013.png Graphic file (type png)
 <use image013.png>
-Package pdftex.def Info: image013.png  used on input line 528.
+Package pdftex.def Info: image013.png  used on input line 407.
 (pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<image014.png, id=275, 420.82219pt x 315.80484pt>
+<image014.png, id=266, 420.82219pt x 315.80484pt>
 File: image014.png Graphic file (type png)
 <use image014.png>
-Package pdftex.def Info: image014.png  used on input line 538.
+Package pdftex.def Info: image014.png  used on input line 417.
 (pdftex.def)             Requested size: 241.49895pt x 181.23459pt.
-<image015.png, id=276, 420.82219pt x 315.80484pt>
+<image015.png, id=267, 420.82219pt x 315.80484pt>
 File: image015.png Graphic file (type png)
 <use image015.png>
-Package pdftex.def Info: image015.png  used on input line 538.
+Package pdftex.def Info: image015.png  used on input line 417.
 (pdftex.def)             Requested size: 241.49895pt x 181.23459pt.
 
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[13]
-Underfull \hbox (badness 10000) in paragraph at lines 553--554
+[11 <./image009.png> <./image010.png> <./image011.png> <./image012.png> <./imag
+e013.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 432--433
 
  []
 
-[14 <./image006.png> <./image007.png> <./image008.png> <./image009.png> <./imag
-e010.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 568--569
+
+Underfull \hbox (badness 10000) in paragraph at lines 447--448
 
  []
 
-[15 <./image011.png> <./image012.png> <./image013.png> <./image014.png> <./imag
-e015.png>]
+[12 <./image014.png> <./image015.png>]
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 588.
+(hyperref)                removing `math shift' on input line 467.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 588.
+(hyperref)                removing `math shift' on input line 467.
 
-<image016.png, id=337, 421.1986pt x 315.80484pt>
+<image016.png, id=312, 421.1986pt x 315.80484pt>
 File: image016.png Graphic file (type png)
 <use image016.png>
-Package pdftex.def Info: image016.png  used on input line 596.
+Package pdftex.def Info: image016.png  used on input line 475.
 (pdftex.def)             Requested size: 207.0021pt x 155.20833pt.
-<image017.png, id=338, 421.1986pt x 315.80484pt>
+<image017.png, id=313, 421.1986pt x 315.80484pt>
 File: image017.png Graphic file (type png)
 <use image017.png>
-Package pdftex.def Info: image017.png  used on input line 596.
+Package pdftex.def Info: image017.png  used on input line 475.
 (pdftex.def)             Requested size: 207.0021pt x 155.20833pt.
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 603.
+(hyperref)                removing `math shift' on input line 482.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 603.
+(hyperref)                removing `math shift' on input line 482.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 603.
+(hyperref)                removing `math shift' on input line 482.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 603.
+(hyperref)                removing `subscript' on input line 482.
 
-[16 <./image016.png> <./image017.png>]
-<image018.png, id=353, 421.1986pt x 315.80484pt>
+<image018.png, id=316, 421.1986pt x 315.80484pt>
 File: image018.png Graphic file (type png)
 <use image018.png>
-Package pdftex.def Info: image018.png  used on input line 612.
+Package pdftex.def Info: image018.png  used on input line 491.
 (pdftex.def)             Requested size: 207.0021pt x 155.20833pt.
-<image020.png, id=354, 421.1986pt x 315.80484pt>
+<image020.png, id=317, 421.1986pt x 315.80484pt>
 File: image020.png Graphic file (type png)
 <use image020.png>
-Package pdftex.def Info: image020.png  used on input line 612.
+Package pdftex.def Info: image020.png  used on input line 491.
 (pdftex.def)             Requested size: 207.0021pt x 155.20833pt.
-<image019.png, id=356, 421.1986pt x 315.80484pt>
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<image019.png, id=319, 421.1986pt x 315.80484pt>
 File: image019.png Graphic file (type png)
 <use image019.png>
-Package pdftex.def Info: image019.png  used on input line 623.
+Package pdftex.def Info: image019.png  used on input line 502.
 (pdftex.def)             Requested size: 207.0021pt x 155.20833pt.
-<image021.png, id=357, 421.1986pt x 315.80484pt>
+<image021.png, id=320, 421.1986pt x 315.80484pt>
 File: image021.png Graphic file (type png)
 <use image021.png>
-Package pdftex.def Info: image021.png  used on input line 623.
+Package pdftex.def Info: image021.png  used on input line 502.
 (pdftex.def)             Requested size: 207.0021pt x 155.20833pt.
- [17 <./image018.png> <./image020.png> <./image019.png> <./image021.png>]
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[13 <./image016.png> <./image017.png>]
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 632.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 632.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 632.
+(hyperref)                removing `math shift' on input line 511.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 632.
+(hyperref)                removing `math shift' on input line 511.
 
-<image022.png, id=375, 421.1986pt x 315.80484pt>
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 511.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `subscript' on input line 511.
+
+<image022.png, id=335, 421.1986pt x 315.80484pt>
 File: image022.png Graphic file (type png)
 <use image022.png>
-Package pdftex.def Info: image022.png  used on input line 636.
+Package pdftex.def Info: image022.png  used on input line 515.
 (pdftex.def)             Requested size: 241.49895pt x 181.07076pt.
-<image023.png, id=377, 421.1986pt x 315.80484pt>
+[14 <./image018.png> <./image020.png> <./image019.png> <./image021.png>]
+<image023.png, id=350, 421.1986pt x 315.80484pt>
 File: image023.png Graphic file (type png)
 <use image023.png>
-Package pdftex.def Info: image023.png  used on input line 647.
+Package pdftex.def Info: image023.png  used on input line 526.
 (pdftex.def)             Requested size: 207.0021pt x 155.20833pt.
-<image024.png, id=378, 421.1986pt x 315.80484pt>
+<image024.png, id=351, 421.1986pt x 315.80484pt>
 File: image024.png Graphic file (type png)
 <use image024.png>
-Package pdftex.def Info: image024.png  used on input line 647.
+Package pdftex.def Info: image024.png  used on input line 526.
 (pdftex.def)             Requested size: 207.0021pt x 155.20833pt.
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<image025.png, id=380, 421.1986pt x 315.80484pt>
+<image025.png, id=353, 421.1986pt x 315.80484pt>
 File: image025.png Graphic file (type png)
 <use image025.png>
-Package pdftex.def Info: image025.png  used on input line 655.
+Package pdftex.def Info: image025.png  used on input line 534.
 (pdftex.def)             Requested size: 241.49895pt x 181.07076pt.
 
-Underfull \hbox (badness 10000) in paragraph at lines 652--659
+Underfull \hbox (badness 10000) in paragraph at lines 531--538
 
  []
 
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<image026.png, id=382, 421.1986pt x 315.80484pt>
+[15 <./image022.png> <./image023.png> <./image024.png>]
+<image026.png, id=366, 421.1986pt x 315.80484pt>
 File: image026.png Graphic file (type png)
 <use image026.png>
-Package pdftex.def Info: image026.png  used on input line 667.
+Package pdftex.def Info: image026.png  used on input line 546.
 (pdftex.def)             Requested size: 207.0021pt x 155.20833pt.
-<image027.png, id=383, 421.1986pt x 315.80484pt>
+<image027.png, id=367, 421.1986pt x 315.80484pt>
 File: image027.png Graphic file (type png)
 <use image027.png>
-Package pdftex.def Info: image027.png  used on input line 667.
+Package pdftex.def Info: image027.png  used on input line 546.
 (pdftex.def)             Requested size: 207.0021pt x 155.20833pt.
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-<image028.png, id=385, 421.1986pt x 315.80484pt>
+ [16 <./image025.png> <./image026.png> <./image027.png>]
+<image028.png, id=380, 421.1986pt x 315.80484pt>
 File: image028.png Graphic file (type png)
 <use image028.png>
-Package pdftex.def Info: image028.png  used on input line 682.
+Package pdftex.def Info: image028.png  used on input line 561.
 (pdftex.def)             Requested size: 207.0021pt x 155.20833pt.
-<image029.png, id=386, 421.1986pt x 315.80484pt>
+<image029.png, id=381, 421.1986pt x 315.80484pt>
 File: image029.png Graphic file (type png)
 <use image029.png>
-Package pdftex.def Info: image029.png  used on input line 682.
+Package pdftex.def Info: image029.png  used on input line 561.
 (pdftex.def)             Requested size: 207.0021pt x 155.20833pt.
+<image030.png, id=383, 420.82219pt x 315.42844pt>
+File: image030.png Graphic file (type png)
+<use image030.png>
+Package pdftex.def Info: image030.png  used on input line 579.
+(pdftex.def)             Requested size: 276.00105pt x 206.87907pt.
+
+Underfull \hbox (badness 10000) in paragraph at lines 576--583
+
+ []
+
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[18 <./image022.png>] [19 <./image023.png> <./image024.png> <./image025.png>]
-<image030.png, id=408, 420.82219pt x 315.42844pt>
-File: image030.png Graphic file (type png)
-<use image030.png>
-Package pdftex.def Info: image030.png  used on input line 700.
-(pdftex.def)             Requested size: 276.00105pt x 206.87907pt.
-
-Underfull \hbox (badness 10000) in paragraph at lines 697--704
-
- []
-
-[20 <./image026.png> <./image027.png> <./image028.png> <./image029.png>]
-<image031.png, id=422, 421.1986pt x 315.42844pt>
+<image031.png, id=385, 421.1986pt x 315.42844pt>
 File: image031.png Graphic file (type png)
 <use image031.png>
-Package pdftex.def Info: image031.png  used on input line 713.
+Package pdftex.def Info: image031.png  used on input line 592.
 (pdftex.def)             Requested size: 189.75105pt x 142.10031pt.
-<image032.png, id=423, 421.1986pt x 315.42844pt>
+<image032.png, id=386, 421.1986pt x 315.42844pt>
 File: image032.png Graphic file (type png)
 <use image032.png>
-Package pdftex.def Info: image032.png  used on input line 713.
+Package pdftex.def Info: image032.png  used on input line 592.
 (pdftex.def)             Requested size: 189.75105pt x 142.10031pt.
-<image033.png, id=424, 421.1986pt x 315.42844pt>
+<image033.png, id=387, 421.1986pt x 315.42844pt>
 File: image033.png Graphic file (type png)
 <use image033.png>
-Package pdftex.def Info: image033.png  used on input line 713.
+Package pdftex.def Info: image033.png  used on input line 592.
 (pdftex.def)             Requested size: 189.75105pt x 142.10031pt.
 
-[21 <./image030.png> <./image031.png> <./image032.png> <./image033.png>]
-Underfull \hbox (badness 10000) in paragraph at lines 727--728
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[17 <./image028.png> <./image029.png>] [18 <./image030.png> <./image031.png> <.
+/image032.png> <./image033.png>]
+Underfull \hbox (badness 10000) in paragraph at lines 604--606
 
  []
 
-[22
+[19
 
 ] (./cluster_neural_population.aux)
 Package rerunfilecheck Info: File `cluster_neural_population.out' has not chang
@@ -1077,42 +1042,41 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 7778 strings out of 479383
- 113429 string characters out of 5868871
- 430019 words of memory out of 5000000
+ 7761 strings out of 479383
+ 113310 string characters out of 5868871
+ 432017 words of memory out of 5000000
  24529 multiletter control sequences out of 15000+600000
  462733 words of font info for 86 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 66i,14n,72p,959b,474s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 66i,12n,72p,959b,402s stack positions out of 5000i,500n,10000p,200000b,80000s
 {e:/software/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{e:/sof
 tware/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{e:/software/texlive
 /2020/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{e:/software/texlive/2020/tex
 mf-dist/fonts/enc/dvips/lm/lm-mathex.enc}<e:/software/texlive/2020/texmf-dist/f
 onts/type1/public/amsfonts/cm/cmmib10.pfb><e:/software/texlive/2020/texmf-dist/
-fonts/type1/public/amsfonts/cmextra/cmmib5.pfb><e:/software/texlive/2020/texmf-
-dist/fonts/type1/public/amsfonts/cmextra/cmmib7.pfb><e:/software/texlive/2020/t
-exmf-dist/fonts/type1/public/lm/lmbx10.pfb><e:/software/texlive/2020/texmf-dist
-/fonts/type1/public/lm/lmbx12.pfb><e:/software/texlive/2020/texmf-dist/fonts/ty
-pe1/public/lm/lmbx5.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public
-/lm/lmbx7.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/lmbx8.
-pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/lmex10.pfb><e:/s
-oftware/texlive/2020/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><e:/software/t
-exlive/2020/texmf-dist/fonts/type1/public/lm/lmmi5.pfb><e:/software/texlive/202
-0/texmf-dist/fonts/type1/public/lm/lmmi7.pfb><e:/software/texlive/2020/texmf-di
-st/fonts/type1/public/lm/lmmi8.pfb><e:/software/texlive/2020/texmf-dist/fonts/t
-ype1/public/lm/lmr10.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/publi
-c/lm/lmr17.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr5.
-pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr7.pfb><e:/sof
-tware/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr8.pfb><e:/software/texli
-ve/2020/texmf-dist/fonts/type1/public/lm/lmro10.pfb><e:/software/texlive/2020/t
-exmf-dist/fonts/type1/public/lm/lmsy10.pfb><e:/software/texlive/2020/texmf-dist
-/fonts/type1/public/lm/lmsy5.pfb><e:/software/texlive/2020/texmf-dist/fonts/typ
-e1/public/lm/lmsy7.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/
-amsfonts/symbols/msbm10.pfb>
-Output written on cluster_neural_population.pdf (22 pages, 2960684 bytes).
+fonts/type1/public/amsfonts/cmextra/cmmib7.pfb><e:/software/texlive/2020/texmf-
+dist/fonts/type1/public/lm/lmbx10.pfb><e:/software/texlive/2020/texmf-dist/font
+s/type1/public/lm/lmbx12.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/p
+ublic/lm/lmbx5.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/l
+mbx7.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/lmbx8.pfb><
+e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/lmex10.pfb><e:/softwa
+re/texlive/2020/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><e:/software/texliv
+e/2020/texmf-dist/fonts/type1/public/lm/lmmi5.pfb><e:/software/texlive/2020/tex
+mf-dist/fonts/type1/public/lm/lmmi7.pfb><e:/software/texlive/2020/texmf-dist/fo
+nts/type1/public/lm/lmmi8.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/
+public/lm/lmr10.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/
+lmr17.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr5.pfb><
+e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr7.pfb><e:/software
+/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr8.pfb><e:/software/texlive/20
+20/texmf-dist/fonts/type1/public/lm/lmro10.pfb><e:/software/texlive/2020/texmf-
+dist/fonts/type1/public/lm/lmsy10.pfb><e:/software/texlive/2020/texmf-dist/font
+s/type1/public/lm/lmsy5.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/pu
+blic/lm/lmsy7.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/amsfo
+nts/symbols/msbm10.pfb>
+Output written on cluster_neural_population.pdf (19 pages, 2932057 bytes).
 PDF statistics:
- 564 PDF objects out of 1000 (max. 8388607)
- 446 compressed objects within 5 object streams
- 157 named destinations out of 1000 (max. 500000)
+ 530 PDF objects out of 1000 (max. 8388607)
+ 416 compressed objects within 5 object streams
+ 140 named destinations out of 1000 (max. 500000)
  382 words of extra memory for PDF output out of 10000 (max. 10000000)
 

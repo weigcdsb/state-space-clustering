@@ -3,6 +3,7 @@
 % Lars Buesing, Jakob H Macke, 2014
 %
 addpath(genpath('C:\Users\gaw19004\Documents\GitHub\state-space-clustering\pop_spike_dyn'));
+% addpath(genpath('D:\github\state-space-clustering'))
 %%
 clear all
 close all
@@ -13,7 +14,7 @@ close all
 xDim    = 5;												% latent dimensiom
 yDim    = 100;											    	% observed dimension = no of neurons
 T       = 100;												% no of time bins per trial; here a time step is approx 10ms 
-Trials  = 1;		    										% no trials
+Trials  = 2;		    										% no trials
 maxIter = 100;		    										% max no of EM iterations for fitting the model
 
 
