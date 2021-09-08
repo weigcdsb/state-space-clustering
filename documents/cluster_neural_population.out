@@ -10,18 +10,16 @@
 \BOOKMARK [3][-]{subsubsection.3.3.2}{Update x0}{subsection.3.3}% 10
 \BOOKMARK [3][-]{subsubsection.3.3.3}{Update \173 di \175i = 1N and \173 ci \175i = 1N}{subsection.3.3}% 11
 \BOOKMARK [3][-]{subsubsection.3.3.4}{Update \173 dc\(j\) \175j and \173 dc\(j\) \175j}{subsection.3.3}% 12
-\BOOKMARK [3][-]{subsubsection.3.3.5}{Update A and b}{subsection.3.3}% 13
-\BOOKMARK [3][-]{subsubsection.3.3.6}{Update Q}{subsection.3.3}% 14
-\BOOKMARK [1][-]{section.4}{Simulations}{}% 15
-\BOOKMARK [2][-]{subsection.4.1}{Simulation 1: Generate from LDS Directly}{section.4}% 16
-\BOOKMARK [3][-]{subsubsection.4.1.1}{Labeled Data: No Clustering}{subsection.4.1}% 17
-\BOOKMARK [3][-]{subsubsection.4.1.2}{Unlabeled Data: Clustering}{subsection.4.1}% 18
-\BOOKMARK [2][-]{subsection.4.2}{Simulation 2: Generate Latents, without Specifying Linear Dynamics}{section.4}% 19
-\BOOKMARK [3][-]{subsubsection.4.2.1}{Labeled Data: No Clustering}{subsection.4.2}% 20
-\BOOKMARK [3][-]{subsubsection.4.2.2}{Unlabeled Data: Clustering}{subsection.4.2}% 21
-\BOOKMARK [1][-]{section.5}{PROBLEMS}{}% 22
-\BOOKMARK [2][-]{subsection.5.1}{Estimation of d and C alone}{section.5}% 23
-\BOOKMARK [2][-]{subsection.5.2}{Estimation of d, C and xt}{section.5}% 24
-\BOOKMARK [2][-]{subsection.5.3}{Estimation of b, A and xt}{section.5}% 25
-\BOOKMARK [2][-]{subsection.5.4}{Simulation 1 Revisit}{section.5}% 26
-\BOOKMARK [1][-]{section.6}{TODO}{}% 27
+\BOOKMARK [3][-]{subsubsection.3.3.5}{Update A, b and Q}{subsection.3.3}% 13
+\BOOKMARK [1][-]{section.4}{Model Check [Problems for b and A partially solved]}{}% 14
+\BOOKMARK [2][-]{subsection.4.1}{Estimation of d and C alone}{section.4}% 15
+\BOOKMARK [2][-]{subsection.4.2}{Estimation of d, C and xt}{section.4}% 16
+\BOOKMARK [2][-]{subsection.4.3}{Estimation of b, A, Q and xt}{section.4}% 17
+\BOOKMARK [1][-]{section.5}{Simulations}{}% 18
+\BOOKMARK [2][-]{subsection.5.1}{Simulation 1: Generate from LDS Directly}{section.5}% 19
+\BOOKMARK [3][-]{subsubsection.5.1.1}{Labeled Data: No Clustering}{subsection.5.1}% 20
+\BOOKMARK [3][-]{subsubsection.5.1.2}{Unlabeled Data: Clustering}{subsection.5.1}% 21
+\BOOKMARK [2][-]{subsection.5.2}{Simulation 2: Generate Latents, without Specifying Linear Dynamics}{section.5}% 22
+\BOOKMARK [3][-]{subsubsection.5.2.1}{Labeled Data: No Clustering}{subsection.5.2}% 23
+\BOOKMARK [3][-]{subsubsection.5.2.2}{Unlabeled Data: Clustering}{subsection.5.2}% 24
+\BOOKMARK [1][-]{section.6}{TODO}{}% 25

@@ -106,7 +106,7 @@ for g = 2:ng
         Sigdc0 = sparse(kron(eye(N_clus), Sigdc0_sing));
         mudc0 = repmat(mudc0_sing, N_clus, 1);
         
-        hessdc_all = @(dc) -sparse(X_dc'*diag(lamdc_all(dc))*X_dc - inv(Sigdc0));
+        hessdc_all = @(dc) sparse(-X_dc'*diag(lamdc_all(dc))*X_dc - inv(Sigdc0));
         niSigdc_all = hessdc_all(mudc_all);
         
         % use Cholesky decomposition to sample efficiently
