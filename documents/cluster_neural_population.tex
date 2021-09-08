@@ -589,7 +589,7 @@ Besides fitting 3 clusters with 10 neurons each, I further fit a larger scale ex
 	\item
 	Think about MV-(Poisson)-GLM. Check \href{https://www.tandfonline.com/doi/full/10.1080/03610926.2012.743565?journalCode=lsta20}{ref1} and \href{https://www.tandfonline.com/doi/full/10.1080/02664763.2021.1877637?src=recsys}{ref2}.
 	\item
-	After resolving (1), see if the MCMC is still trapped in local optima sometimes.
+	After resolving (1), see if the MCMC is still trapped in local optima sometimes. Now, the chain seems will get stuck in local mode. Maybe updating the loading as a whole will remedy the problem a bit.
 	\item
 	Find a more efficient way to generate new cluster parameters, otherwise the newly generated ones will always be rejected.
 	\item
