@@ -94,6 +94,10 @@ if(sum(isnan(muXvec)) ~= 0)
 end
 
 % use Cholesky decomposition to sample efficiently
+
+% [L,D,P] = ldl(-hess_tmp+ 1e-13*sparse(eye(size(hess_tmp))));
+% R = P*L*sqrt(D);
+
 R = chol(-hess_tmp,'lower'); % sparse
 z = randn(length(muXvec), 1) + R'*muXvec;
 Xsamp = R'\z;

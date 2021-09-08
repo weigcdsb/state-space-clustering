@@ -23,15 +23,6 @@ for k = 1:MaxIter
         break;
     end
     
-%     
-%     if(norm(fx) > 1e4*dhPre{1})
-%        x = nan;
-%        dfdx = nan;
-%        fprintf('skip');
-%        return; 
-%     elseif(norm(fx)<TolFun || norm(dx) < TolX)
-%         break;
-%     end
     
 end
 warning('on');

@@ -27,5 +27,7 @@ gradHess{1} = C_trans_tmp'*(Y - lam_tmp) + [-Q0_tmp\(X_all(:,1) - x0_tmp)+...
 gradHess{1} = gradHess{1}(:);
 
 gradHess{2} = blktridiag(hessmed,hessub,hessup);
+% gradHess{2} = (gradHess{2} + gradHess{2}')/2;
+
 
 end

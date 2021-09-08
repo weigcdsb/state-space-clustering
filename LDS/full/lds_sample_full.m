@@ -108,7 +108,7 @@ Psidc0 = eye(p+1)*1e-4;
 nudc0 = p+1+2;
 
 BA0 = [zeros(nClus*p,1) eye(nClus*p)]';
-Lamb0 = eye(nClus*p + 1);
+Lamb0 = eye(nClus*p + 1)*.25;
 Psi0 = eye(nClus*p)*1e-4;
 nu0 = nClus*p+2;
 
@@ -293,7 +293,7 @@ title('Frobenius norm of A')
 
 
 %%
-idx = 1500:ng;
+idx = 500:1000;
 
 subplot(1,2,1)
 imagesc(exp(C_trans*X + d))

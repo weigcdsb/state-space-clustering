@@ -3,7 +3,7 @@ addpath(genpath('C:\Users\gaw19004\Documents\GitHub\state-space-clustering'));
 
 %% simulation
 rng(1)
-n = 40;
+n = 10;
 nClus = 3;
 N = n*nClus;
 p = 2;
@@ -58,7 +58,7 @@ clusterPlot(Y, Lab)
 
 %% fitting: MCMC
 rng(3)
-ng = 100;
+ng = 5000;
 X_fit = zeros(nClus*p, T, ng);
 x0_fit = zeros(nClus*p, ng);
 d_fit = repmat(d,1,ng); % true
@@ -172,6 +172,8 @@ for g = 2:ng
     plot(A_fit_fro(1:g))
 end
 
+ng = 1000;
+
 figure
 subplot(1,2,1)
 plot(b_fit_norm(1:ng))
@@ -181,7 +183,7 @@ plot(A_fit_fro(1:ng))
 title('Frobenius norm of A')
 % idx = 50:100;
 % idx = 500:1000;
-% idx = 5000:ng;
+% idx = 4000:ng;
 
 figure
 subplot(3,2,1)

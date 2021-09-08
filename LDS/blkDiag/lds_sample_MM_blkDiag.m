@@ -56,9 +56,9 @@ Y = poissrnd(exp(logLam));
 clusterPlot(Y, Lab)
 
 %%
-rng(3)
+rng(6)
 ng = 50;
-kMM = 3;
+kMM = 30;
 
 % pre-allocation
 Z_fit = zeros(N, ng);
@@ -83,7 +83,7 @@ Sigx00 = eye(kMM*p);
 deltadc0 = zeros(p+1,1);
 Taudc0 = eye(p+1);
 
-Psidc0 = eye(p+1)*1e-2;
+Psidc0 = eye(p+1)*1e-4;
 nudc0 = p+1+2;
 
 BA0_all = [zeros(kMM*p,1) eye(kMM*p)]';
@@ -93,8 +93,8 @@ nu0 = p+2;
 
 
 % initials
-% Z_fit(:,1) = ones(1, N);
-Z_fit(:,1) = randsample(kMM, N, true);
+Z_fit(:,1) = ones(1, N);
+% Z_fit(:,1) = randsample(kMM, N, true);
 RHO_fit(:,1) = ones(kMM,1)/kMM;
 
 mudc_fit(:,:,1) = zeros(p+1, kMM);
@@ -165,6 +165,7 @@ for g = 2:ng
     logp_tmp = repmat(log(RHO_fit(:,g-1)'), N, 1) + LLHD;
     clus_tmp = mnrnd(ones(N, 1), softmax(logp_tmp')');
     [Z_fit(:,g), ~] = find(clus_tmp');
+    
     
     % (2) update RHO_fit
     nClus = histc(Z_fit(:,g),1:kMM);

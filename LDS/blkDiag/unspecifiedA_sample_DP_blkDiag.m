@@ -50,8 +50,8 @@ clusterPlot(Y, Lab)
 
 %% MCMC setting
 rng(3)
-alphaDP = 1;
-ng = 50;
+alphaDP = 10;
+ng = 100;
 
 % pre-allocation
 Z_fit = zeros(N, ng);
@@ -77,7 +77,8 @@ nu0 = p+2;
 % single cluster
 % Z_fit(:,1) = ones(N, 1);
 % N cluster
-Z_fit(:,1) = 1:N;
+Z_fit(:,1) = randsample(2, N, true);
+% Z_fit(:,1) = 1:N;
 
 
 % reorder Y by labels

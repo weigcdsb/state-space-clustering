@@ -58,7 +58,7 @@ clusterPlot(Y, Lab)
 % nClus = 1;
 % Lab = ones(1,N);
 rng(3)
-ng = 2000;
+ng = 1000;
 
 % pre-allocation
 X_fit = zeros(nClus*p, T, ng);
@@ -87,7 +87,7 @@ Psidc0 = eye(p+1)*1e-4;
 nudc0 = p+1+2;
 
 BA0 = [zeros(nClus*p,1) eye(nClus*p)]';
-Lamb0 = eye(nClus*p + 1);
+Lamb0 = eye(nClus*p + 1)*.25;
 Psi0 = eye(nClus*p)*1e-4;
 nu0 = nClus*p+2;
 
@@ -137,14 +137,20 @@ for g = 2:ng
     A_tmp = A_fit(:,:,g-1);
     b_tmp = b_fit(:,g-1);
     Q_tmp = Q_fit(:,:,g-1);
-%     X_tmp = X_fit(:,:,g-1);
-    X_tmp = ppasmoo_poissexp_v2(Y,C_tmp,d_tmp,x0_tmp,Q0,A_tmp,b_tmp,Q_tmp);
-%     hess_tmp = hessX(muX(:), d_tmp, C_tmp, Q0, Q_tmp, A_tmp, Y);
+    X_tmp = X_fit(:,:,g-1);
     
-    % if use Newton?
     gradHess = @(vecX) gradHessX(vecX, d_tmp, C_tmp, x0_tmp, Q0, Q_tmp, A_tmp, b_tmp, Y);
     [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp(:),1e-10,1000);
     muX = reshape(muXvec, [], T);
+    
+    % X_tmp = ppasmoo_poissexp_v2(Y,C_tmp,d_tmp,x0_tmp,Q0,A_tmp,b_tmp,Q_tmp);
+    % hess_tmp = hessX(muX(:), d_tmp, C_tmp, Q0, Q_tmp, A_tmp, Y);
+    
+    if(sum(isnan(muXvec)) ~= 0)
+        disp('use adaptive smoother initial')
+        X_tmp = ppasmoo_poissexp_v2(Y,C_tmp,d_tmp,x0_tmp,Q0,A_tmp,b_tmp,Q_tmp);
+        [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp2(:),1e-6,1000);
+    end
     
     % tic;
     % use Cholesky decomposition to sample efficiently
@@ -198,30 +204,30 @@ for g = 2:ng
     %     d_fit(:,:,g)
     
     % (4) update mudc_fit & Sigdc_fit
-%    dcRes_all = [];
+    %    dcRes_all = [];
     for l = unique(Lab)
         dc_tmp = [d_fit(Lab == l, l, g) C_fit(Lab == l, id2id(l,p), g)];
         invTaudc = inv(Taudc0) + sum(Lab == l)*inv(Sigdc_fit(:,:,l,g-1));
         deltadc = invTaudc\(Taudc0\deltadc0 + Sigdc_fit(:,:,l,g-1)\sum(dc_tmp,1)');
         mudc_fit(:,l,g) = mvnrnd(deltadc, inv(invTaudc));
         
-        % assume different covariances 
+        % assume different covariances
         dcRes = dc_tmp' - mudc_fit(:,l,g);
         Psidc = Psidc0 + dcRes*dcRes';
         nudc = sum(Lab == l) + nudc0;
         Sigdc_fit(:,:,l,g) = iwishrnd(Psidc,nudc);
         
         % assume single covariance
-%         dcRes_all = [dcRes_all dc_tmp' - mudc_fit(:,l,g)];
+        %         dcRes_all = [dcRes_all dc_tmp' - mudc_fit(:,l,g)];
     end
     
     % assume single covariance
-%     Psidc = Psidc0 + dcRes_all*dcRes_all';
-%     nudc = N + nudc0;
-%     Sigdc_fit(:,:,:,g) = repmat(iwishrnd(Psidc,nudc),1,1,nClus);
+    %     Psidc = Psidc0 + dcRes_all*dcRes_all';
+    %     nudc = N + nudc0;
+    %     Sigdc_fit(:,:,:,g) = repmat(iwishrnd(Psidc,nudc),1,1,nClus);
     
-%     mudc_fit(:,:,g)
-%     Sigdc_fit(:,:,:,g)
+    %     mudc_fit(:,:,g)
+    %     Sigdc_fit(:,:,:,g)
     
     % (4)update Q
     Y_BA = X_fit(:,2:T,g)';

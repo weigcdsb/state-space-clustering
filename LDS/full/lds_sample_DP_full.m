@@ -57,8 +57,8 @@ figure(1)
 clusterPlot(Y, Lab)
 
 %% MCMC setting
-rng(3)
-alphaDP = 1;
+rng(10)
+alphaDP = 15;
 ng = 50;
 
 % pre-allocation
@@ -73,7 +73,7 @@ Sigx00_f = @(nClus) eye(nClus*p);
 deltadc0 = zeros(p+1,1);
 Taudc0 = eye(p+1);
 
-Psidc0 = eye(p+1)*1e-2;
+Psidc0 = eye(p+1)*1e-4;
 nudc0 = p+1+2;
 
 
@@ -86,8 +86,8 @@ nu0_f = @(nClus) nClus*p+2;
 % single cluster
 % Z_fit(:,1) = ones(N, 1);
 % N cluster
-Z_fit(:,1) = 1:N;
-
+% Z_fit(:,1) = 1:N;
+Z_fit(:,1) = randsample(5, N, true);
 
 % reorder Y by labels
 clusMax = max(Z_fit(:,1));

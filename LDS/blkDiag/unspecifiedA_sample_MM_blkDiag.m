@@ -1,6 +1,6 @@
 %% simulation
 rng(123)
-n = 10;
+n = 50;
 nClus = 3;
 N = n*nClus;
 p = 2;
@@ -51,8 +51,8 @@ clusterPlot(Y, Lab)
 
 %% MCMC setting
 rng(3)
-ng = 50;
-kMM = 3;
+ng = 100;
+kMM = 30;
 
 % pre-allocation
 Z_fit = zeros(N, ng);
@@ -77,7 +77,7 @@ Sigx00 = eye(kMM*p);
 deltadc0 = zeros(p+1,1);
 Taudc0 = eye(p+1);
 
-Psidc0 = eye(p+1)*1e-2;
+Psidc0 = eye(p+1)*1e-4;
 nudc0 = p+1+2;
 
 BA0_all = [zeros(kMM*p,1) eye(kMM*p)]';
