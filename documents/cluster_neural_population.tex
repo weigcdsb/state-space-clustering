@@ -189,9 +189,43 @@ latent by row, the problem is reduced to a multivariate general linear model (MV
 , where
 \(\mathbf{E} = \left( \mathbf{\epsilon}_{1},\ldots,\mathbf{\epsilon}_{T - 1} \right)^{'}\).
 
-Since the progress noise is independent at each step,
-\(f\left( \mathbf{y}_{i}|\mathbf{\Theta}_{j} \right) = \prod_{t = 1}^{T}{P(y_{\text{it}}|\mathbf{\Theta}_{j})}\),
-where \(P( \cdot )\) is the Poisson density and \(\mathbf{\Theta}_{j}\) contains all parameters in cluster \(j\).
+In summary, Let
+\(\mathbf{\Theta} = \left\{ \mathbf{z},\ \mathbf{d},\mathbf{C},\left\{ \mathbf{x}_{t} \right\}_{t = 1}^{T},\mathbf{x}_{0},\mathbf{Q}_{0},\mathbf{A},\ \mathbf{b},\mathbf{Q}\  \right\}\)
+be the set of parameters for LDS. The number of observation/ neuron is
+\(N\), and they can group into \(J\) clusters. In each cluster, there
+are \(p\) latent state vectors. The recording length is \(T\).
+\begin{enumerate}
+	\def\labelenumi{(\arabic{enumi})}
+	\item
+	\(\mathbf{z} \in \mathbb{Z}^{N}\): cluster index for each neuron/ observation,
+	with \(z_{i} \in \{ 1,\ldots,J\}\) for \(i = 1,\ldots,N\).
+	\item
+	\(\mathbf{d} \in \mathbb{R}^{N}\) and \(\mathbf{C} \in \mathbb{R}^{N \times p}\): baseline
+	\& loading of the latent
+	\item
+	\(\mathbf{x}_{t} \in \mathbb{R}^{\text{Jp}}\): all latent at \(t\).
+	\item
+	\(\mathbf{x}_{t}^{(j)} \in \mathbb{R}^{p}\) means the latent in cluster \(j\) at
+	time \(t\).
+	\item
+	\(\mathbf{x}_{0} \in \mathbb{R}^{\text{Jp}}\) and
+	\(\mathbf{Q}_{0} \in \mathbb{R}^{\text{Jp} \times Jp}\): mean and covariance of
+	\(\mathbf{x}_{1}\). For simplicity, assume \(\mathbf{Q}_{0}\) is known.
+	\item
+	\(\mathbf{A} \in \mathbb{R}^{Jp \times Jp},\ \mathbf{b} \in \mathbb{R}^{Jp},\mathbf{Q} \in \mathbb{R}^{Jp \times Jp}\):
+	linear dynamics of the latent.
+\end{enumerate}
+
+Since the progress noise is independent at each step and the observation is assumed conditional independent, the likelihood is:
+\[ f(\mathbf{y}|\mathbf{\Theta})= \prod_{i = 1}^{N}\prod_{t = 1}^{T}{P(y_{it}|\mathbf{\Theta})} = \prod_{i = 1}^{N}\prod_{t = 1}^{T}{POI(y_{it}|\exp{(d_{i} + \mathbf{c'}_{i}\mathbf{x}_{t}^{(z_{i})})})}
+\]
+, where \(POI(\cdot|\lambda)\) is the density of \(Poisson(\lambda)\).
+
+\textbf{DETOUR}:\\
+Maybe in the future, we may switch to EM. To help with this, I also give the likelihood for complete observation \((\mathbf{y}, \left\{ \mathbf{x}_{t} \right\}_{t = 1}^{T})\). Let \(\mathbf{\Theta}'=\mathbf{\Theta}\backslash \left\{ \mathbf{x}_{t} \right\}_{t = 1}^{T}\).
+\[ f(\mathbf{y}, \left\{ \mathbf{x}_{t} \right\}_{t = 1}^{T}|\mathbf{\Theta}')= \prod_{i = 1}^{N}\prod_{t = 1}^{T}{P(y_{it}, \mathbf{x}_{t}|\mathbf{\Theta}')} = \prod_{i = 1}^{N}\prod_{t = 1}^{T}{POI(y_{it}|\exp{(d_{i} + \mathbf{c'}_{i}\mathbf{x}_{t}^{(z_{i})})})}\cdot N(\mathbf{x}_{t}^{(z_{i})} |\mathbf{A}_{z_i}\mathbf{x}_{t} + \mathbf{b}_{z_i}, \mathbf{Q}_{z_i})
+\]
+, where \(\mathbf{A}_j\in \mathbb{R}^{p \times Jp}\) and \(\mathbf{b}_j\in \mathbb{R}^p\)  are the \(j^{\text{th}}\) row block of \(\mathbf{A}\) and \(\mathbf{b}\). \(\mathbf{Q}_j \in \mathbb{R}^{p \times p}\) is the \(j^{\text{th}}\) row and column block of \(\mathbf{Q}\).
 
 \subsection{Conditional Priors for Parameters}
 The parameters need to estimate:

@@ -57,7 +57,7 @@ imagesc(exp(logLam))
 colorbar()
 % clusterPlot(Y, Lab)
 
-ng = 100; % 40
+ng = 1000; % 40
 idx = 50:ng; % 20:ng
 
 %% fitting: MCMC, no update prior
@@ -74,6 +74,10 @@ A_fit = repmat(A,1,1,ng); % true
 b_fit = repmat(b,1,ng); % true
 Q_fit = repmat(Q,1,1,ng); % true
 
+
+dc = [d_fit(i,1) C_fit(i,:,1)]';
+acs = 0;
+tau = 
 for g = 2:ng
     
     disp(g)
@@ -90,14 +94,32 @@ for g = 2:ng
         [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
             [d_fit(i, g-1) C_fit(i,:,g-1)]',1e-8,1000);
         
-        Sigdc = -inv(niSigdc);
-        Sigdc = (Sigdc + Sigdc')/2;
-        dc = mvnrnd(mudc, Sigdc);
+        % let's step further... MH based on posterior mode
+        % proposal distribution
+        % use Cholesky decomposition
+        R = chol(-niSigdc,'lower'); % sparse
+        z = randn(length(mudc), 1) + R'*(mudc -(dc - mudc));
+        dcStar = R'\z;
+        
+        % lhr
+        lhr = sum(log(poisspdf(Y(i,:)', lamdc(dcStar)))) -...
+            sum(log(poisspdf(Y(i,:)', lamdc(dc)))) +...
+            log(mvnpdf(dcStar, mudc0, Sigdc0)) -...
+            log(mvnpdf(dc, mudc0, Sigdc0));
+        
+        if(log(rand(1)) < lhr)
+            dc = dcStar;
+            acs = acs + 1;
+        end
         
         d_fit(i,g) = dc(1);
         C_fit(i,:,g) = dc(2:end);
     end
 end
+
+acs
+
+
 
 figure
 subplot(1,3,1)
