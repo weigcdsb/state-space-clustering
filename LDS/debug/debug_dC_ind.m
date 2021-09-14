@@ -57,11 +57,8 @@ imagesc(exp(logLam))
 colorbar()
 % clusterPlot(Y, Lab)
 
-ng = 1000; % 40
-idx = 50:ng; % 20:ng
-
 %% fitting: MCMC, no update prior
-
+ng = 1000;
 d_fit = zeros(N, ng);
 C_fit = zeros(N, p, ng);
 mudc0 = zeros(p+1,1);
@@ -75,51 +72,90 @@ b_fit = repmat(b,1,ng); % true
 Q_fit = repmat(Q,1,1,ng); % true
 
 
-dc = [d_fit(i,1) C_fit(i,:,1)]';
+dc_all = [d_fit(:,1) C_fit(:,:,1)]';
 acs = 0;
-tau = 
+
+mudc_all = zeros(p+1, N);
+niSigdc_all = zeros(p+1,p+1,N);
+for i = 1:N
+    
+    l = Lab(i);
+    latentId = ((l-1)*p+1):(l*p);
+    X_tmp = [ones(1, T) ;X_fit(latentId,:,1)]';
+    
+    lamdc = @(dc) exp(X_tmp*dc);
+    
+    derdc = @(dc) X_tmp'*(Y(i,:)' - lamdc(dc)) - inv(Sigdc0)*(dc - mudc0);
+    hessdc = @(dc) -X_tmp'*diag(lamdc(dc))*X_tmp - inv(Sigdc0);
+    [mudc_all(:,i),~,niSigdc_all(:,:,i),~] = newton(derdc,hessdc,dc_all(:,i),1e-8,1000);
+    
+end
+
+tau = 1;
 for g = 2:ng
     
     disp(g)
     
     for i = 1:N
+        
         l = Lab(i);
         latentId = ((l-1)*p+1):(l*p);
-        X_tmp = [ones(1, T) ;X_fit(latentId,:,g)]';
-        
+        X_tmp = [ones(1, T) ;X_fit(latentId,:,1)]';
+    
         lamdc = @(dc) exp(X_tmp*dc);
-        
-        derdc = @(dc) X_tmp'*(Y(i,:)' - lamdc(dc)) - inv(Sigdc0)*(dc - mudc0);
-        hessdc = @(dc) -X_tmp'*diag(lamdc(dc))*X_tmp - inv(Sigdc0);
-        [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
-            [d_fit(i, g-1) C_fit(i,:,g-1)]',1e-8,1000);
         
         % let's step further... MH based on posterior mode
         % proposal distribution
         % use Cholesky decomposition
-        R = chol(-niSigdc,'lower'); % sparse
-        z = randn(length(mudc), 1) + R'*(mudc -(dc - mudc));
+        R = chol(-niSigdc_all(:,:,i),'lower'); % sparse
+        R = tau*R;
+        % z = randn(length(mudc_all(:,i)), 1) + R'*(mudc_all(:,i) -(dc_all(:,i) - mudc_all(:,i)));
+        z = randn(length(dc_all(:,i)), 1) + R'*dc_all(:,i);
         dcStar = R'\z;
         
         % lhr
         lhr = sum(log(poisspdf(Y(i,:)', lamdc(dcStar)))) -...
-            sum(log(poisspdf(Y(i,:)', lamdc(dc)))) +...
+            sum(log(poisspdf(Y(i,:)', lamdc(dc_all(:,i))))) +...
             log(mvnpdf(dcStar, mudc0, Sigdc0)) -...
-            log(mvnpdf(dc, mudc0, Sigdc0));
+            log(mvnpdf(dc_all(:,i), mudc0, Sigdc0));
         
         if(log(rand(1)) < lhr)
-            dc = dcStar;
+            dc_all(:,i) = dcStar;
             acs = acs + 1;
         end
         
-        d_fit(i,g) = dc(1);
-        C_fit(i,:,g) = dc(2:end);
+        d_fit(i,g) = dc_all(1,i);
+        C_fit(i,:,g) = dc_all(2:end,i);
     end
 end
 
-acs
+acs/((ng-1)*N)
 
 
+d_norm = zeros(g, 1);
+C_norm_fro = zeros(g, 1);
+
+for k = 1:g
+    d_norm(k) = norm(d_fit(:,k), 'fro');
+    C_norm_fro(k) = norm(C_fit(:,:,k), 'fro');
+end
+
+figure
+subplot(1,2,1)
+plot(d_norm)
+title('norm of d')
+subplot(1,2,2)
+plot(C_norm_fro)
+title('Frobenius norm of C')
+
+% hold on
+% nidx = 14;
+% hist(d_fit(nidx,5000:ng))
+% xline(d(nidx))
+% hold off
+
+idx = round(ng/2):ng;
+% idx = 500:100;
 
 figure
 subplot(1,3,1)

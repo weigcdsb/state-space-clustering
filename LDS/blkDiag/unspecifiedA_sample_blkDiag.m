@@ -58,7 +58,7 @@ clusterPlot(Y, Lab)
 % nClus = 1;
 % Lab = ones(1,N);
 rng(3)
-ng = 2000;
+ng = 10000;
 
 % pre-allocation
 X_fit = zeros(nClus*p, T, ng);
@@ -120,6 +120,9 @@ X_fit(:,:,1) = reshape(muXvec, [], T);
 
 
 %% MCMC
+dc_all = [sum(d_fit(:,:,1), 2) sum(C_fit(:,1:p:end), 2) sum(C_fit(:,2:p:end), 2)]';
+acc = zeros(N,1);
+
 for g = 2:ng
     
     disp(g)
@@ -175,23 +178,37 @@ for g = 2:ng
         [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
             [d_fit(i,l, g-1) C_fit(i,latentId,g-1)]',1e-8,1000);
         
-        % tic;
-        % use warm start
-        % invSigdc_star = inv(Sigdc_fit(:,:,l,g-1)) + X_tmp'*diag(lamdc(mudc_fit(:,l,g-1)))*X_tmp;
-        % mudc_star = mudc_fit(:,l,g-1) + invSigdc_star\(X_tmp'*(Y(i,:)' - lamdc(mudc_fit(:,l,g-1))));
-        % [mudc,~,niSigdc,~] = newton(derdc,hessdc,mudc_star,1e-8,1000);
-        % toc;
+        if(sum(isnan(mudc)) ~= 0)
+            [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
+                mudc0,1e-8,1000);
+        end
         
-        % [mudc [d(i) C_all(i,:)]']
+        % pure MH?
+        % half MH, half Normal approx?
+        if g < 1 % g < round(ng/2)
+            Sigdc = -inv(niSigdc);
+            Sigdc = (Sigdc + Sigdc')/2;
+            dc_all(:,i) = mvnrnd(mudc, Sigdc);
+        else
+            R = chol(-niSigdc,'lower'); % sparse
+            z = randn(length(dc_all(:,i)), 1) + R'*dc_all(:,i);
+            dcStar = R'\z;
+            
+            % lhr
+            lhr = sum(log(poisspdf(Y(i,:)', lamdc(dcStar)))) -...
+            sum(log(poisspdf(Y(i,:)', lamdc(dc_all(:,i))))) +...
+            log(mvnpdf(dcStar, mudc_fit(:,l,g-1), Sigdc_fit(:,:,l,g-1))) -...
+            log(mvnpdf(dc_all(:,i), mudc_fit(:,l,g-1), Sigdc_fit(:,:,l,g-1)));
         
-        Sigdc = -inv(niSigdc);
-        Sigdc = (Sigdc + Sigdc')/2;
-        dc = mvnrnd(mudc, Sigdc);
+            if(log(rand(1)) < lhr)
+                dc_all(:,i) = dcStar;
+                acc(i) = acc(i)+1;
+            end
+        end
         
-        % dTest(i) = mudc(1);
-        % CTest(i,:) = mudc(2:end);
-        d_fit(i,l,g) = dc(1);
-        C_fit(i,latentId,g) = dc(2:end);
+        d_fit(i,l,g) = dc_all(1,i);
+        C_fit(i,latentId,g) = dc_all(2:end,i);
+        
     end
     
     %     C_fit(:,:,g)
@@ -247,6 +264,8 @@ for g = 2:ng
     end
 end
 
+save('C:\Users\gaw19004\Desktop\LDS_backup\new2\noA_samp_MH.mat')
+
 %%
 
 d_norm = zeros(g, 1);
@@ -276,7 +295,7 @@ plot(A_norm_fro)
 title('Frobenius norm of A')
 
 %%
-idx = 1800:2000;
+idx = round(ng/2):ng;
 
 subplot(1,2,1)
 imagesc(exp(C_trans*X + d))

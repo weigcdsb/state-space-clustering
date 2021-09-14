@@ -79,7 +79,7 @@ plot(X(2*p+1:3*p,:)')
 % nClus = 1;
 % Lab = ones(1,N);
 rng(3)
-ng = 2000;
+ng = 10000;
 
 % pre-allocation
 X_fit = zeros(nClus*p, T, ng);
@@ -140,6 +140,10 @@ X_fit(:,:,1) = reshape(muXvec, [], T);
 
 
 %% MCMC
+dc_all = [sum(d_fit(:,:,1), 2) sum(C_fit(:,1:p:end), 2) sum(C_fit(:,2:p:end), 2)]';
+acc = zeros(N,1);
+x_all = reshape(X_fit(:,:,1),[],1);
+
 for g = 2:ng
     
     disp(g)
@@ -157,22 +161,48 @@ for g = 2:ng
     A_tmp = A_fit(:,:,g-1);
     b_tmp = b_fit(:,g-1);
     Q_tmp = Q_fit(:,:,g-1);
-%     X_tmp = X_fit(:,:,g-1);
-    X_tmp = ppasmoo_poissexp_v2(Y,C_tmp,d_tmp,x0_tmp,Q0,A_tmp,b_tmp,Q_tmp);
-%     hess_tmp = hessX(muX(:), d_tmp, C_tmp, Q0, Q_tmp, A_tmp, Y);
+    X_tmp = X_fit(:,:,g-1);
     
-    % if use Newton?
     gradHess = @(vecX) gradHessX(vecX, d_tmp, C_tmp, x0_tmp, Q0, Q_tmp, A_tmp, b_tmp, Y);
-    [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp(:),1e-10,1000);
-    muX = reshape(muXvec, [], T);
-    
-    % tic;
-    % use Cholesky decomposition to sample efficiently
+    [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp(:),1e-8,1000);
+    if(sum(isnan(muXvec)) ~= 0)
+        disp('use adaptive smoother initial')
+        X_tmp = ppasmoo_poissexp_v2(Y,C_tmp,d_tmp,x0_tmp,Q0,A_tmp,b_tmp,Q_tmp);
+        [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp(:),1e-8,1000);
+    end
+        
     R = chol(-hess_tmp,'lower'); % sparse
-    z = randn(length(muX(:)), 1) + R'*muX(:);
-    Xsamp = R'\z;
-    X_fit(:,:,g) = reshape(Xsamp,[], T);
-    % toc;
+    z = randn(length(muXvec), 1) + R'*muXvec;
+    x_all = R'\z;
+    
+    % let's use MH again...
+%     if g < 1 % g < round(ng/2)
+%         R = chol(-hess_tmp,'lower'); % sparse
+%         z = randn(length(muXvec), 1) + R'*muXvec;
+%         x_all = R'\z;
+%     else
+%         lamX = @(X) exp(C_tmp*X + d_tmp) ;
+%         
+%         R = chol(-hess_tmp,'lower'); % sparse
+%         z = randn(length(x_all), 1) + R'*x_all;
+%         xStar = R'\z;
+%         
+%         XStar = reshape(xStar, [], T);
+%         X_all2 = reshape(x_all, [], T);
+%         
+%         logNPrior = @(X) -1/2*(X(:,1) - x0_tmp)'*Q0*(X(:,1) - x0_tmp) -...
+%             1/2*trace((X(:,2:end) - A_tmp*X(:,1:(end-1)) - b_tmp)'*Q_tmp*...
+%             (X(:,2:end) - A_tmp*X(:,1:(end-1)) - b_tmp));
+%         
+%         % lhr
+%         lhr = sum(log(poisspdf(Y, lamX(XStar))), 'all') -...
+%             sum(log(poisspdf(Y, lamX(X_all2))), 'all') +...
+%             logNPrior(XStar) - logNPrior(X_all2);
+%         
+%         if(log(rand(1)) < lhr);x_all = xStar;end;
+%     end
+    
+    X_fit(:,:,g) = reshape(x_all,[], T);
     
     % (2) update x0_fit
     Sigx0 = inv(inv(Sigx00) + inv(Q0));
@@ -195,27 +225,40 @@ for g = 2:ng
         [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
             [d_fit(i,l, g-1) C_fit(i,latentId,g-1)]',1e-8,1000);
         
-        % tic;
-        % use warm start
-        % invSigdc_star = inv(Sigdc_fit(:,:,l,g-1)) + X_tmp'*diag(lamdc(mudc_fit(:,l,g-1)))*X_tmp;
-        % mudc_star = mudc_fit(:,l,g-1) + invSigdc_star\(X_tmp'*(Y(i,:)' - lamdc(mudc_fit(:,l,g-1))));
-        % [mudc,~,niSigdc,~] = newton(derdc,hessdc,mudc_star,1e-8,1000);
-        % toc;
+        if(sum(isnan(mudc)) ~= 0)
+            [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
+                mudc0,1e-8,1000);
+        end
         
-        % [mudc [d(i) C_all(i,:)]']
         
-        Sigdc = -inv(niSigdc);
-        Sigdc = (Sigdc + Sigdc')/2;
-        dc = mvnrnd(mudc, Sigdc);
+        % pure MH?
+        % half MH, half Normal approx?
+        if g < 1 % g < round(ng/2)
+            Sigdc = -inv(niSigdc);
+            Sigdc = (Sigdc + Sigdc')/2;
+            dc_all(:,i) = mvnrnd(mudc, Sigdc);
+        else
+            R = chol(-niSigdc,'lower'); % sparse
+            z = randn(length(dc_all(:,i)), 1) + R'*dc_all(:,i);
+            dcStar = R'\z;
+            
+            % lhr
+            lhr = sum(log(poisspdf(Y(i,:)', lamdc(dcStar)))) -...
+            sum(log(poisspdf(Y(i,:)', lamdc(dc_all(:,i))))) +...
+            log(mvnpdf(dcStar, mudc_fit(:,l,g-1), Sigdc_fit(:,:,l,g-1))) -...
+            log(mvnpdf(dc_all(:,i), mudc_fit(:,l,g-1), Sigdc_fit(:,:,l,g-1)));
         
-        % dTest(i) = mudc(1);
-        % CTest(i,:) = mudc(2:end);
-        d_fit(i,l,g) = dc(1);
-        C_fit(i,latentId,g) = dc(2:end);
+            if(log(rand(1)) < lhr)
+                dc_all(:,i) = dcStar;
+                acc(i) = acc(i)+1;
+            end
+        end
+        
+        d_fit(i,l,g) = dc_all(1,i);
+        C_fit(i,latentId,g) = dc_all(2:end,i);
+        
     end
     
-    %     C_fit(:,:,g)
-    %     d_fit(:,:,g)
     
     % (4) update mudc_fit & Sigdc_fit
 %    dcRes_all = [];
@@ -266,6 +309,8 @@ for g = 2:ng
     end
 end
 
+save('C:\Users\gaw19004\Desktop\LDS_backup\new2\lds_double_MH.mat')
+
 %%
 d_norm = zeros(g, 1);
 C_norm_fro = zeros(g, 1);
@@ -295,7 +340,7 @@ title('Frobenius norm of A')
 
 
 %%
-idx = 1000:ng;
+idx = round(ng/2):ng;
 
 subplot(1,2,1)
 imagesc(exp(C_trans*X + d))

@@ -55,8 +55,7 @@ end
 
 Y = poissrnd(exp(logLam));
 clusterPlot(Y, Lab)
-ng = 1000;
-idx = 900:ng;
+ng = 5000;
 
 %% fitting: MCMC, no update prior
 X_fit = zeros(nClus*p, T, ng);
@@ -85,14 +84,17 @@ x0_fit(:,1) = lsqr(C_trans_tmp,(log(mean(Y(:,1:10),2))-d_fit(:,1)));
 [X_fit(:,:,1),~,~] = ppasmoo_poissexp_v2(Y,C_trans_tmp,d_fit(:,1),...
     x0_fit(:,1),Q0,A_fit(:,:,1),b_fit(:,1),Q_fit(:,:,1));
 
+
+
+dc_all = [d_fit(:,1) C_fit(:,:,1)]';
+acc = zeros(N,1);
 for g = 2:ng
     
     disp(g)
-    
     % (1) update X_fit
     % adaptive smoothing
     C_trans_tmp = zeros(N, p*nClus);
-    for k = 1:length(Lab)
+    for k = 1:N
         C_trans_tmp(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = C_fit(k,:,g-1);
     end
     d_tmp = d_fit(:,g-1);
@@ -134,22 +136,57 @@ for g = 2:ng
         hessdc = @(dc) -X_tmp'*diag(lamdc(dc))*X_tmp - inv(Sigdc0);
         [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
             [d_fit(i, g-1) C_fit(i,:,g-1)]',1e-8,1000);
-        
         if(sum(isnan(mudc)) ~= 0)
             [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
                 mudc0,1e-8,1000);
         end
         
+        if g < 1 % g < round(ng/2)
+            Sigdc = -inv(niSigdc);
+            Sigdc = (Sigdc + Sigdc')/2;
+            dc_all(:,i) = mvnrnd(mudc, Sigdc);
+        else
+            R = chol(-niSigdc,'lower'); % sparse
+            z = randn(length(dc_all(:,i)), 1) + R'*dc_all(:,i);
+            dcStar = R'\z;
+            
+            % lhr
+            lhr = sum(log(poisspdf(Y(i,:)', lamdc(dcStar)))) -...
+                sum(log(poisspdf(Y(i,:)', lamdc(dc_all(:,i))))) +...
+                log(mvnpdf(dcStar, mudc0, Sigdc0)) -...
+                log(mvnpdf(dc_all(:,i), mudc0, Sigdc0));
+            
+            if(log(rand(1)) < lhr)
+                dc_all(:,i) = dcStar;
+                acc(i) = acc(i)+1;
+            end
+        end
         
-        Sigdc = -inv(niSigdc);
-        Sigdc = (Sigdc + Sigdc')/2;
-        dc = mvnrnd(mudc, Sigdc);
-        d_fit(i,g) = dc(1);
-        C_fit(i,:,g) = dc(2:end);
+        d_fit(i,g) = dc_all(1,i);
+        C_fit(i,:,g) = dc_all(2:end,i);
     end
     
-    
 end
+
+
+d_norm = zeros(g, 1);
+C_norm_fro = zeros(g, 1);
+
+for k = 1:g
+    d_norm(k) = norm(d_fit(:,k), 'fro');
+    C_norm_fro(k) = norm(C_fit(:,:,k), 'fro');
+end
+
+figure
+subplot(1,2,1)
+plot(d_norm)
+title('norm of d')
+subplot(1,2,2)
+plot(C_norm_fro)
+title('Frobenius norm of C')
+
+
+idx = round(ng/2):ng;
 
 figure
 subplot(1,3,1)
@@ -229,6 +266,9 @@ gradHess = @(vecX) gradHessX(vecX, d_tmp, C_fit2(:,:,1), x0_fit2(:,1), Q0,...
 [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp(:),1e-10,1000);
 X_fit2(:,:,1) = reshape(muXvec, [], T);
 
+
+dc_all2 = [sum(d_fit2(:,:,1), 2) sum(C_fit2(:,1:p:end), 2) sum(C_fit2(:,2:p:end), 2)]';
+acc2 = zeros(N,1);
 for g = 2:ng
     
     disp(g)
@@ -287,12 +327,31 @@ for g = 2:ng
             [mudc,~,niSigdc,~] = newton(derdc,hessdc,deltadc0,1e-8,1000);
         end
         
-        Sigdc = -inv(niSigdc);
-        Sigdc = (Sigdc + Sigdc')/2;
-        dc = mvnrnd(mudc, Sigdc);
         
-        d_fit2(i,l,g) = dc(1);
-        C_fit2(i,latentId,g) = dc(2:end);
+        if g < 1 % g < round(ng/2)
+            Sigdc = -inv(niSigdc);
+            Sigdc = (Sigdc + Sigdc')/2;
+            dc_all2(:,i) = mvnrnd(mudc, Sigdc);
+        else
+            R = chol(-niSigdc,'lower'); % sparse
+            z = randn(length(dc_all2(:,i)), 1) + R'*dc_all2(:,i);
+            dcStar = R'\z;
+            
+            % lhr
+            lhr = sum(log(poisspdf(Y(i,:)', lamdc(dcStar)))) -...
+            sum(log(poisspdf(Y(i,:)', lamdc(dc_all2(:,i))))) +...
+            log(mvnpdf(dcStar, mudc_fit2(:,l,g-1), Sigdc_fit2(:,:,l,g-1))) -...
+            log(mvnpdf(dc_all2(:,i), mudc_fit2(:,l,g-1), Sigdc_fit2(:,:,l,g-1)));
+        
+            if(log(rand(1)) < lhr)
+                dc_all2(:,i) = dcStar;
+                acc2(i) = acc2(i)+1;
+            end
+        end
+        
+        d_fit2(i,l,g) = dc_all2(1,i);
+        C_fit2(i,latentId,g) = dc_all2(2:end,i);
+        
     end
     
     
@@ -311,6 +370,29 @@ for g = 2:ng
     end
     
 end
+
+% acc2/ng
+
+
+d_norm = zeros(g, 1);
+C_norm_fro = zeros(g, 1);
+
+for k = 1:g
+    d_norm(k) = norm(d_fit2(:,:,k), 'fro');
+    C_norm_fro(k) = norm(C_fit2(:,:,k), 'fro');
+end
+
+figure
+subplot(1,2,1)
+plot(d_norm)
+title('norm of d')
+subplot(1,2,2)
+plot(C_norm_fro)
+title('Frobenius norm of C')
+
+
+idx = round(ng/2):ng;
+
 
 figure
 subplot(1,3,1)
