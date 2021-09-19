@@ -138,22 +138,45 @@ gradHess = @(vecX) gradHessX(vecX, d_tmp, C_fit(:,:,1), x0_fit(:,1), Q0,...
 X_fit(:,:,1) = reshape(muXvec, [], T);
 
 
-
 %% MCMC
 dc_all = [sum(d_fit(:,:,1), 2) sum(C_fit(:,1:p:end), 2) sum(C_fit(:,2:p:end), 2)]';
 acc = zeros(N,1);
 x_all = reshape(X_fit(:,:,1),[],1);
-% taux = sqrt(p*T);
-taux = sqrt(length(x_all))/2.38;
-accx = 0;
 
-optdc.M=0;
-optdc.Madapt=1;
-optdc.delta = 0.8;
+% optdc.M=0;
+% optdc.Madapt=50;
+% optdc.delta = 0.8;
+% epsilon = zeros(N,1);
+% 
+% for i = 1:N
+%     l = Lab(i);
+%     latentId = id2id(l,p);
+%     X_tmp = [ones(1, T) ;X_fit(latentId,:,1)]';
+%     
+%     lamdc = @(dc) exp(X_tmp*dc);
+%     derdc = @(dc) X_tmp'*(Y(i,:)' - lamdc(dc)) - Sigdc_fit(:,:,l,1)\(dc - mudc_fit(:,l,1));
+%     lpdf_dc = @(dc) sum(log(poisspdf(Y(i,:)', lamdc(dc)))) +...
+%         log(mvnpdf(dc, mudc_fit(:,l,1), Sigdc_fit(:,:,l,1)));
+%     
+%     fg_dc=@(dc_r) deal(lpdf_dc(dc_r'), derdc(dc_r')'); % log density and gradient
+%     
+%     [mudc_NUTS, ~, diagn]=hmc_nuts(fg_dc, [d_fit(i,l, 1) C_fit(i,latentId,1)],optdc);
+%     epsilon(i) = diagn.opt.epsilonbar;
+%     
+%     d_fit(i,l,1) = mudc_NUTS(end,1);
+%     C_fit(i,latentId,1) = mudc_NUTS(end,2:end);
+%     
+% end
+clear optdc
+optdc.M=1;
+optdc.Madapt=0;
+epsilon = zeros(N,1);
+burnIn = 1000;
+flg = 0;
 
 for g = 2:ng
     
-    disp(g)
+    % disp(g)
     
     % (1) update X_fit
     % adaptive smoothing
@@ -181,41 +204,10 @@ for g = 2:ng
     R = chol(-hess_tmp,'lower'); % sparse
     z = randn(length(muXvec), 1) + R'*muXvec;
     x_all = R'\z;
-    
-%     x_MHStart = round(ng/2);
-%     % let's use MH again...
-%     if g < x_MHStart % g < round(ng/2)
-%         R = chol(-hess_tmp,'lower'); % sparse
-%         z = randn(length(muXvec), 1) + R'*muXvec;
-%         x_all = R'\z;
-%     else
-%         lamX = @(X) exp(C_tmp*X + d_tmp) ;
-%         
-%         R = chol(-hess_tmp,'lower'); % sparse
-%         R = taux*R;
-%         z = randn(length(x_all), 1) + R'*x_all;
-%         xStar = R'\z;
-%         
-%         XStar = reshape(xStar, [], T);
-%         X_all2 = reshape(x_all, [], T);
-%         
-%         logNPrior = @(X) -1/2*(X(:,1) - x0_tmp)'*Q0*(X(:,1) - x0_tmp) -...
-%             1/2*trace((X(:,2:end) - A_tmp*X(:,1:(end-1)) - b_tmp)'*Q_tmp*...
-%             (X(:,2:end) - A_tmp*X(:,1:(end-1)) - b_tmp));
-%         
-%         % lhr
-%         lhr = sum(log(poisspdf(Y, lamX(XStar))), 'all') -...
-%             sum(log(poisspdf(Y, lamX(X_all2))), 'all') +...
-%             logNPrior(XStar) - logNPrior(X_all2);
-%         
-%         if(log(rand(1)) < lhr)
-%             x_all = xStar;
-%             accx = accx + 1;
-%         end
-%     end
-    
-%     disp("iter " + g +": " + accx/(g-x_MHStart))
     X_fit(:,:,g) = reshape(x_all,[], T);
+    
+%     disp("iter " + g + ": " + norm(X_fit(:,:,g) - X_fit(:,:,g-1), 'fro')/...
+%                 norm(X_fit(:,:,g-1), 'fro'));
     
     % (2) update x0_fit
     Sigx0 = inv(inv(Sigx00) + inv(Q0));
@@ -224,7 +216,30 @@ for g = 2:ng
     % disp(x0_fit(:,g))
     
     % (3) update d_fit & C_fit
-    % Laplace approximation
+    % NUTS
+    if(g < 50)
+        tuneState = 1; % change epsilon
+        disp("iter " + g + ": " + norm(X_fit(:,:,g) - X_fit(:,:,g-1), 'fro')/...
+            norm(X_fit(:,:,g-1), 'fro') + ", changing");
+    elseif(flg == 1)
+        tuneState = 3; % fix epsilon
+        disp("iter " + g + ": " + norm(X_fit(:,:,g) - X_fit(:,:,g-1), 'fro')/...
+                    norm(X_fit(:,:,g-1), 'fro') + ", tuned");
+    else
+        if(g > burnIn ||...
+                norm(X_fit(:,:,g) - X_fit(:,:,g-1), 'fro')/...
+                norm(X_fit(:,:,g-1), 'fro') < 1e-1)
+            tuneState = 2; % tune epsilon
+            disp("iter " + g + ": " + norm(X_fit(:,:,g) - X_fit(:,:,g-1), 'fro')/...
+                    norm(X_fit(:,:,g-1), 'fro') + ", tuning");
+        else
+            tuneState = 1; % change epsilon
+            disp("iter " + g + ": " + norm(X_fit(:,:,g) - X_fit(:,:,g-1), 'fro')/...
+            norm(X_fit(:,:,g-1), 'fro') + ", changing");
+        end
+    end
+    
+    
     
     for i = 1:N
         l = Lab(i);
@@ -234,16 +249,29 @@ for g = 2:ng
         lamdc = @(dc) exp(X_tmp*dc);
         derdc = @(dc) X_tmp'*(Y(i,:)' - lamdc(dc)) - Sigdc_fit(:,:,l,g-1)\(dc - mudc_fit(:,l,g-1));
         lpdf_dc = @(dc) sum(log(poisspdf(Y(i,:)', lamdc(dc)))) +...
-            log(mvnpdf(dc, mudc0, Sigdc0));
+            log(mvnpdf(dc, mudc_fit(:,l,g-1), Sigdc_fit(:,:,l,g-1)));
         
         fg_dc=@(dc_r) deal(lpdf_dc(dc_r'), derdc(dc_r')'); % log density and gradient
-        [mudc_NUTS, ~, ~]=hmc_nuts(fg_dc, [d_fit(i,l, g-1) C_fit(i,latentId,g-1)],optdc);
+        
+        switch tuneState
+            case 1
+                [mudc_NUTS, ~, ~]=hmc_nuts(fg_dc, [d_fit(i,l, g-1) C_fit(i,latentId,g-1)],optdc);
+            case 2
+                optdc.Madapt=50;
+                [mudc_NUTS, ~, diagn]=hmc_nuts(fg_dc, [d_fit(i,l, g-1) C_fit(i,latentId,g-1)],optdc);
+                epsilon(i) = diagn.opt.epsilonbar;
+                optdc.Madapt=0;
+            case 3
+                optdc.epsilon = epsilon(i);
+                [mudc_NUTS, ~, ~]=hmc_nuts(fg_dc, [d_fit(i,l, g-1) C_fit(i,latentId,g-1)],optdc);
+        end
         
         d_fit(i,l,g) = mudc_NUTS(2,1);
         C_fit(i,latentId,g) = mudc_NUTS(2,2:end);
         
     end
     
+    if(tuneState == 2);flg = 1;end    
     
     % (4) update mudc_fit & Sigdc_fit
     %    dcRes_all = [];
@@ -312,12 +340,12 @@ for g = 2:ng
     
 end
 
-save('C:\Users\gaw19004\Desktop\LDS_backup\new2\lds_halfX_MH.mat')
+save('C:\Users\gaw19004\Desktop\LDS_backup\new2\lds_NUTS.mat')
 
 %%
 
-accx/(ng-x_MHStart)
-acc/(ng-dc_MHStart)
+% accx/(ng-x_MHStart)
+% acc/(ng-dc_MHStart)
 
 d_norm = zeros(g, 1);
 C_norm_fro = zeros(g, 1);

@@ -81,19 +81,71 @@ for k = 1:length(Lab)
     C_trans_tmp(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = C_fit(k,:,1);
 end
 x0_fit(:,1) = lsqr(C_trans_tmp,(log(mean(Y(:,1:10),2))-d_fit(:,1)));
-[X_fit(:,:,1),~,~] = ppasmoo_poissexp_v2(Y,C_trans_tmp,d_fit(:,1),...
-    x0_fit(:,1),Q0,A_fit(:,:,1),b_fit(:,1),Q_fit(:,:,1));
+d_tmp = d_fit(:,1);
+x0_tmp = x0_fit(:,1);
+A_tmp = A_fit(:,:,1);
+b_tmp = b_fit(:,1);
+Q_tmp = Q_fit(:,:,1);
 
+
+[X_fit(:,:,1),~,~] = ppasmoo_poissexp_v2(Y,C_trans_tmp,d_tmp,...
+    x0_tmp,Q0,A_tmp,b_tmp,Q_tmp);
 
 dc_all = [d_fit(:,1) C_fit(:,:,1)]';
 acc = zeros(N,1);
 
-optX.M=0;
-optX.Madapt=1;
-optX.delta = 0.5;
 
+% optX.M=0;
+% optX.Madapt=1;
+% optX.delta = 0.5;
+% 
+% logNPrior = @(X) -1/2*(X(:,1) - x0_tmp)'*inv(Q0)*(X(:,1) - x0_tmp) -...
+%     1/2*trace((X(:,2:end) - A_tmp*X(:,1:(end-1)) - b_tmp)'*inv(Q_tmp)*...
+%     (X(:,2:end) - A_tmp*X(:,1:(end-1)) - b_tmp));
+% lamX = @(X) exp(C_trans_tmp*X + d_tmp) ;
+% lpdf = @(vecX) sum(log(poisspdf(Y, lamX(reshape(vecX, [], T)))), 'all') +...
+%     logNPrior(reshape(vecX, [], T));
+% glpdf = @(vecX) derX(vecX, d_tmp, C_trans_tmp, x0_tmp,...
+%     Q0, Q_tmp, A_tmp, b_tmp, Y);
+% fg=@(vecX_r) deal(lpdf(vecX_r'), glpdf(vecX_r')'); % log density and gradient
+% 
+% [muXvec_NUTS, ~, diagnX]=hmc_nuts(fg, reshape(X_fit(:,:,1),[],1)',optX);
+% epsilonX = diagnX.opt.epsilonbar;
+% % X_fit(:,:,1) = reshape(muXvec_NUTS(end,:),[], T);
+
+
+epsilondc = zeros(N,1);
 optdc.M=0;
-optdc.Madapt=1;
+optdc.Madapt=50;
+optdc.delta = 0.8;
+
+for i = 1:N
+    l = Lab(i);
+    latentId = ((l-1)*p+1):(l*p);
+    X_tmp = [ones(1, T) ;X_fit(latentId,:,1)]';
+    
+    lamdc = @(dc) exp(X_tmp*dc);
+    
+    derdc = @(dc) X_tmp'*(Y(i,:)' - lamdc(dc)) - inv(Sigdc0)*(dc - mudc0);
+    lpdf_dc = @(dc) sum(log(poisspdf(Y(i,:)', lamdc(dc)))) +...
+        log(mvnpdf(dc, mudc0, Sigdc0));
+    
+    
+    fg_dc=@(dc_r) deal(lpdf_dc(dc_r'), derdc(dc_r')'); % log density and gradient
+    [mudc_NUTS, ~, diagndc]=hmc_nuts(fg_dc, [d_fit(i, 1) C_fit(i,:,1)],optdc);
+    epsilondc(i) = diagndc.opt.epsilonbar;
+    
+    d_fit(i,1) = mudc_NUTS(end,1);
+    C_fit(i,:,1) = mudc_NUTS(end,2:end);
+end
+
+
+% optX.M=1;
+% optX.Madapt=0;
+% optX.delta = 0.5;
+
+optdc.M=1;
+optdc.Madapt=0;
 optdc.delta = 0.8;
 
 for g = 2:ng
@@ -110,7 +162,7 @@ for g = 2:ng
     A_tmp = A_fit(:,:,g-1);
     b_tmp = b_fit(:,g-1);
     Q_tmp = Q_fit(:,:,g-1);
-    
+%     
 %     logNPrior = @(X) -1/2*(X(:,1) - x0_tmp)'*inv(Q0)*(X(:,1) - x0_tmp) -...
 %         1/2*trace((X(:,2:end) - A_tmp*X(:,1:(end-1)) - b_tmp)'*inv(Q_tmp)*...
 %         (X(:,2:end) - A_tmp*X(:,1:(end-1)) - b_tmp));
@@ -121,7 +173,8 @@ for g = 2:ng
 %         Q0, Q_tmp, A_tmp, b_tmp, Y);
 %     fg=@(vecX_r) deal(lpdf(vecX_r'), glpdf(vecX_r')'); % log density and gradient
 %     
-%     [muXvec_NUTS, ~, ~]=hmc_nuts(fg, reshape(X_fit(:,:,g-1),[],1)',...
+%     optX.epsilon = epsilonX;
+%     [muXvec_NUTS, ~, diagnX]=hmc_nuts(fg, reshape(X_fit(:,:,g-1),[],1)',...
 %         optX);
 %     X_fit(:,:,g) = reshape(muXvec_NUTS(2,:),[], T);
     
@@ -159,8 +212,10 @@ for g = 2:ng
         lpdf_dc = @(dc) sum(log(poisspdf(Y(i,:)', lamdc(dc)))) +...
             log(mvnpdf(dc, mudc0, Sigdc0));
         
+        optdc.epsilon = epsilondc(i);
         fg_dc=@(dc_r) deal(lpdf_dc(dc_r'), derdc(dc_r')'); % log density and gradient
         [mudc_NUTS, ~, ~]=hmc_nuts(fg_dc, [d_fit(i, g-1) C_fit(i,:,g-1)],optdc);
+        
         
         d_fit(i,g) = mudc_NUTS(2,1);
         C_fit(i,:,g) = mudc_NUTS(2,2:end);
@@ -180,7 +235,6 @@ for g = 2:ng
     plot(sum(C_trans(:,2:p:end), 2),C_fit_mean(:,2),'rx');
     title('2nd column of C')
     sgtitle('No Update of Prior')
-    
     
 end
 
