@@ -120,10 +120,9 @@ for k = unique(Lab)
     C_fit(Lab == k, ladid_tmp, 1) = C_raw(Lab == k, :);
     d_tmp(Lab == k) = d_fit(Lab ==k, k);
 end
-C_fit(:,:,1) = C_fit(:,:,1)/norm(C_fit(:,:,1), 'fro');
 
 % mudc_fit(:,:,1) = zeros(p+1, 1);
-Sigdc_fit(:,:,1:nClus,1) = repmat(eye(p+1)*1e-2,1,1,nClus);
+Sigdc_fit(:,:,:,1) = repmat(eye(p+1)*1e-2,1,1,nClus);
 
 A_fit(:,:,1) = eye(nClus*p);
 % initial for b_fit: 0
@@ -137,6 +136,41 @@ gradHess = @(vecX) gradHessX(vecX, d_tmp, C_fit(:,:,1), x0_fit(:,1), Q0,...
     Q_fit(:,:,1), A_fit(:,:,1), b_fit(:,1), Y);
 [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp(:),1e-10,1000);
 X_fit(:,:,1) = reshape(muXvec, [], T);
+
+
+params.xt = X_fit(:,:,1);
+params.x0 = x0_fit(:,1);
+params.Q0 = Q0;
+params.mux00 = mux00;
+params.Sigx00 = Sigx00;
+
+params.C = C_fit(:,:,1);
+params.mudc = mudc_fit(:,:,1);
+params.Sigdc = Sigdc_fit(:,:,:,1);
+params.deltadc0 = deltadc0;
+params.Taudc0 = Taudc0;
+params.Psidc0 = Psidc0;
+params.nudc0 = nudc0;
+
+params.A = A_fit(:,:,1);
+params.b = b_fit(:,1);
+params.Q = Q_fit(:,:,1);
+params.BA0_all = BA0_all;
+params.Lamb0 = Lamb0;
+params.Psi0 = Psi0;
+params.nu0 = nu0;
+
+UC = {};
+SC = {};
+VC = {};
+for j = 1:nClus
+    [UC{j},SC{j},VC{j}] = svd(params.C(:,id2id(j, p)),0);
+end
+
+M = sparse(blkdiag(SC{:})*(blkdiag(VC{:}))');
+% M = blkdiag(SC{:})*(blkdiag(VC{:}))';
+
+
 
 
 %% MCMC
