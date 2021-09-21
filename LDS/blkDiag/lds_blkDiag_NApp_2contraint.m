@@ -108,7 +108,7 @@ plot(X(2*p+1:3*p,:)')
 %% d is cluster-dependent, but C is not. (maybe let C be cluster-dependent later)
 % pre-setting...
 rng(3)
-ng = 1000;
+ng = 10000;
 
 X_fit = zeros(nClus*p, T, ng);
 mud_fit = zeros(nClus, ng);
@@ -172,6 +172,7 @@ optdK.Madapt=0;
 epsilon = 0.01;
 burnIn = round(ng/10);
 flg = 0;
+nX = numel(X_fit(:,:,1));
 
 for g = 2:ng
     
@@ -214,27 +215,25 @@ for g = 2:ng
     
     % (3) update d_fit & C_fit (K_fit)
     % NUTS (no U turn sampler)
+    %     xnorm_change = norm(X_fit(:,:,g) - X_fit(:,:,g-1), 'fro')/...
+    %         norm(X_fit(:,:,g-1), 'fro');
     
+    xnorm_change = norm(X_fit(:,:,g) - X_fit(:,:,g-1), 'fro');
+     
     if(g < round(burnIn/10))
         tuneState = 1; % change epsilon
-        disp("iter " + g + ": " + norm(X_fit(:,:,g) - X_fit(:,:,g-1), 'fro')/...
-            norm(X_fit(:,:,g-1), 'fro') + ", changing");
+        disp("iter " + g + ": " + xnorm_change + ", changing");
     elseif(flg == 1)
         tuneState = 3; % fix epsilon
-        disp("iter " + g + ": " + norm(X_fit(:,:,g) - X_fit(:,:,g-1), 'fro')/...
-            norm(X_fit(:,:,g-1), 'fro') + ", tuned");
+        disp("iter " + g + ": " + xnorm_change + ", tuned");
     else
-        if(g > burnIn ||...
-                norm(X_fit(:,:,g) - X_fit(:,:,g-1), 'fro')/...
-                norm(X_fit(:,:,g-1), 'fro') < 1e-1)
+        if(g > burnIn || xnorm_change < sqrt(1e-1*nX))
             tuneState = 2; % tune epsilon
             flg = 1;
-            disp("iter " + g + ": " + norm(X_fit(:,:,g) - X_fit(:,:,g-1), 'fro')/...
-                norm(X_fit(:,:,g-1), 'fro') + ", tuning");
+            disp("iter " + g + ": " + xnorm_change + ", tuning");
         else
             tuneState = 1; % change epsilon
-            disp("iter " + g + ": " + norm(X_fit(:,:,g) - X_fit(:,:,g-1), 'fro')/...
-                norm(X_fit(:,:,g-1), 'fro') + ", changing");
+            disp("iter " + g + ": " + xnorm_change + ", changing");
         end
     end
     
@@ -322,6 +321,8 @@ for g = 2:ng
     subplot(3,2,6)
     plot(X_fit(2*p+1:3*p,:,g)')
 end
+
+save('C:\Users\gaw19004\Desktop\LDS_backup\new2\lds_NUTS_CCI_all.mat')
 
 %%
 
