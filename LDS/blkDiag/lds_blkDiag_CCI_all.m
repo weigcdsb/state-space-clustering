@@ -105,8 +105,8 @@ plot(X(p+1:2*p,:)')
 subplot(1,3,3)
 plot(X(2*p+1:3*p,:)')
 
-%% d is cluster-dependent, but C is not. (maybe let C be cluster-dependent later)
-% pre-setting...
+%% pre-setting...
+% d is cluster-dependent, but C is not. (maybe let C be cluster-dependent later)
 rng(3)
 ng = 10000;
 
@@ -208,18 +208,10 @@ for g = 2:ng
     Xsamp = R'\z;
     X_fit(:,:,g) = reshape(Xsamp,[], T);
     
-    % (2) update x0_fit
-    Sigx0 = inv(inv(Sigx00) + inv(Q0));
-    mux0 = Sigx0*(Sigx00\mux00 + Q0\X_fit(:,1,g));
-    x0_fit(:,g) = mvnrnd(mux0, Sigx0)';
-    
-    % (3) update d_fit & C_fit (K_fit)
-    % NUTS (no U turn sampler)
-    %     xnorm_change = norm(X_fit(:,:,g) - X_fit(:,:,g-1), 'fro')/...
+    % xnorm_change = norm(X_fit(:,:,g) - X_fit(:,:,g-1), 'fro')/...
     %         norm(X_fit(:,:,g-1), 'fro');
-    
     xnorm_change = norm(X_fit(:,:,g) - X_fit(:,:,g-1), 'fro');
-     
+    
     if(g < round(burnIn/10))
         tuneState = 1; % change epsilon
         disp("iter " + g + ": " + xnorm_change + ", changing");
@@ -236,6 +228,14 @@ for g = 2:ng
             disp("iter " + g + ": " + xnorm_change + ", changing");
         end
     end
+    
+    % (2) update x0_fit
+    Sigx0 = inv(inv(Sigx00) + inv(Q0));
+    mux0 = Sigx0*(Sigx00\mux00 + Q0\X_fit(:,1,g));
+    x0_fit(:,g) = mvnrnd(mux0, Sigx0)';
+    
+    % (3) update d_fit & C_fit (K_fit)
+    % NUTS (no U turn sampler)
     
     lpdf = @(dKvec) dKlpdf(Y, dKvec(1:N), reshape(dKvec((N+1):end), [], p),...
         X_fit(:,:,g-1), Lab, mud_fit(:,g-1), sig2d_fit(:,g-1));
