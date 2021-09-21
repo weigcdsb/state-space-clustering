@@ -108,7 +108,7 @@ plot(X(2*p+1:3*p,:)')
 %% d is cluster-dependent, but C is not. (maybe let C be cluster-dependent later)
 % pre-setting...
 rng(3)
-ng = 100;
+ng = 1000;
 
 X_fit = zeros(nClus*p, T, ng);
 mud_fit = zeros(nClus, ng);
@@ -170,7 +170,7 @@ x0_fit(:,1) = lsqr(C_tmp,(log(mean(Y(:,1:10),2))-d_fit(:,1)));
 optdK.M=1;
 optdK.Madapt=0;
 epsilon = 0.01;
-burnIn = 1000;
+burnIn = round(ng/10);
 flg = 0;
 
 for g = 2:ng
@@ -215,7 +215,7 @@ for g = 2:ng
     % (3) update d_fit & C_fit (K_fit)
     % NUTS (no U turn sampler)
     
-    if(g < 50)
+    if(g < round(burnIn/10))
         tuneState = 1; % change epsilon
         disp("iter " + g + ": " + norm(X_fit(:,:,g) - X_fit(:,:,g-1), 'fro')/...
             norm(X_fit(:,:,g-1), 'fro') + ", changing");
@@ -228,6 +228,7 @@ for g = 2:ng
                 norm(X_fit(:,:,g) - X_fit(:,:,g-1), 'fro')/...
                 norm(X_fit(:,:,g-1), 'fro') < 1e-1)
             tuneState = 2; % tune epsilon
+            flg = 1;
             disp("iter " + g + ": " + norm(X_fit(:,:,g) - X_fit(:,:,g-1), 'fro')/...
                 norm(X_fit(:,:,g-1), 'fro') + ", tuning");
         else
@@ -322,7 +323,42 @@ for g = 2:ng
     plot(X_fit(2*p+1:3*p,:,g)')
 end
 
+%%
 
+d_norm = zeros(g-1, 1);
+C_norm_fro = zeros(g-1, 1);
+b_norm = zeros(g-1, 1);
+A_norm_fro = zeros(g-1, 1);
+X_norm_fro = zeros(g-1, 1);
+
+for k = 1:g-1
+    d_norm(k) = norm(d_fit(:,:,k), 'fro');
+    C_norm_fro(k) = norm(C_fit(:,:,k), 'fro');
+    b_norm(k) = norm(b_fit(:,k));
+    A_norm_fro(k) = norm(A_fit(:,:,k), 'fro');
+    X_norm_fro(k) = norm(X_fit(:,:,k), 'fro');
+end
+
+figure
+plot(X_norm_fro)
+title("Frobenius norm of X, dim: " + nClus*p + "\times" + T)
+
+
+figure
+subplot(2,2,1)
+plot(d_norm)
+title('norm of d')
+subplot(2,2,2)
+plot(C_norm_fro)
+title('Frobenius norm of C')
+subplot(2,2,3)
+plot(b_norm)
+title('norm of b')
+subplot(2,2,4)
+plot(A_norm_fro)
+title('Frobenius norm of A')
+
+%%
 idx = round(ng/2):ng;
 
 figure
@@ -342,7 +378,17 @@ sgtitle('No Update of Prior')
 
 
 
-
-
-
-
+subplot(1,2,1)
+imagesc(exp(C_trans*X + d))
+cLim = caxis;
+title('true')
+colorbar()
+subplot(1,2,2)
+C_tmp = zeros(N, p*nClus);
+for k = 1:length(Lab)
+    C_tmp(k, id2id(Lab(k), p)) = C_fit_mean(k,:);
+end
+imagesc(exp(C_tmp*mean(X_fit(:,:,idx), 3) + sum(mean(d_fit(:,:,idx), 3),2)))
+set(gca,'CLim',cLim)
+title('fit')
+colorbar()
