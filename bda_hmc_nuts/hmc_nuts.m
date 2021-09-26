@@ -158,6 +158,7 @@ for m = 2:M+Madapt+1,
     rej = 0;
     % Main loop---keep going until the criterion s == 0.
     s = 1;
+    tic;
     while (s == 1)
         % Choose a direction. -1=backwards, 1=forwards.
         v = 2*(rand() < 0.5)-1;
@@ -181,7 +182,9 @@ for m = 2:M+Madapt+1,
         % Update number of valid points we've seen.
         n = n + nprime;
         % Decide if it's time to stop.
-        s = sprime && stop_criterion(thetaminus, thetaplus, rminus, rplus);
+        elspT = toc;
+        s = (sprime && stop_criterion(thetaminus, thetaplus, rminus, rplus)) &&...
+            elspT < 2; % add time constraint
         % Increment depth.
         j = j + 1;
     end

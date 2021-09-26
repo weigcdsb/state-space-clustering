@@ -1,7 +1,6 @@
 addpath(genpath('C:\Users\gaw19004\Documents\GitHub\state-space-clustering'));
 % addpath(genpath('D:\github\state-space-clustering'));
-
-%% simulation
+%%
 rng(1)
 n = 10;
 nClus = 3;
@@ -55,6 +54,7 @@ for t=2:T
 end
 
 Y = poissrnd(exp(logLam));
+clusterPlot(Y, Lab)
 
 % do transformation/ constraint: C_j'*C_j = I
 S1 = {};
@@ -99,17 +99,13 @@ plot(X(p+1:2*p,:)')
 subplot(1,3,3)
 plot(X(2*p+1:3*p,:)')
 
-%% d & C are cluster-dependent.
+%% d & C are cluster-dependent & Q: blk-diag
 % for computation (update blk-by-blk) & clustering
 rng(3)
 ng = 10000;
 
 X_fit = zeros(nClus*p, T, ng);
 x0_fit = zeros(nClus*p, ng);
-
-d_fit = zeros(N, nClus, ng);
-mud_fit = zeros(nClus, ng);
-sig2d_fit = zeros(nClus, ng);
 
 % do I need to update mean of K?
 K_fit = zeros(N, nClus*p, ng);
@@ -136,52 +132,49 @@ sig2K0 = 1;
 deltaK0 = 0;
 kK0 = 1;
 
-% prior for d
-nud0 = 1;
-sig2d0 = 1e-2;
-deltad0 = 0;
-kd0 = 1;
-
 % prior for linear dyanmics (b, A, Q)
 BA0_all = [zeros(nClus*p,1) eye(nClus*p)]';
-Lamb0 = eye(nClus*p + 1);
-Psi0 = eye(p)*1e-4;
-nu0 = p+2;
+Lamb0_all = eye(nClus*p + 1);
+BA0 = repmat([0 1]', nClus*p,1);
+Lamb0 = eye(2);
+Psi0 = eye(nClus*p)*1e-4;
+nu0 = nClus*p+2;
 
 % initials...
-sig2d_fit(:,1) = ones(nClus,1)*1e-2;
-mud_fit(:,1) = zeros(nClus,1);
-d_fit(:,:,1) = zeros(N,nClus);
+% sig2d_fit(:,1) = ones(nClus,1)*1e-2;
+% mud_fit(:,1) = zeros(nClus,1);
+% d_fit(:,:,1) = zeros(N,nClus);
 
 muK_fit(:,1) = zeros(nClus, 1);
 sig2K_fit(:,1) = ones(nClus, 1);
 
 K_raw = randn(N, p);
-d_tmp = zeros(N,1);
 for k = unique(Lab)
     ladid_tmp = id2id(k, p);
     K_tmp = K_raw(Lab == k, :);
     K_fit(Lab == k, ladid_tmp, 1) = K_tmp;
     C_fit(Lab == k, ladid_tmp, 1) = K_tmp/(sqrtm(K_tmp'*K_tmp));
-    d_tmp(Lab == k) = d_fit(Lab ==k, k);
 end
 
 A_fit(:,:,1) = eye(nClus*p);
 b_fit(:,1) = zeros(nClus*p, 1);
 Q_fit(:,:,1) = eye(nClus*p)*1e-4;
 
+d_tmp = zeros(N,1);
 x0_fit(:,1) = lsqr(C_fit(:,:,1),(log(mean(Y(:,1:10),2))-d_tmp));
 [X_fit(:,:,1),~,~] = ppasmoo_poissexp_v2(Y,C_fit(:,:,1),d_tmp,...
     x0_fit(:,1),Q0,A_fit(:,:,1),b_fit(:,1),Q_fit(:,:,1));
 
 %% MCMC
-optdK.M=1;
-optdK.Madapt=0;
+optK.M=1;
+optK.Madapt=0;
 epsilon = 0.01*ones(nClus,1);
 burnIn = round(ng/10);
 flg = 0;
 nX = p*T;
 
+xnorm = zeros(ng,1);
+xnorm(1) = norm(X_fit(:,:,1), 'fro');
 for g = 2:ng
     
     % disp(g)
@@ -189,10 +182,7 @@ for g = 2:ng
     % (1) update X_fit
     % adaptive smoothing
     
-    d_raw = d_fit(:,:,g-1);
-    I = (1 : size(d_raw, 1)) .';
-    k = sub2ind(size(d_raw), I, Lab');
-    d_tmp = d_raw(k);
+    d_tmp = zeros(N,1);
     C_tmp = C_fit(:,:,g-1);
     
     x0_tmp = x0_fit(:,g-1);
@@ -238,53 +228,36 @@ for g = 2:ng
         end
     end
     
-    % (3) update d_fit & C_fit (K_fit): cluster-wise
+    % (3) update  C_fit (K_fit): cluster-wise
     % NUTS (no U turn sampler)
     for l = unique(Lab(:))'
         latentId = id2id(l,p);
-        nj = sum(Lab == l);
         
-        lpdf = @(dKvec) dKlpdf_blk(Y(Lab == l,:), dKvec(1:nj),...
-            reshape(dKvec((nj+1):end), [], p), X_fit(latentId,:,g),...
-            mud_fit(l,g-1), sig2d_fit(l,g-1), muK_fit(l,g-1), sig2K_fit(l,g-1));
-        glpdf = @(dKvec) getGrad(lpdf, dKvec);
-        fg=@(dKvec_r) deal(lpdf(dKvec_r'), glpdf(dKvec_r')'); % log density and gradient
+        lpdf = @(Kvec) dKlpdf_blk_nod(Y(Lab == l,:),...
+            reshape(Kvec(:), [], p), X_fit(latentId,:,g),...
+            muK_fit(l,g-1), sig2K_fit(l,g-1));
+        glpdf = @(Kvec) getGrad(lpdf, Kvec);
+        fg=@(Kvec_r) deal(lpdf(Kvec_r'), glpdf(Kvec_r')'); % log density and gradient
         
-        dKvec0 = [d_fit(Lab == l,l, g-1); reshape(K_fit(Lab == l,latentId,g-1), [], 1)];
+        Kvec0 = reshape(K_fit(Lab == l,latentId,g-1), [], 1);
         
         switch tuneState
             case 1
-                [dK_NUTS, ~, ~]=hmc_nuts(fg, dKvec0',optdK);
+                [K_NUTS, ~, ~]=hmc_nuts(fg, Kvec0',optK);
             case 2
-                optdK.Madapt=50;
-                [dK_NUTS, ~, diagn]=hmc_nuts(fg, dKvec0',optdK);
+                optK.Madapt=50;
+                [K_NUTS, ~, diagn]=hmc_nuts(fg, Kvec0',optK);
                 epsilon(l) = diagn.opt.epsilonbar;
-                optdK.Madapt=0;
+                optK.Madapt=0;
             case 3
-                optdK.epsilon = epsilon;
-                [dK_NUTS, ~, ~]=hmc_nuts(fg, dKvec0',optdK);
+                optK.epsilon = epsilon(l);
+                [K_NUTS, ~, ~]=hmc_nuts(fg, Kvec0',optK);
         end
         
-        % d_fit
-        d_fit(Lab == l,l,g) = dK_NUTS(end,1:nj)';
-        Kfit_tmp = reshape(dK_NUTS(end,(nj+1):end), [], p);
+        %K_fit & C_fit
+        Kfit_tmp = reshape(K_NUTS(end,:), [], p);
         K_fit(Lab == l,latentId,g) = Kfit_tmp;
         C_fit(Lab == l,latentId,g) = Kfit_tmp/(sqrtm(Kfit_tmp'*Kfit_tmp));
-        
-        % (4) update mud_fit & sig2d_fit
-        dj = d_fit(Lab == l, l, g);
-        dbar = mean(dj);
-        kdn = kd0 + nj;
-        
-        % sig2d_fit
-        alph = (nud0 + nj)/2;
-        beta = (nud0*sig2d0 + sum((dj - dbar).^2) +...
-            (kd0*nj/kdn)*((dbar - deltad0)^2))/2;
-        sig2d_fit(l, g) = 1/gamrnd(alph, 1/beta);
-        
-        % mud_fit
-        mud_fit(l,g) = normrnd((kd0*deltad0 + sum(dj))/kdn,...
-            sqrt(sig2d_fit(l, g)/kdn));
         
         % (5) update muK_fit & sig2K_fit
         k_tmp = reshape(K_fit(Lab == l,latentId,g), [], 1);
@@ -301,25 +274,40 @@ for g = 2:ng
         % muK_fit
         muK_fit(l,g) = normrnd((kK0*deltaK0 + sum(k_tmp))/kKn,...
             sqrt(sig2K_fit(l, g)/kKn));
-        
-        % (5)update Q
-        Y_BA = X_fit(latentId,2:T,g)';
-        X_BA = [ones(T-1,1) X_fit(:,1:(T-1),g)'];
-        
-        BA0 = BA0_all(:,latentId);
-        BAn = (X_BA'*X_BA + Lamb0)\(X_BA'*Y_BA + Lamb0*BA0);
-        PsiQ = Psi0 + (Y_BA - X_BA*BAn)'*(Y_BA - X_BA*BAn) +...
-            (BAn - BA0)'*Lamb0*(BAn - BA0);
-        nuQ = T-1 + nu0;
-        Q_fit(latentId,latentId,g) = iwishrnd(PsiQ,nuQ);
-        
-        % (6) update b_fit & A_fit
-        Lambn = X_BA'*X_BA + Lamb0;
-        BAvec = mvnrnd(BAn(:), kron(Q_fit(latentId,latentId,g), inv(Lambn)))';
-        BAsamp = reshape(BAvec,[], p)';
-        b_fit(latentId,g) = BAsamp(:,1);
-        A_fit(latentId,:,g) = BAsamp(:,2:end);
     end
+    
+    
+    % (4)update Q
+    Y_BA = X_fit(:,2:T,g)';
+    X_BA = [ones(T-1,1) X_fit(:,1:(T-1),g)'];
+    X_BA_star = zeros(length(Y_BA(:)),2*nClus*p);
+    for k = 1:size(X_fit, 1)
+        ridx = ((k-1)*(T-1)+1):(k*(T-1));
+        cidx = (2*(k-1)+1):(2*k);
+        X_BA_star(ridx, cidx) = [ones(T-1, 1) X_fit(k,1:(T-1),g)'];
+    end
+    
+    Lambn = X_BA_star'*X_BA_star + kron(eye(nClus*p), Lamb0);
+    ban = (Lambn)\(X_BA_star'*Y_BA(:) + kron(eye(nClus*p), Lamb0)*BA0);
+    ban2 = reshape(ban, 2, []);
+    BAn = [ban2(1,:);diag(ban2(2,:))];
+    
+    PsiQ = Psi0 + (Y_BA - X_BA*BAn)'*(Y_BA - X_BA*BAn) +...
+        (BAn - BA0_all)'*Lamb0_all*(BAn - BA0_all);
+    nuQ = T-1 + nu0;
+    Q_fit(:,:,g) = iwishrnd(PsiQ,nuQ);
+    
+    % (5) update b_fit & A_fit
+    baVar = kron(Q_fit(:,:,g), eye(2))/(Lambn);
+    baVar = (baVar + baVar.')/2;
+    [V,D] = eig(baVar);
+    baVar = V*(abs(D)+1e-13)*V';
+    
+    BAvec = mvnrnd(ban, baVar)';
+    BAsamp = reshape(BAvec, 2, []);
+    
+    b_fit(:,g) = BAsamp(1,:);
+    A_fit(:,:,g) = diag(BAsamp(2,:));
     
     figure(1)
     subplot(3,2,1)
@@ -337,13 +325,12 @@ for g = 2:ng
     subplot(3,2,6)
     plot(X_fit(2*p+1:3*p,:,g)')
     
-    
+    xnorm(g) = norm(X_fit(:,:,g), 'fro');
+    figure(2)
+    plot(xnorm(1:g))
 end
 
-
-
-
-
+save('C:\Users\gaw19004\Desktop\LDS_backup\new2\lds_NUTS_CCI_blk_A_diag_d_off.mat')
 
 
 

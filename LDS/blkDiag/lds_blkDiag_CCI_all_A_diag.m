@@ -138,10 +138,10 @@ deltad0 = 0;
 k0 = 1;
 
 % prior for linear dyanmics (b, A, Q)
-BA0_all = [zeros(nClus*p,1) eye(nClus*p)]';
-Lamb0 = eye(nClus*p + 1);
-Psi0 = eye(p)*1e-4;
-nu0 = p+2;
+BA0 =[0 1]';
+Lamb0 = eye(2);
+Psi0 = 1e-4;
+nu0 = 1+2;
 
 % initials...
 % a0 = nud0/2;
@@ -165,6 +165,8 @@ Q_fit(:,:,1) = eye(nClus*p)*1e-4;
 x0_fit(:,1) = lsqr(C_tmp,(log(mean(Y(:,1:10),2))-d_fit(:,1)));
 [X_fit(:,:,1),~,~] = ppasmoo_poissexp_v2(Y,C_tmp,d_fit(:,1),...
     x0_fit(:,1),Q0,A_fit(:,:,1),b_fit(:,1),Q_fit(:,:,1));
+
+
 
 %% MCMC
 optdK.M=1;
@@ -285,25 +287,28 @@ for g = 2:ng
         mud_fit(l,g) = normrnd((k0*deltad0 + sum(dj))/kn,...
             sqrt(sig2d_fit(l, g)/kn));
         
-        latentId = id2id(l,p);
-        % (4)update Q
-        Y_BA = X_fit(latentId,2:T,g)';
-        X_BA = [ones(T-1,1) X_fit(:,1:(T-1),g)'];
+    end
+    
+    for k = 1:size(X_fit, 1)
         
-        BA0 = BA0_all(:,latentId);
+        % (5)update Q
+        Y_BA = X_fit(k,2:T,g)';
+        X_BA = [ones(T-1,1) X_fit(k,1:(T-1),g)'];
+        
         BAn = (X_BA'*X_BA + Lamb0)\(X_BA'*Y_BA + Lamb0*BA0);
         PsiQ = Psi0 + (Y_BA - X_BA*BAn)'*(Y_BA - X_BA*BAn) +...
             (BAn - BA0)'*Lamb0*(BAn - BA0);
         nuQ = T-1 + nu0;
-        Q_fit(latentId,latentId,g) = iwishrnd(PsiQ,nuQ);
+        Q_fit(k,k,g) = iwishrnd(PsiQ,nuQ);
         
-        % (5) update b_fit & A_fit
+        % (6) update b_fit & A_fit
         Lambn = X_BA'*X_BA + Lamb0;
-        BAvec = mvnrnd(BAn(:), kron(Q_fit(latentId,latentId,g), inv(Lambn)))';
-        BAsamp = reshape(BAvec,[], p)';
-        b_fit(latentId,g) = BAsamp(:,1);
-        A_fit(latentId,:,g) = BAsamp(:,2:end);
+        BAsamp = mvnrnd(BAn(:), kron(Q_fit(k,k,g), inv(Lambn)))';
+        b_fit(k,g) = BAsamp(1);
+        A_fit(k,k,g) = BAsamp(2);
     end
+    
+    
     
     figure(1)
     subplot(3,2,1)
@@ -321,99 +326,4 @@ for g = 2:ng
     subplot(3,2,6)
     plot(X_fit(2*p+1:3*p,:,g)')
 end
-
-save('C:\Users\gaw19004\Desktop\LDS_backup\new2\lds_NUTS_CCI_all.mat')
-
-%%
-
-d_norm = zeros(g-1, 1);
-C_norm_fro = zeros(g-1, 1);
-b_norm = zeros(g-1, 1);
-A_norm_fro = zeros(g-1, 1);
-X_norm_fro = zeros(g-1, 1);
-
-for k = 1:g-1
-    d_norm(k) = norm(d_fit(:,:,k), 'fro');
-    C_norm_fro(k) = norm(C_fit(:,:,k), 'fro');
-    b_norm(k) = norm(b_fit(:,k));
-    A_norm_fro(k) = norm(A_fit(:,:,k), 'fro');
-    X_norm_fro(k) = norm(X_fit(:,:,k), 'fro');
-end
-
-figure
-plot(X_norm_fro)
-title("Frobenius norm of X, dim: " + nClus*p + "\times" + T)
-
-
-figure
-subplot(2,2,1)
-plot(d_norm)
-title('norm of d')
-subplot(2,2,2)
-plot(C_norm_fro)
-title('Frobenius norm of C')
-subplot(2,2,3)
-plot(b_norm)
-title('norm of b')
-subplot(2,2,4)
-plot(A_norm_fro)
-title('Frobenius norm of A')
-
-%%
-% idx = round(ng/2):ng;
-idx = 3000:6000;
-
-
-
-figure
-subplot(1,3,1)
-plot(d,sum(mean(d_fit(:,:,idx), 3),2),'rx');
-ylabel('estimate')
-title('d')
-C_fit_mean = mean(C_fit(:,:,idx), 3);
-subplot(1,3,2)
-plot(sum(C_trans(:,1:p:end), 2),C_fit_mean(:,1),'rx');
-title('1st column of C')
-xlabel('true')
-subplot(1,3,3)
-plot(sum(C_trans(:,2:p:end), 2),C_fit_mean(:,2),'rx');
-title('2nd column of C')
-sgtitle('No Update of Prior')
-
-
-
-subplot(1,2,1)
-imagesc(exp(C_trans*X + d))
-cLim = caxis;
-title('true')
-colorbar()
-subplot(1,2,2)
-C_tmp = zeros(N, p*nClus);
-for k = 1:length(Lab)
-    C_tmp(k, id2id(Lab(k), p)) = C_fit_mean(k,:);
-end
-imagesc(exp(C_tmp*mean(X_fit(:,:,idx), 3) + sum(mean(d_fit(:,:,idx), 3),2)))
-set(gca,'CLim',cLim)
-title('fit')
-colorbar()
-
-
-
-figure
-subplot(3,2,1)
-plot(X(1:p,:)')
-title('true')
-subplot(3,2,2)
-plot(mean(X_fit(1:p,:,idx), 3)')
-title('fit')
-subplot(3,2,3)
-plot(X(p+1:2*p,:)')
-subplot(3,2,4)
-plot(mean(X_fit(p+1:2*p,:,idx), 3)')
-subplot(3,2,5)
-plot(X(2*p+1:3*p,:)')
-subplot(3,2,6)
-plot(mean(X_fit(2*p+1:3*p,:,idx), 3)')
-
-
 

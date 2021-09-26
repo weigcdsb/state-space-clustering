@@ -37,8 +37,8 @@ lamTmp = exp()
 lpdf = @(vecX) sum(log(poisspdf(Y, lamX(reshape(vecX, [], T)))), 'all');
 
 
-llhd_trace = zeros(g,1);
-for l = 1:g
+llhd_trace = zeros(g-1,1);
+for l = 1:g-1
     disp(l)
     d_raw = d_fit(:,:,l);
     I = (1 : size(d_raw, 1)) .';
@@ -74,6 +74,40 @@ end
 
 
 
+sval = zeros(nClus*p, g);
 
+[U,S,V] = svd(C_fit(:,:,k)*X_fit(:,1,k), 0);
+
+
+for k = 1:g
+    disp(k)
+    [~,S,~] = svd(C_fit(:,:,k)*X_fit(:,:,k), 0);
+    diagTmp = diag(S);
+    sval(:,k) = diagTmp(1:nClus*p);
+end
+
+
+plot(sval')
+
+
+
+
+
+R = [1 4; 0 3];
+xt = R*ones(2,1);
+
+KC = randn(4, 2);
+C = KC/(sqrtm(KC'*KC));
+
+C*R*ones(2,1)
+C*xt
+
+[U,S,V] = svd(C*xt)
+
+KU = randn(2, 2);
+U = KU/(sqrtm(KU'*KU));
+
+C*R
+C*U'*(U*R*ones(2,1))
 
 
