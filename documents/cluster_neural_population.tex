@@ -203,13 +203,13 @@ are \(p\) latent state vectors. The recording length is \(T\).
 	\(\mathbf{d} \in \mathbb{R}^{N}\) and \(\mathbf{C} \in \mathbb{R}^{N \times p}\): baseline
 	\& loading of the latent
 	\item
-	\(\mathbf{x}_{t} \in \mathbb{R}^{\text{Jp}}\): all latent at \(t\).
+	\(\mathbf{x}_{t} \in \mathbb{R}^{Jp}\): all latent at \(t\).
 	\item
 	\(\mathbf{x}_{t}^{(j)} \in \mathbb{R}^{p}\) means the latent in cluster \(j\) at
 	time \(t\).
 	\item
-	\(\mathbf{x}_{0} \in \mathbb{R}^{\text{Jp}}\) and
-	\(\mathbf{Q}_{0} \in \mathbb{R}^{\text{Jp} \times Jp}\): mean and covariance of
+	\(\mathbf{x}_{0} \in \mathbb{R}^{Jp}\) and
+	\(\mathbf{Q}_{0} \in \mathbb{R}^{Jp \times Jp}\): mean and covariance of
 	\(\mathbf{x}_{1}\). For simplicity, assume \(\mathbf{Q}_{0}\) is known.
 	\item
 	\(\mathbf{A} \in \mathbb{R}^{Jp \times Jp},\ \mathbf{b} \in \mathbb{R}^{Jp},\mathbf{Q} \in \mathbb{R}^{Jp \times Jp}\):
@@ -260,7 +260,7 @@ The conditional priors for these parameters:
 	\item
 	Initials \(\mathbf{x}_{0}\): assume there are \(J\) clusters,
 	\[\mathbf{x}_{0} \sim N(\bm{\mu}_{\mathbf{x}_{00}},\ \mathbf{\Sigma}_{\mathbf{x}_{00}})\]
-	, where \(\bm{\mu}_{\mathbf{x}_{00}} = \mathbf{0}_{\text{Jp}}\) and \(\mathbf{\Sigma}_{\mathbf{x}_{00}} = \mathbf{I}_{\text{Jp}}\)
+	, where \(\bm{\mu}_{\mathbf{x}_{00}} = \mathbf{0}_{Jp}\) and \(\mathbf{\Sigma}_{\mathbf{x}_{00}} = \mathbf{I}_{Jp}\)
 	\item
 	Linear mapping (loading) for latent vectors
 	\(\left\{ d_{i} \right\}_{i = 1}^{N}\) and
@@ -293,10 +293,10 @@ The conditional priors for these parameters:
 	\end{align*}
 	
 	, where \(\mathbf{f}_0 = vec(\mathbf{F}_0)\).If the number of cluster is \(J\), \(\nu_{\mathbf{Q}_{0}} = Jp + 2\),
-	\(\Psi_{\mathbf{Q}_{0}} = \mathbf{I}_{\text{Jp}} \times 10^{- 4}\). (To make the mean of \(\mathbf{Q}\) loosely centered around
+	\(\Psi_{\mathbf{Q}_{0}} = \mathbf{I}_{Jp} \times 10^{- 4}\). (To make the mean of \(\mathbf{Q}\) loosely centered around
 	\(\mathbf{I}_{Jp} \times 10^{- 4}\)), \(\mathbf{F}_0 = \begin{pmatrix}
 		\mathbf{0}'_{Jp} \\
-		\mathbf{I}_{\text{Jp}} \\
+		\mathbf{I}_{Jp} \\
 	\end{pmatrix}\) and \(\bm{\Lambda}_0 = \mathbf{I}_{Jp + 1}\)
 	
 \end{enumerate}
@@ -457,8 +457,8 @@ As shown before, the problem is the usual Bayesian MV-GLM problem. Denote \(\mat
 , where
 \(\mathbf{E} = \left( \mathbf{\epsilon}_{1},\ldots,\mathbf{\epsilon}_{T - 1} \right)^{'}\) and \(\mathbf{\epsilon} \sim N(0,\mathbf{Q})\). Then posteriors are
 \begin{align*}
-	\mathbf{Q}|\mathbf{Y}_{\mathbf{\text{bA}}},\mathbf{X}_{\mathbf{\text{bA}}},\ldots &\sim W^{-1}(\Psi_{\mathbf{Q}}, \nu_{\mathbf{Q}})\\
-	\mathbf{f}|\mathbf{Y}_{\mathbf{\text{bA}}},\mathbf{X}_{\mathbf{\text{bA}}},\mathbf{Q},\ldots &\sim N(vec(\mathbf{F}_\mathbf{bA}),  \mathbf{Q}\bigotimes \bm{\Lambda}_\mathbf{bA}^{-1})
+	\mathbf{Q}|\mathbf{Y}_{\mathbf{bA}},\mathbf{X}_{\mathbf{bA}},\ldots &\sim W^{-1}(\Psi_{\mathbf{Q}}, \nu_{\mathbf{Q}})\\
+	\mathbf{f}|\mathbf{Y}_{\mathbf{bA}},\mathbf{X}_{\mathbf{bA}},\mathbf{Q},\ldots &\sim N(vec(\mathbf{F}_\mathbf{bA}),  \mathbf{Q}\bigotimes \bm{\Lambda}_\mathbf{bA}^{-1})
 \end{align*}
 , with parameters be:
 \begin{align*}
@@ -469,210 +469,212 @@ As shown before, the problem is the usual Bayesian MV-GLM problem. Denote \(\mat
 \end{align*}
 
 
-\section{Model Check [Problems for \(\mathbf{b}\) and \(\mathbf{A}\) partially solved]} \label{problems}
-
-\subsection{Estimation of \(\mathbf{d}\) and \(\mathbf{C}\) alone}
-First, turn off all others except for loading (related) parameters and set them to be true values. There are 2 versions: (1) update priors as in subsection \ref{loading prior} and (2) no update of priors, and just set the prior for each as the standard normal.
-For the estimation with prior update, the results are mean from iteration 50 to 100 (Figure \ref{loading alone}).
-\begin{figure}[h!]
-	\makebox[\linewidth][c]{%
-		\centering
-		\subfigure[]{\includegraphics[width=0.6\textwidth]{image016.png}}%
-		\subfigure[]{\includegraphics[width=0.6\textwidth]{image017.png}}%
-	}
-	\caption{estimation of loading}
-	\label{loading alone}
-\end{figure}
-
-The mixing of convergence for loading priors (in subsection \ref{loading prior}) are fine. The update of priors don't influence results a lot, but this will help clustering a lot. It seems estimation of loading is fine. Let's see what happens when estimation of latents \(\mathbf{x}_t\) is on at the same time.
-
-\subsection{Estimation of \(\mathbf{d}\), \(\mathbf{C}\) and \(\mathbf{x}_{t}\)}
-When the estimation of \(\mathbf{x}_t\) is on, we need more iterations. The results are mean from iteration 500 to 1000 (Figure \ref{loading and latent}).
-
-The estimation of loading:
-\begin{figure}[h!]
-	\makebox[\linewidth][c]{%
-		\centering
-		\subfigure[]{\includegraphics[width=0.6\textwidth]{image018.png}}%
-		\subfigure[]{\includegraphics[width=0.6\textwidth]{image020.png}}%
-	}
-	\caption{estimation of loading, with latents on}
-	\label{loading and latent}
-\end{figure}
-
-And the estimation of corresponding latents (Figure \ref{loading and latents}):
-\begin{figure}[h!]
-	\makebox[\linewidth][c]{%
-		\centering
-		\subfigure[no update of prior]{\includegraphics[width=0.6\textwidth]{image019.png}}%
-		\subfigure[with update of prior]{\includegraphics[width=0.6\textwidth]{image021.png}}%
-	}
-	\caption{estimation of loading}
-	\label{loading and latents}
-\end{figure}
-
-Things are still fine. The remaining parts may influence latent estimations are dynamics (\(\mathbf{b}\), \(\mathbf{A}\)) and prior process noise \(\mathbf{Q}\).
-
-\subsection{Estimation of \(\mathbf{b}\), \(\mathbf{A}\), \(\mathbf{Q}\) and \(\mathbf{x}_t\)}
-I show the results of block-diagonal (Figure \ref{bAQX_blkDiag}) and full (Figure \ref{bAQX_full}) \(\mathbf{Q}\). These results are from 2000 MCMC samples. The latent and dynamics are from average from 500 to 2000 iterations.
-
-\begin{figure}[h!]
-	\makebox[\linewidth][c]{%
-		\centering
-		\subfigure[trace]{\label{fig:a}\includegraphics[width=0.55\textwidth]{bAX_blkDiag_trace.png}}%
-		\subfigure[latent]{\label{fig:b}\includegraphics[width=0.55\textwidth]{bAX_blkDiag_latent.png}}%
-		\subfigure[dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{bAX_blkDiag_A.png}}%
-	}
-	\caption{sampling of $\mathbf{b}$, $\mathbf{A}$, $\mathbf{Q}$ and $\mathbf{x}_t$, block-diagonal process noise}
-	\label{bAQX_blkDiag}
-\end{figure}
-
-\begin{figure}[h!]
-	\makebox[\linewidth][c]{%
-		\centering
-		\subfigure[trace]{\label{fig:a}\includegraphics[width=0.55\textwidth]{bAX_full_trace.png}}%
-		\subfigure[latent]{\label{fig:b}\includegraphics[width=0.55\textwidth]{bAX_full_latent.png}}%
-		\subfigure[dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{bAX_full_A.png}}%
-	}
-	\caption{sampling of $\mathbf{b}$, $\mathbf{A}$, $\mathbf{Q}$ and $\mathbf{x}_t$, full process noise}
-	\label{bAQX_full}
-\end{figure}
-
-Both block-diagonal and full looks fine, but the mixing of  full process noise version looks better.
+%\section{Model Check [Problems for \(\mathbf{b}\) and \(\mathbf{A}\) partially solved]} \label{problems}
+%
+%\subsection{Estimation of \(\mathbf{d}\) and \(\mathbf{C}\) alone}
+%First, turn off all others except for loading (related) parameters and set them to be true values. There are 2 versions: (1) update priors as in subsection \ref{loading prior} and (2) no update of priors, and just set the prior for each as the standard normal.
+%For the estimation with prior update, the results are mean from iteration 50 to 100 (Figure \ref{loading alone}).
+%\begin{figure}[h!]
+%	\makebox[\linewidth][c]{%
+%		\centering
+%		\subfigure[]{\includegraphics[width=0.6\textwidth]{image016.png}}%
+%		\subfigure[]{\includegraphics[width=0.6\textwidth]{image017.png}}%
+%	}
+%	\caption{estimation of loading}
+%	\label{loading alone}
+%\end{figure}
+%
+%The mixing of convergence for loading priors (in subsection \ref{loading prior}) are fine. The update of priors don't influence results a lot, but this will help clustering a lot. It seems estimation of loading is fine. Let's see what happens when estimation of latents \(\mathbf{x}_t\) is on at the same time.
+%
+%\subsection{Estimation of \(\mathbf{d}\), \(\mathbf{C}\) and \(\mathbf{x}_{t}\)}
+%When the estimation of \(\mathbf{x}_t\) is on, we need more iterations. The results are mean from iteration 500 to 1000 (Figure \ref{loading and latent}).
+%
+%The estimation of loading:
+%\begin{figure}[h!]
+%	\makebox[\linewidth][c]{%
+%		\centering
+%		\subfigure[]{\includegraphics[width=0.6\textwidth]{image018.png}}%
+%		\subfigure[]{\includegraphics[width=0.6\textwidth]{image020.png}}%
+%	}
+%	\caption{estimation of loading, with latents on}
+%	\label{loading and latent}
+%\end{figure}
+%
+%And the estimation of corresponding latents (Figure \ref{loading and latents}):
+%\begin{figure}[h!]
+%	\makebox[\linewidth][c]{%
+%		\centering
+%		\subfigure[no update of prior]{\includegraphics[width=0.6\textwidth]{image019.png}}%
+%		\subfigure[with update of prior]{\includegraphics[width=0.6\textwidth]{image021.png}}%
+%	}
+%	\caption{estimation of loading}
+%	\label{loading and latents}
+%\end{figure}
+%
+%Things are still fine. The remaining parts may influence latent estimations are dynamics (\(\mathbf{b}\), \(\mathbf{A}\)) and prior process noise \(\mathbf{Q}\).
+%
+%\subsection{Estimation of \(\mathbf{b}\), \(\mathbf{A}\), \(\mathbf{Q}\) and \(\mathbf{x}_t\)}
+%I show the results of block-diagonal (Figure \ref{bAQX_blkDiag}) and full (Figure \ref{bAQX_full}) \(\mathbf{Q}\). These results are from 2000 MCMC samples. The latent and dynamics are from average from 500 to 2000 iterations.
+%
+%\begin{figure}[h!]
+%	\makebox[\linewidth][c]{%
+%		\centering
+%		\subfigure[trace]{\label{fig:a}\includegraphics[width=0.55\textwidth]{bAX_blkDiag_trace.png}}%
+%		\subfigure[latent]{\label{fig:b}\includegraphics[width=0.55\textwidth]{bAX_blkDiag_latent.png}}%
+%		\subfigure[dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{bAX_blkDiag_A.png}}%
+%	}
+%	\caption{sampling of $\mathbf{b}$, $\mathbf{A}$, $\mathbf{Q}$ and $\mathbf{x}_t$, block-diagonal process noise}
+%	\label{bAQX_blkDiag}
+%\end{figure}
+%
+%\begin{figure}[h!]
+%	\makebox[\linewidth][c]{%
+%		\centering
+%		\subfigure[trace]{\label{fig:a}\includegraphics[width=0.55\textwidth]{bAX_full_trace.png}}%
+%		\subfigure[latent]{\label{fig:b}\includegraphics[width=0.55\textwidth]{bAX_full_latent.png}}%
+%		\subfigure[dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{bAX_full_A.png}}%
+%	}
+%	\caption{sampling of $\mathbf{b}$, $\mathbf{A}$, $\mathbf{Q}$ and $\mathbf{x}_t$, full process noise}
+%	\label{bAQX_full}
+%\end{figure}
+%
+%Both block-diagonal and full looks fine, but the mixing of  full process noise version looks better.
 
 
 \section{Simulations}\label{sim}
 
-There are two set of simulation examples. The first example is generated from LDS model directly, while in the second example the latents are generated directly without explicit specifying linear dynamics. In all following results, I fit things with both \href{https://github.com/weigcdsb/state-space-clustering/tree/main/LDS/blkDiag}{block-diagonal} and \href{https://github.com/weigcdsb/state-space-clustering/tree/main/LDS/full}{full} \(\mathbf{Q}\). The fitting results for block-diagonal version is a bit better, because the underlying true \(\mathbf{Q}\) is diagonal. In the following part, I only show results from block-diagonal fitting for labeled data. For unlabeled data, i.e. clustering, all the results can be found in this \href{https://github.com/weigcdsb/state-space-clustering/tree/main/results/gif}{folder}.
+\textbf{\textcolor{red}{All the simulation results are old and problematic. Update them later.}}
 
-\subsection{Simulation 1: Generate from LDS Directly}
-In this simulation, there are 3 clusters with 10 neurons in each cluster. The dimension of latents in each cluster is 2. In the linear dynamics, the bias term \(\mathbf{b}\) is zero. There's no within-population interaction but has some weak between-population interactions. In other words, the linear dynamics matrix \(\mathbf{A}\) is roughly diagonal. The details of simulation can be found in the first section of the \href{https://github.com/weigcdsb/state-space-clustering/blob/main/LDS/blkDiag/lds_sample_DP_blkDiag.m}{simulation 1}.
-
-\subsubsection{Labeled Data: No Clustering}
-The code for fitting is \href{https://github.com/weigcdsb/state-space-clustering/blob/main/LDS/blkDiag/lds_sample_DP_blkDiag.m}{here}. 
-
-Here, I first compare 10k iterations for three methods (consider high dimension of \(\mathbf{x}_t\)): (1) both \(\mathbf{x}_t\) and loading (\(\mathbf{d}\) and \(\mathbf{C}\)) are updated by normal approximation. (2) update \(\mathbf{x}_t\) by normal approximation, but update loading by MH. (3) update both \(\mathbf{x}_t\) and loading by MH.
-
-The fitting results are average of iteration 5k to 10k.
-
-\textbf{Update \(\mathbf{x}_t\) and (\(\mathbf{d}\), \(\mathbf{C}\)) by normal approximation}
-
-The trace plots are in Figure \ref{double N: trace}
-\begin{figure}[h!]
-	\makebox[\linewidth][c]{%
-		\centering
-		\subfigure[tracd of latent]{\label{fig:a}\includegraphics[width=0.55\textwidth]{xnorm_doubleN.png}}%
-		\subfigure[trace of loading and dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{trace_doubleN.png}}%
-	}
-	\caption{both Normal Approx., trace plots}
-	\label{double N: trace}
-\end{figure}
-
-Well, the chain hasn't achieve the stationary distribution. So there's no need to see further results. But to show the improvement and for comparison, I still show the fitting of overall firing rate, latents and dynamics in Figure \ref{double N: fit}.
-
-\begin{figure}[h!]
-	\makebox[\linewidth][c]{%
-		\centering
-		\subfigure[overall mean firing rate]{\label{fig:a}\includegraphics[width=0.55\textwidth]{FR_doubleN.png}}%
-		\subfigure[latents]{\label{fig:b}\includegraphics[width=0.55\textwidth]{latent_doubleN.png}}%
-		\subfigure[dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{A_doubleN.png}}%
-	}
-	\caption{both Normal Approx., fit}
-	\label{double N: fit}
-\end{figure}
-
-\textbf{Update \(\mathbf{x}_t\) by normal approximation and (\(\mathbf{d}\), \(\mathbf{C}\)) by MH}
-
-By using the normal approximated posterior variance as the proposal variance, the acceptance rates are around 0.45 (Since there are 30 neurons, there are 30 acceptance rates).
-The trace plots are in Figure \ref{dc MH: trace}
-\begin{figure}[h!]
-	\makebox[\linewidth][c]{%
-		\centering
-		\subfigure[tracd of latent]{\label{fig:a}\includegraphics[width=0.55\textwidth]{xnorm_dcMH.png}}%
-		\subfigure[trace of loading and dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{trace_dcMH.png}}%
-	}
-	\caption{latent Normal Approx. + loading MH, trace plots}
-	\label{dc MH: trace}
-\end{figure}
-
-Looks much better, although still not perfect yet. The fitting of overall firing rate, latents and dynamics are in Figure \ref{dc MH: fit}.
-
-\begin{figure}[h!]
-	\makebox[\linewidth][c]{%
-		\centering
-		\subfigure[overall mean firing rate]{\label{fig:a}\includegraphics[width=0.55\textwidth]{FR_dcMH.png}}%
-		\subfigure[latents]{\label{fig:b}\includegraphics[width=0.55\textwidth]{latent_dcMH.png}}%
-		\subfigure[dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{A_dcMH.png}}%
-	}
-	\caption{latent Normal Approx. + loading MH, fit}
-	\label{dc MH: fit}
-\end{figure}
-
-See, nearly perfect (especially) for latent.
-
-\textbf{Update both \(\mathbf{x}_t\) and (\(\mathbf{d}\), \(\mathbf{C}\)) by MH}
-
-The acceptance rate (by using the optimal scalar) for latent is 0.6227, which is a bit high (but acceptable). Again, the acceptance rates for loading are around 0.45.
-
-The trace plots are in Figure \ref{double MH: trace}
-\begin{figure}[h!]
-	\makebox[\linewidth][c]{%
-		\centering
-		\subfigure[tracd of latent]{\label{fig:a}\includegraphics[width=0.55\textwidth]{xnorm_doubleMH.png}}%
-		\subfigure[trace of loading and dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{trace_doubleMH.png}}%
-	}
-	\caption{both MH, trace plots}
-	\label{double MH: trace}
-\end{figure}
-
-The trace for dynamics is terrible... Maybe this is caused by high dimension of latent (\(d=6000\) in this case).
-
-The fitting of overall firing rate, latents and dynamics are in Figure \ref{double MH: fit}.
-
-\begin{figure}[h!]
-	\makebox[\linewidth][c]{%
-		\centering
-		\subfigure[overall mean firing rate]{\label{fig:a}\includegraphics[width=0.55\textwidth]{FR_doubleMH.png}}%
-		\subfigure[latents]{\label{fig:b}\includegraphics[width=0.55\textwidth]{latent_doubleMH.png}}%
-		\subfigure[dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{A_doubleMH.png}}%
-	}
-	\caption{both MH, fit}
-	\label{double MH: fit}
-\end{figure}
-
-OK, the fitting sucks...
-
-One natural idea is to combine MH and normal approximation in latent: at first few steps, use normal approximation at conditional posterior mode to bring things into somewhere close to mode quickly. Then use MH to stabilize everything.
-
-In the following, I still sample loading by MH. But for latent, the first half iteration is sampled by normal approximation, while the remainder is sampled from MH.
-
-The red line marks when I switch the sampling method for \(\mathbf{x}_t\).
- 
-The trace plots are in Figure \ref{half MH: trace}
-\begin{figure}[h!]
-	\makebox[\linewidth][c]{%
-		\centering
-		\subfigure[tracd of latent]{\label{fig:a}\includegraphics[width=0.55\textwidth]{xnorm_halfMH.png}}%
-		\subfigure[trace of loading and dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{trace_halfMH.png}}%
-	}
-	\caption{half MH for latent, trace plots}
-	\label{half MH: trace}
-\end{figure}
-
-The fitting of overall firing rate, latents and dynamics are in Figure \ref{half MH: fit}.
-
-\begin{figure}[h!]
-	\makebox[\linewidth][c]{%
-		\centering
-		\subfigure[overall mean firing rate]{\label{fig:a}\includegraphics[width=0.55\textwidth]{FR_halfMH.png}}%
-		\subfigure[latents]{\label{fig:b}\includegraphics[width=0.55\textwidth]{latent_halfMH.png}}%
-		\subfigure[dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{A_halfMH.png}}%
-	}
-	\caption{half MH for latent, fit}
-	\label{half MH: fit}
-\end{figure}
-
-Well, everything is stable now. But this implementation is too naive. Maybe use some more advanced adaptive sampling method?
+%There are two set of simulation examples. The first example is generated from LDS model directly, while in the second example the latents are generated directly without explicit specifying linear dynamics. In all following results, I fit things with both \href{https://github.com/weigcdsb/state-space-clustering/tree/main/LDS/blkDiag}{block-diagonal} and \href{https://github.com/weigcdsb/state-space-clustering/tree/main/LDS/full}{full} \(\mathbf{Q}\). The fitting results for block-diagonal version is a bit better, because the underlying true \(\mathbf{Q}\) is diagonal. In the following part, I only show results from block-diagonal fitting for labeled data. For unlabeled data, i.e. clustering, all the results can be found in this \href{https://github.com/weigcdsb/state-space-clustering/tree/main/results/gif}{folder}.
+%
+%\subsection{Simulation 1: Generate from LDS Directly}
+%In this simulation, there are 3 clusters with 10 neurons in each cluster. The dimension of latents in each cluster is 2. In the linear dynamics, the bias term \(\mathbf{b}\) is zero. There's no within-population interaction but has some weak between-population interactions. In other words, the linear dynamics matrix \(\mathbf{A}\) is roughly diagonal. The details of simulation can be found in the first section of the \href{https://github.com/weigcdsb/state-space-clustering/blob/main/LDS/blkDiag/lds_sample_DP_blkDiag.m}{simulation 1}.
+%
+%\subsubsection{Labeled Data: No Clustering}
+%The code for fitting is \href{https://github.com/weigcdsb/state-space-clustering/blob/main/LDS/blkDiag/lds_sample_DP_blkDiag.m}{here}. 
+%
+%Here, I first compare 10k iterations for three methods (consider high dimension of \(\mathbf{x}_t\)): (1) both \(\mathbf{x}_t\) and loading (\(\mathbf{d}\) and \(\mathbf{C}\)) are updated by normal approximation. (2) update \(\mathbf{x}_t\) by normal approximation, but update loading by MH. (3) update both \(\mathbf{x}_t\) and loading by MH.
+%
+%The fitting results are average of iteration 5k to 10k.
+%
+%\textbf{Update \(\mathbf{x}_t\) and (\(\mathbf{d}\), \(\mathbf{C}\)) by normal approximation}
+%
+%The trace plots are in Figure \ref{double N: trace}
+%\begin{figure}[h!]
+%	\makebox[\linewidth][c]{%
+%		\centering
+%		\subfigure[tracd of latent]{\label{fig:a}\includegraphics[width=0.55\textwidth]{xnorm_doubleN.png}}%
+%		\subfigure[trace of loading and dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{trace_doubleN.png}}%
+%	}
+%	\caption{both Normal Approx., trace plots}
+%	\label{double N: trace}
+%\end{figure}
+%
+%Well, the chain hasn't achieve the stationary distribution. So there's no need to see further results. But to show the improvement and for comparison, I still show the fitting of overall firing rate, latents and dynamics in Figure \ref{double N: fit}.
+%
+%\begin{figure}[h!]
+%	\makebox[\linewidth][c]{%
+%		\centering
+%		\subfigure[overall mean firing rate]{\label{fig:a}\includegraphics[width=0.55\textwidth]{FR_doubleN.png}}%
+%		\subfigure[latents]{\label{fig:b}\includegraphics[width=0.55\textwidth]{latent_doubleN.png}}%
+%		\subfigure[dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{A_doubleN.png}}%
+%	}
+%	\caption{both Normal Approx., fit}
+%	\label{double N: fit}
+%\end{figure}
+%
+%\textbf{Update \(\mathbf{x}_t\) by normal approximation and (\(\mathbf{d}\), \(\mathbf{C}\)) by MH}
+%
+%By using the normal approximated posterior variance as the proposal variance, the acceptance rates are around 0.45 (Since there are 30 neurons, there are 30 acceptance rates).
+%The trace plots are in Figure \ref{dc MH: trace}
+%\begin{figure}[h!]
+%	\makebox[\linewidth][c]{%
+%		\centering
+%		\subfigure[tracd of latent]{\label{fig:a}\includegraphics[width=0.55\textwidth]{xnorm_dcMH.png}}%
+%		\subfigure[trace of loading and dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{trace_dcMH.png}}%
+%	}
+%	\caption{latent Normal Approx. + loading MH, trace plots}
+%	\label{dc MH: trace}
+%\end{figure}
+%
+%Looks much better, although still not perfect yet. The fitting of overall firing rate, latents and dynamics are in Figure \ref{dc MH: fit}.
+%
+%\begin{figure}[h!]
+%	\makebox[\linewidth][c]{%
+%		\centering
+%		\subfigure[overall mean firing rate]{\label{fig:a}\includegraphics[width=0.55\textwidth]{FR_dcMH.png}}%
+%		\subfigure[latents]{\label{fig:b}\includegraphics[width=0.55\textwidth]{latent_dcMH.png}}%
+%		\subfigure[dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{A_dcMH.png}}%
+%	}
+%	\caption{latent Normal Approx. + loading MH, fit}
+%	\label{dc MH: fit}
+%\end{figure}
+%
+%See, nearly perfect (especially) for latent.
+%
+%\textbf{Update both \(\mathbf{x}_t\) and (\(\mathbf{d}\), \(\mathbf{C}\)) by MH}
+%
+%The acceptance rate (by using the optimal scalar) for latent is 0.6227, which is a bit high (but acceptable). Again, the acceptance rates for loading are around 0.45.
+%
+%The trace plots are in Figure \ref{double MH: trace}
+%\begin{figure}[h!]
+%	\makebox[\linewidth][c]{%
+%		\centering
+%		\subfigure[tracd of latent]{\label{fig:a}\includegraphics[width=0.55\textwidth]{xnorm_doubleMH.png}}%
+%		\subfigure[trace of loading and dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{trace_doubleMH.png}}%
+%	}
+%	\caption{both MH, trace plots}
+%	\label{double MH: trace}
+%\end{figure}
+%
+%The trace for dynamics is terrible... Maybe this is caused by high dimension of latent (\(d=6000\) in this case).
+%
+%The fitting of overall firing rate, latents and dynamics are in Figure \ref{double MH: fit}.
+%
+%\begin{figure}[h!]
+%	\makebox[\linewidth][c]{%
+%		\centering
+%		\subfigure[overall mean firing rate]{\label{fig:a}\includegraphics[width=0.55\textwidth]{FR_doubleMH.png}}%
+%		\subfigure[latents]{\label{fig:b}\includegraphics[width=0.55\textwidth]{latent_doubleMH.png}}%
+%		\subfigure[dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{A_doubleMH.png}}%
+%	}
+%	\caption{both MH, fit}
+%	\label{double MH: fit}
+%\end{figure}
+%
+%OK, the fitting sucks...
+%
+%One natural idea is to combine MH and normal approximation in latent: at first few steps, use normal approximation at conditional posterior mode to bring things into somewhere close to mode quickly. Then use MH to stabilize everything.
+%
+%In the following, I still sample loading by MH. But for latent, the first half iteration is sampled by normal approximation, while the remainder is sampled from MH.
+%
+%The red line marks when I switch the sampling method for \(\mathbf{x}_t\).
+% 
+%The trace plots are in Figure \ref{half MH: trace}
+%\begin{figure}[h!]
+%	\makebox[\linewidth][c]{%
+%		\centering
+%		\subfigure[tracd of latent]{\label{fig:a}\includegraphics[width=0.55\textwidth]{xnorm_halfMH.png}}%
+%		\subfigure[trace of loading and dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{trace_halfMH.png}}%
+%	}
+%	\caption{half MH for latent, trace plots}
+%	\label{half MH: trace}
+%\end{figure}
+%
+%The fitting of overall firing rate, latents and dynamics are in Figure \ref{half MH: fit}.
+%
+%\begin{figure}[h!]
+%	\makebox[\linewidth][c]{%
+%		\centering
+%		\subfigure[overall mean firing rate]{\label{fig:a}\includegraphics[width=0.55\textwidth]{FR_halfMH.png}}%
+%		\subfigure[latents]{\label{fig:b}\includegraphics[width=0.55\textwidth]{latent_halfMH.png}}%
+%		\subfigure[dynamics \(\mathbf{A}\)]{\label{fig:c}\includegraphics[width=0.55\textwidth]{A_halfMH.png}}%
+%	}
+%	\caption{half MH for latent, fit}
+%	\label{half MH: fit}
+%\end{figure}
+%
+%Well, everything is stable now. But this implementation is too naive. Maybe use some more advanced adaptive sampling method?
 
 
 
@@ -697,26 +699,26 @@ Well, everything is stable now. But this implementation is too naive. Maybe use 
 %
 %Personally, I think the fitting is not bad and the mixing is fine (in previous version, we may need 10000 iterations to get a not bad result. But here 2000 iterations did even better than before).
 
-I also fit the model by assuming one cluster. Again, the fitting for overall mean firing rate is perfect. This is why it's important to make the loading, \(\mathbf{d}\) and \(\mathbf{C}\), also be cluster-dependent (loading within clusters are correlated).
-
-If the loading only depends on neuron index and will not change for different clustering assignments, it's impossible to do clustering (at least in this case), since the loading is enough to capture all the patterns.
-
-
-\subsubsection{Unlabeled Data: Clustering}
-To give the full path of clustering, I show results in GIFs. All results can be found in this \href{https://github.com/weigcdsb/state-space-clustering/tree/main/results/gif}{folder}. The code can be found in this \href{https://github.com/weigcdsb/state-space-clustering/tree/main/LDS/blkDiag}{folder}.
-
-Basically, in my current implementation, algorithms are good to merge clusters. However, generating new clusters is very hard... In other words, the newly generated cluster will usually not be sampled.
-
-\textbf{This is a big problem}. This makes DPMM loses its power. \textbf{Fix that later}.
-
-\subsection{Simulation 2: Generate Latents, without Specifying Linear Dynamics}
-In this simulation, there are again 3 clusters with 2 latents and 10 neurons in each. Now, the latents are generated directly without specifying the underlying linear dynamics of latents. However, each latent is generated independently, so the linear dynamics matrix \(\mathbf{A}\) should be roughly diagonal. The details of simulation can be found in the \href{https://github.com/weigcdsb/state-space-clustering/blob/main/LDS/blkDiag/unspecifiedA_sample_blkDiag.m}{code}.
-
-\subsubsection{Labeled Data: No Clustering}
-As in simulation 1, the data is fitted by the true cluster assignment (3 clusters) and forcing all neurons belong to single cluster. The code can be found \href{https://github.com/weigcdsb/state-space-clustering/blob/main/LDS/blkDiag/unspecifiedA_sample_blkDiag.m}{here}.
-
-
-\textbf{I have deleted the old results to avoid confusion. I will post the new results here later.}
+%I also fit the model by assuming one cluster. Again, the fitting for overall mean firing rate is perfect. This is why it's important to make the loading, \(\mathbf{d}\) and \(\mathbf{C}\), also be cluster-dependent (loading within clusters are correlated).
+%
+%If the loading only depends on neuron index and will not change for different clustering assignments, it's impossible to do clustering (at least in this case), since the loading is enough to capture all the patterns.
+%
+%
+%\subsubsection{Unlabeled Data: Clustering}
+%To give the full path of clustering, I show results in GIFs. All results can be found in this \href{https://github.com/weigcdsb/state-space-clustering/tree/main/results/gif}{folder}. The code can be found in this \href{https://github.com/weigcdsb/state-space-clustering/tree/main/LDS/blkDiag}{folder}.
+%
+%Basically, in my current implementation, algorithms are good to merge clusters. However, generating new clusters is very hard... In other words, the newly generated cluster will usually not be sampled.
+%
+%\textbf{This is a big problem}. This makes DPMM loses its power. \textbf{Fix that later}.
+%
+%\subsection{Simulation 2: Generate Latents, without Specifying Linear Dynamics}
+%In this simulation, there are again 3 clusters with 2 latents and 10 neurons in each. Now, the latents are generated directly without specifying the underlying linear dynamics of latents. However, each latent is generated independently, so the linear dynamics matrix \(\mathbf{A}\) should be roughly diagonal. The details of simulation can be found in the \href{https://github.com/weigcdsb/state-space-clustering/blob/main/LDS/blkDiag/unspecifiedA_sample_blkDiag.m}{code}.
+%
+%\subsubsection{Labeled Data: No Clustering}
+%As in simulation 1, the data is fitted by the true cluster assignment (3 clusters) and forcing all neurons belong to single cluster. The code can be found \href{https://github.com/weigcdsb/state-space-clustering/blob/main/LDS/blkDiag/unspecifiedA_sample_blkDiag.m}{here}.
+%
+%
+%\textbf{I have deleted the old results to avoid confusion. I will post the new results here later.}
 
 %This time I ran 1000 iterations. The trace of the samples is shown in Figure \ref{noA norms}.
 %\begin{figure}[h!]
@@ -742,13 +744,393 @@ As in simulation 1, the data is fitted by the true cluster assignment (3 cluster
 %This time the mixing of loading (\(\mathbf{d}\) and \(\mathbf{C}\)) is not fine. That reminds me that \textbf{I may need to make loading within cluster related by MV-(Poisson)-GLM directly.}
 
 
-\subsubsection{Unlabeled Data: Clustering}
-\textbf{The clustering results are old. Update when the MFM is implemented}
+%\subsubsection{Unlabeled Data: Clustering}
+%\textbf{The clustering results are old. Update when the MFM is implemented}
+%
+%Again, all results can be found in this \href{https://github.com/weigcdsb/state-space-clustering/tree/main/results/gif}{folder}. The code can be found in this \href{https://github.com/weigcdsb/state-space-clustering/tree/main/LDS/blkDiag}{folder}.
+%
+%Besides fitting 3 clusters with 10 neurons each, I further fit a larger scale example (50 neurons for each cluster). 
 
-Again, all results can be found in this \href{https://github.com/weigcdsb/state-space-clustering/tree/main/results/gif}{folder}. The code can be found in this \href{https://github.com/weigcdsb/state-space-clustering/tree/main/LDS/blkDiag}{folder}.
+\section{Problem from Affine Transformation}
+Let me review the model first.\\
+Assume there are \(J\)
+clusters, with \(n\) neurons in each cluster. Each cluster is governed
+by \(p\) latent vectors. \(\bm{\lambda}_{t}^{(j)} \in \mathbb{R}^{n}\),
+\(\mathbf{x}_{t}^{(j)} \in \mathbb{R}^{p}\), \(\mathbf{d}^{(j)} \in \mathbb{R}^{n}\) and
+\(\mathbf{C}^{(j)} \in \mathbb{R}^{n \times p}\), with \(j = 1,\ldots,J\), be the
+mean firing rate, latent state, intercept and loading (at time $t$) for
+each cluster. Then I just stack all the thing together, and denote
+corresponding things as \(\bm{\lambda}_{t} \in R^{\text{Jn}}\),
+\(\mathbf{x}_{t} \in \mathbb{R}^{Jp}\), \(\mathbf{d} \in \mathbb{R}^{\text{Jn}}\)
+and \(\mathbf{C} \in \mathbb{R}^{Jn \times Jp}\). Notice \(\mathbf{C}\) is block
+diagonal.
 
-Besides fitting 3 clusters with 10 neurons each, I further fit a larger scale example (50 neurons for each cluster). 
+\[\log{\begin{pmatrix}
+		\ \bm{\lambda}_{t}^{(1)} \\
+		\vdots \\
+		\ \bm{\lambda}_{t}^{(J)} \\
+	\end{pmatrix} =}\log\bm{\lambda}_{t} = \begin{pmatrix}
+	\ \mathbf{d}^{(1)} \\
+	\vdots \\
+	\ \mathbf{d}^{(J)} \\
+\end{pmatrix} + \begin{pmatrix}
+	\mathbf{C}^{(1)} & \cdots & 0 \\
+	\vdots & \ddots & \vdots \\
+	0 & \cdots & \mathbf{C}^{(J)} \\
+\end{pmatrix}\begin{pmatrix}
+	\ \mathbf{x}_{t}^{(1)} \\
+	\vdots \\
+	\ \mathbf{x}_{t}^{(J)} \\
+\end{pmatrix} = \mathbf{d} + \mathbf{C}\mathbf{x}_{t}\]
 
+The latent states progress linearly with a Gaussian noise:
+
+\[\mathbf{x}_{t + 1}|\mathbf{x}_{t} \sim N(\mathbf{A}\mathbf{x}_{t} + \mathbf{b},\ \mathbf{Q})\]
+
+, where \(\mathbf{A} \in \mathbb{R}^{Jp \times Jp}\),
+\(\mathbf{b} \in \mathbb{R}^{Jp}\) and
+\(\mathbf{Q} \in \mathbb{R}^{Jp \times Jp}\).
+
+Now assume we take an affine transformation of latent states as
+\(\mathbf{x}_{t}^{*} = \mathbf{M}\mathbf{x}_{t} + \mathbf{g}\). To
+preserve the block diagonal structure of \(\mathbf{C}\), \(\mathbf{M}\)
+is also block diagonal. Then,
+\begin{align*}
+	\log\bm{\lambda}_{t} &= \mathbf{d} + \mathbf{C}\mathbf{M}^{- 1}\left( \mathbf{M}\mathbf{x}_{t} + \mathbf{g} \right) - \mathbf{C}\mathbf{M}^{- 1}\mathbf{g}\\
+	&= \left( \mathbf{d} - \mathbf{C}\mathbf{M}^{- 1}\mathbf{g} \right) + \mathbf{C}\mathbf{M}^{- 1}(\mathbf{M}\mathbf{x}_{t} + \mathbf{g})\\
+	\mathbf{M}\mathbf{x}_{t + 1} + \mathbf{g}|\mathbf{x}_{t} &\sim N_{Jp}\left( \mathbf{M}\left( \mathbf{A}\mathbf{x}_{t} + \mathbf{b} \right)+\mathbf{g}, \mathbf{MQM}' \right)\\
+	&= N_{Jp}(\mathbf{MAM}^{- 1}\left( \mathbf{M}\mathbf{x}_{t} + \mathbf{g} \right) + \left( \mathbf{Mb} + \mathbf{g} - \mathbf{MAM}^{- 1}\mathbf{g} \right), \mathbf{MQM}')
+\end{align*}
+
+That means, when \(\left\{ \mathbf{d},\mathbf{C},\mathbf{x}_t,\mathbf{A},\mathbf{b},\mathbf{Q} \right\}\) is a solution,
+\(\left\{ \mathbf{d}^*,\mathbf{C}^*,\mathbf{x}^*_t,\mathbf{A}^*,\mathbf{b}^*,\mathbf{Q}^* \right\}\) is also a
+solution, where
+\(\mathbf{d}^* = \mathbf{d} - \mathbf{C}\mathbf{M}^{- 1}\mathbf{g}\),
+\(\mathbf{C}^* = \mathbf{CM}^{- 1}\), \(\mathbf{x}_{t}^{*} = \mathbf{M}\mathbf{x}_{t} + \mathbf{g}\),
+\(\mathbf{A}^* = \mathbf{MAM}^{- 1}\),
+\(\mathbf{b}^* = \mathbf{Mb} + \mathbf{g} - \mathbf{MAM}^{- 1}\mathbf{g}\)
+and \(\mathbf{Q}^* = \mathbf{MQM}'\), for any block diagonal \(\mathbf{M}\). Therefore, we must add some constraints to ensure the unique solution/ stationary
+posterior!
+
+\subsection{Constraints}
+An affine transformation contains translation and linear transformation. 
+
+\subsubsection{Translation}
+There are two strategies: (1) just ignore \(\mathbf{d}\) and let \(\mathbf{Cx}_{t}\)
+absorb all the intercepts; (2) center \(\mathbf{x}_t\) such that mean for each
+row of \((\mathbf{x}_{1},\ldots,\mathbf{x}_{T})\) is 0. However, because of the block-diagonal constraints on $\mathbf{M}$, the strategy (1) may be problematic. Moreover, when $\mathbf{d}$ is non-zero, the \(\mathbf{x}_t\) will looks ugly. Another benefit for (2) is that we can use $\mathbf{d}$ to help clustering. However, the constraint on translation cannot resolve problems from linear transformation, since any linear transformation will preserve the zero row mean in \((\mathbf{x}_{1},\ldots,\mathbf{x}_{T})\).
+
+\subsubsection{Linear Transformation}
+To mimic PCA, one natural way is to make the loading orthogonal. Again, I'm considering two strategies: (1) make
+\(\mathbf{C}'^{(j)}\mathbf{C}^{(j)} = \mathbf{I}_{p}\); (2) make \( (\mathbf{C}'^{(1)},\cdots, \mathbf{C}'^{(J)})
+\begin{pmatrix}
+	\mathbf{C}^{(1)} \\
+	\vdots \\
+	\mathbf{C}^{(J)} \\
+\end{pmatrix} = \mathbf{I}_{p}\). Personally, I prefer the first one, for both computational and clustering reasons. Computationally, if I do things cluster-wise, I can easily use parallel when dimension becomes large.
+
+\textbf{However, this is not enough!} Consider \(\mathbf{x}_{t}^{*} = \mathbf{Ux}_{t}\), to
+preserve the orthogonality and block diagonal on \(\mathbf{C}\), \(\mathbf{U}\) must be
+block diagonal and each diagonal block \(\mathbf{U}^{(j)}\) is an orthogonal matrix (need to be the same for constraint (2)). More explicitly,
+
+\[\begin{pmatrix}
+	\mathbf{C}^{(1)} & \cdots & \mathbf{0} \\
+	\vdots & \ddots & \vdots \\
+	\mathbf{0} & \cdots & \mathbf{C}^{(J)} \\
+\end{pmatrix}\begin{pmatrix}
+	\mathbf{U}^{'(1)} & \cdots & \mathbf{0} \\
+	\vdots & \ddots & \vdots \\
+	\mathbf{0} & \cdots & \mathbf{U}^{'(J)} \\
+\end{pmatrix} = \begin{pmatrix}
+	\mathbf{C}^{(1)}\mathbf{U}^{'(J)} & \cdots & \mathbf{0} \\
+	\vdots & \ddots & \vdots \\
+	\mathbf{0} & \cdots & \mathbf{C}^{(1)}\mathbf{U}^{'(J)} \\
+\end{pmatrix}\]
+
+This transformation will also preserve the Frobenius norm of \(\mathbf{x}_{t}\),
+but the element value is not preserved. To ensure the unique solution,
+we need to add more constraints on linear dynamics, i.e. \(\mathbf{A}\) or/and
+\(\mathbf{Q}\). Simply making \(\mathbf{A}\) or \(\mathbf{Q}\) be block diagonal or even diagonal
+with same absolute value (e.g., \(\mathbf{I}_{Jp}\)) is still not enough. One solution is to force at least one of \(\mathbf{A}\) and \(\mathbf{Q}\) be diagonal.
+
+Take \(\mathbf{A}\) for example. Assume the true \(\mathbf{A}\) is diagonal and true
+\(\mathbf{C}^{\{ j\}}\) has orthogonal column. As shown previous, the linear transformation \(\mathbf{U}\) must be block diagonal and each diagonal block
+\(\mathbf{U}^{(j)}\) is an orthogonal matrix. Further, to preserve the diagonal
+structure of \(\mathbf{A}\) (the elements on the diagonal are generally not the
+same), we need \(\mathbf{U}^{(j)}\) to be diagonal. These two constraints force
+\(\mathbf{U}\) be diagonal with diagonal elements be \(\pm 1\). So the solution
+is unique up to sign. The same rationale for constraint on \(\mathbf{Q}\).
+
+\textbf{The above argument reminds me that I may need one more tiny constraint to solve the sign flipping issue. Do it later.}
+
+In summary, we need add three constraints: (1) translation of \(\mathbf{x}_{t}\),
+(2) orthogonality of loading and (3) diagonality of linear dynamics. In the following implementation, I tried 3 sets of constraints:
+
+\begin{enumerate}
+	\def\labelenumi{(\arabic{enumi})}
+	\item
+	row mean in \((\mathbf{x}_{1},\ldots,\mathbf{x}_{T})\) is 0,
+	\(\mathbf{C}'^{(j)}\mathbf{C}^{(j)} = \mathbf{I}_{p}\), \(\mathbf{A}\) is full while \(\mathbf{Q}\) is
+	diagonal
+	\item
+	row mean in \((\mathbf{x}_{1},\ldots,\mathbf{x}_{T})\) is 0,
+	\(\mathbf{C}'^{(j)}\mathbf{C}^{(j)} = \mathbf{I}_{p}\), \(\mathbf{Q}\) is full while \(\mathbf{A}\) is
+	diagonal
+	\item
+	row mean in \((\mathbf{x}_{1},\ldots,\mathbf{x}_{T})\) is 0,
+	\(\mathbf{C}'^{(j)}\mathbf{C}^{(j)} = \mathbf{I}_{p}\), both \(\mathbf{A}\) and \(\mathbf{Q}\) are diagonal
+\end{enumerate}
+
+Constraint (1) and (2) allows interaction between clusters.
+
+Although, constraint (1) (diagonal $\mathbf{Q}$) is valid in theory, it doesn't work well in practice. Since elements $\mathbf{Q}$ is usually very small (~$10^{-3} ot 10^{-5}$).
+Therefore, I will discard this constraint later.
+
+\subsection{Constraint Implementation}
+
+\subsubsection{Translation}
+The constraint on translation is easy, just row-center the sample of \((\mathbf{x}_{1},\ldots,\mathbf{x}_{T})\) in each iteration. We can get the transformed full conditional distribution after some algebra. Let \(\mathbf{X} = \left( \mathbf{x}_{1},\ldots,\mathbf{x}_{T} \right) = \begin{pmatrix}
+	\mathbf{X}_{(1)}^{'} \\
+	\vdots \\
+	\mathbf{X}_{(Jp)}^{'} \\
+\end{pmatrix}\), where \(\mathbf{x}_{(k)} \in \mathbb{R}^{T}\) is the k-th row vector.
+Then the k-th row mean is
+\({\overline{\mathbf{x}}}_{(k)} = \frac{1}{T}\mathbf{x}_{(k)}^{'}\mathbf{1}_{T}\). The unconstraint full conditional distribution of \(vec(\mathbf{X})\) is derived in previous section. After
+normalization in each iteration, we are actually sampling from
+\(P(vec(\mathbf{X}) - \mathbf{1}_{T}\bigotimes\begin{pmatrix}
+	{\overline{\mathbf{x}}}_{(1)} \\
+	\vdots \\
+	{\overline{\mathbf{x}}}_{(Jp)} \\
+\end{pmatrix}|\mathbf{Y},\ldots)\). Notice that,
+\[\mathbf{1}_{T}\bigotimes\begin{pmatrix}
+	{\overline{\mathbf{x}}}_{(1)} \\
+	\vdots \\
+	{\overline{\mathbf{x}}}_{(Jp)} \\
+\end{pmatrix} = \mathbf{1}_{T}\bigotimes\frac{1}{T}\mathbf{X1}_{T} = \frac{1}{T}vec\left( \mathbf{1X}_{T}\mathbf{1}_{T}^{'} \right) = \frac{\mathbf{J}_{T}\bigotimes \mathbf{I}_{Jp}}{T}vec(\mathbf{X})\]
+, then we are just sampling from full conditional distribution of
+\((\mathbf{I}_{JpT} - \frac{\mathbf{J}_{T}\bigotimes \mathbf{I}_{Jp}}{T})vec(\mathbf{X})\)
+
+\subsubsection{Linear Transformation}
+The constraint on orthogonality is kind of tricky. Here, I just transformed \(\mathbf{C}^{(j)}\) be
+\(\mathbf{C}^{(j)} = \mathbf{K}^{(j)}\left( \mathbf{K}^{'(j)}\mathbf{K}^{(j)} \right)^{- 1/2}\). Therefore,
+we can just sample \(\mathbf{K}^{(j)}\) without any constrained. Since
+\(\mathbf{K}^{(j)}\) has the same structure as \(\mathbf{C}^{(j)}\), we can put some
+hierarchical prior to model \(\mathbf{C}^{(j)}\). Specially, when
+\(\mathbf{K}^{(j)} \sim MN_{n,p}(\mathbf{0},\bm{\Sigma}^{(j)},\mathbf{I})\) (\(MN_{n,p}\) means a matrix
+normal distribution), \(\mathbf{C}^{(j)} \sim MACG(\bm{\Sigma}^{(j)})\).
+\(MACG(\bm{\Sigma})\) means the matrix angular central Gaussian distribution,
+with density
+\(f_{\mathbf{X}}(\mathbf{X}) = |\bm{\Sigma}\left. \  \right|^{- p/2}{|\mathbf{X}'\Sigma^{- 1}\mathbf{X}|}^{- n/2}\).
+When \(\bm{\Sigma}^{(j)} = \mathbf{I}_{n}\) or \(n = p\), \(\mathbf{C}^{(j)}\) is just
+uniformly distributed on the Stiefel manifold
+\(S(p,n) = \left\{ \mathbf{C} \in \mathbb{R}^{n \times p} \right|\mathbf{C}'\mathbf{C} = \mathbf{I}_{p}\}\).
+
+\textbf{This reminds me to fix the problem when \(n < p\)}, which may happen when doing clustering. One easy solution is just use the constraint
+\( (\mathbf{C}'^{(1)},\cdots, \mathbf{C}'^{(J)})
+\begin{pmatrix}
+	\mathbf{C}^{(1)} \\
+	\vdots \\
+	\mathbf{C}^{(J)} \\
+\end{pmatrix} = \mathbf{I}_{p}\), or just merge clusters with \(n < p\) to other
+clusters. Fix that.
+
+Since now there's no closed form for full conditional, I just sample it by no U-turn sampler (NUTS).
+
+The diagonality in linear dynamics is trivial, except for the constraint with diagonal \(\mathbf{A}\) and full \(\mathbf{Q}\). This needs some algebra. Denote the diagonal \(\mathbf{A}\) as \(\mathbf{A} = diag(a_{1},\ldots,a_{Jp})\). Then,
+
+\[\mathbf{Y}_{BA} = \begin{pmatrix}
+	\mathbf{x}_{2}^{'} \\
+	\mathbf{x}_{3}^{'} \\
+	\vdots \\
+	\mathbf{x}_{T}^{'} \\
+\end{pmatrix} = \begin{pmatrix}
+	1 & x_{1,1} & \cdots & x_{1,Jp} \\
+	1 & x_{2,1} & \cdots & x_{2,Jp} \\
+	\vdots & \vdots & \vdots & \vdots \\
+	1 & x_{T - 1,1} & \cdots & x_{T - 1,Jp} \\
+\end{pmatrix}\begin{pmatrix}
+	b_{1} & \cdots & b_{Jp} \\
+	a_{1} & \cdots & 0 \\
+	\vdots & \ddots & \vdots \\
+	0 & \cdots & a_{Jp} \\
+\end{pmatrix} + \mathbf{E} = \mathbf{X}_{BA}\mathbf{F}_{BA} + \mathbf{E}\]
+
+, where
+\(\mathbf{E} = \left( \bm{\epsilon}_{1},\ldots,\bm{\epsilon}_{T - 1} \right)^{'}\)
+and \(\bm{\epsilon}_{t} \sim N(\mathbf{0},\mathbf{Q})\). Notice that
+\(\mathbf{x}_{t} = (x_{t, 1}, \cdots x_{t, Jp})'\).
+
+Equivalently, we can rewrite the model as:
+
+\[\mathbf{Y}_{ba} = vec\left(\mathbf{Y}_{BA} \right) = \begin{pmatrix}
+	1 & x_{1,1} & \cdots & 0 & 0 \\
+	\vdots & \vdots & \vdots & \vdots & \vdots \\
+	1 & x_{T - 1,1} & \cdots & 0 & 0 \\
+	\vdots & \vdots & \ddots & \vdots & \vdots \\
+	0 & 0 & \cdots & 1 & x_{1,Jp} \\
+	\vdots & \vdots & \vdots & \vdots & \vdots \\
+	0 & 0 & \cdots & 1 & x_{T - 1,Jp} \\
+\end{pmatrix}\begin{pmatrix}
+	b_{1} \\
+	a_{1} \\
+	\vdots \\
+	b_{Jp} \\
+	a_{Jp} \\
+\end{pmatrix} + vec(\mathbf{E}) = \mathbf{X}_{ba}\mathbf{f}_{ba} + vec(\mathbf{E})\]
+
+, where
+\(Cov\left(vec(\mathbf{E}) \right) = \mathbf{Q}\bigotimes \mathbf{I}_{T - 1}\).
+
+If we use the prior:
+\begin{align*}
+	\mathbf{Q} &\sim W^{- 1}(\Psi_{Q_{0}},\nu_{Q_{0}})\\
+	\mathbf{f}_{ba}|\mathbf{Q} &\sim N_{2Jp}(\mathbf{1}_{Jp}\bigotimes \mathbf{f}_{ba,0},\ \mathbf{Q}\bigotimes\bm{\Lambda}_{ba,0}^{- 1})
+\end{align*}
+
+, where \(\mathbf{f}_{ba,0} = (0, 1)'\) and \(\bm{\Lambda}_{ba,0} = \mathbf{I}_{2}\). Then the
+corresponding prior for \(vec(\mathbf{F}_{BA})\) is:
+
+\[vec\left( \mathbf{F}_{BA} \right)|\mathbf{Q} \sim N(vec\left( \mathbf{F}_{BA,0} \right),\ \mathbf{Q}\bigotimes\bm{\Lambda}_{BA,0}^{- 1})\]
+
+, where \(\mathbf{F}_{BA,0} = \begin{pmatrix}
+	\mathbf{0}_{Jp}^{'} \\
+	\mathbf{I}_{Jp} \\
+\end{pmatrix}\) and \(\bm{\Lambda}_{BA,0} = \mathbf{I}_{Jp + 1}\).
+
+Then the posteriors are:
+\begin{align*}
+	\mathbf{Q}|\mathbf{Y},\ldots &\sim W^{- 1}(\Psi_{Q},\nu_{Q})\\
+	\mathbf{f}_{ba}|\mathbf{Y},\mathbf{Q},\ldots &\sim N({\widehat{\mathbf{f}}}_{ba},\ (\mathbf{Q}\bigotimes \mathbf{I}_{2})\Lambda_{ba}^{- 1})
+\end{align*}
+
+, with parameters be:
+\begin{align*}
+	\bm{\Lambda}_{ba} &= \mathbf{X}_{ba}^{'}\mathbf{X}_{ba} + \mathbf{I}_{Jp}\bigotimes\bm{\Lambda}_{ba,0}\\
+	{\widehat{\mathbf{f}}}_{ba} &= \bm{\Lambda}_{ba}^{- 1}\left( \mathbf{X}_{ba}^{'}\mathbf{Y}_{ba} + \ \mathbf{1}_{Jp}\bigotimes\bm{\Lambda}_{ba,0}\mathbf{f}_{ba,0} \right)
+\end{align*}
+
+The corresponding estimate for \(\mathbf{F}_{BA}\) is denoted as
+\({\widehat{\mathbf{F}}}_{BA}\), which is just a transformation of \({\widehat{\mathbf{f}}}_{ba}\).
+\begin{align*}
+	\Psi_{Q} &= \Psi_{Q0} + \left( \mathbf{Y}_{BA} - \mathbf{X}_{BA}{\widehat{\mathbf{F}}}_{BA} \right)^{'}\left( \mathbf{Y}_{BA} - \mathbf{X}_{BA}{\widehat{\mathbf{F}}}_{BA} \right) + \left( {\widehat{\mathbf{F}}}_{BA} - \mathbf{F}_{BA,0} \right)^{'}\Lambda_{BA,0}^{- 1}\left( {\widehat{\mathbf{F}}}_{BA} - \mathbf{F}_{BA,0} \right)\\
+	\nu_{Q} &= \nu_{Q0} + T - 1
+\end{align*}
+
+\subsection{Simulation}
+The simulation example is as before, and all the code can be found in \href{https://github.com/weigcdsb/state-space-clustering/tree/main/LDS/blkDiag}{this folder}.
+
+Since now we constrain the loading has orthogonal column for each cluster, just showing the Frobenius norm of $\mathbf{x}_t$ is not enough to check convergence. Here, I further check the value of $\mathbf{x}_{[T/2]}$.
+
+For \(\mathbf{C}^{(j)} = \mathbf{K}^{(j)}\left( \mathbf{K}^{'(j)}\mathbf{K}^{(j)} \right)^{- 1/2}\), I just put a simple hierarchical prior on $\mathbf{K}^{(j)}$ such that each element of $\mathbf{K}^{(j)}$ is i.i.d. $N(\mu_{k}^{(j)}, (\sigma^{(j)}_{k})^2)$. Well, maybe we can put some more careful priors later to reflect the covariance among neurons.
+
+Basically, I ran both MCMCs for 10,000 iterations. Here, I show 6 sets of plots:
+\begin{enumerate}
+	\def\labelenumi{(\arabic{enumi})}
+	\item
+	Full trace of Frobenius norm in $\mathbf{X} = (\mathbf{x}_{1},\ldots,\mathbf{x}_{T})$ and the value of $\mathbf{x}_{T/2} = \mathbf{x}_{500}$
+	\item
+	Full trace of 2-norm/ Frobenius norm in $\mathbf{d}$, $\mathbf{b}$, $\mathbf{A}$ and $\mathbf{Q}$ 
+	\item
+	partial trace plot of (1) from iteration 1 to 100
+	\item
+	partial trace plot of (2) from iteration 1 to 100
+	\item
+	average mean firing rate from iteration 5000 to 10,000.
+	\item
+	average $\mathbf{X}$ from iteration 5000 to 10,000.
+\end{enumerate}
+
+\subsubsection{\(\mathbf{Q}\) is full while \(\mathbf{A}\) is diagonal}
+\begin{figure}[h!]
+	\makebox[\linewidth][c]{%
+		\centering
+		\subfigure[tracd of $\mathbf{X}$]{\label{fig:a}\includegraphics[width=0.75\textwidth]{trace_X_full_diagA.png}}%
+		\subfigure[trace of loading and dynamics]{\label{fig:b}\includegraphics[width=0.75\textwidth]{trace_dbAQ_full_diagA.png}}%
+	}
+	\caption{\(\mathbf{Q}\) is full while \(\mathbf{A}\) is diagonal, full trace}
+	\label{full trace, diag A}
+\end{figure}
+
+\begin{figure}[h!]
+	\makebox[\linewidth][c]{%
+		\centering
+		\subfigure[tracd of $\mathbf{X}$]{\label{fig:a}\includegraphics[width=0.75\textwidth]{trace_X_part_diagA.png}}%
+		\subfigure[trace of loading and dynamics]{\label{fig:b}\includegraphics[width=0.75\textwidth]{trace_dbAQ_part_diagA.png}}%
+	}
+	\caption{\(\mathbf{Q}\) is full while \(\mathbf{A}\) is diagonal, partial trace}
+	\label{partial trace, diag A}
+\end{figure}
+
+\begin{figure}[h!]
+	\makebox[\linewidth][c]{%
+		\centering
+		\subfigure[mean firing rate]{\label{fig:a}\includegraphics[width=0.75\textwidth]{FR_diagA.png}}%
+		\subfigure[latent vectors]{\label{fig:b}\includegraphics[width=0.75\textwidth]{latent_diagA.png}}%
+	}
+	\caption{\(\mathbf{Q}\) is full while \(\mathbf{A}\) is diagonal, mean FR and $\mathbf{x}_t$}
+	\label{FR and X, diag A}
+\end{figure}
+\clearpage
+
+\subsubsection{both \(\mathbf{A}\) and \(\mathbf{Q}\) are diagonal}
+\begin{figure}[h!]
+	\makebox[\linewidth][c]{%
+		\centering
+		\subfigure[tracd of $\mathbf{X}$]{\label{fig:a}\includegraphics[width=0.75\textwidth]{trace_X_full_diagAQ.png}}%
+		\subfigure[trace of loading and dynamics]{\label{fig:b}\includegraphics[width=0.75\textwidth]{trace_dbAQ_full_diagAQ.png}}%
+	}
+	\caption{both \(\mathbf{A}\) and \(\mathbf{Q}\) are diagonal, full trace}
+	\label{full trace, diag AQ}
+\end{figure}
+
+\begin{figure}[h!]
+	\makebox[\linewidth][c]{%
+		\centering
+		\subfigure[tracd of $\mathbf{X}$]{\label{fig:a}\includegraphics[width=0.75\textwidth]{trace_X_part_diagAQ.png}}%
+		\subfigure[trace of loading and dynamics]{\label{fig:b}\includegraphics[width=0.75\textwidth]{trace_dbAQ_part_diagAQ.png}}%
+	}
+	\caption{both \(\mathbf{A}\) and \(\mathbf{Q}\) are diagonal, partial trace}
+	\label{partial trace, diag AQ}
+\end{figure}
+
+\begin{figure}[h!]
+	\makebox[\linewidth][c]{%
+		\centering
+		\subfigure[mean firing rate]{\label{fig:a}\includegraphics[width=0.75\textwidth]{FR_diagAQ.png}}%
+		\subfigure[latent vectors]{\label{fig:b}\includegraphics[width=0.75\textwidth]{latent_diagAQ.png}}%
+	}
+	\caption{both \(\mathbf{A}\) and \(\mathbf{Q}\) are diagonal, mean FR and $\mathbf{x}_t$}
+	\label{FR and X, diag AQ}
+\end{figure}
+
+We can see that either is fine, and the convergence is achieved at nearly 20 to 30 iterations.
+
+\textbf{In summary, to ensure convergence, we can put the following two constraints:}
+\begin{enumerate}
+	\def\labelenumi{(\arabic{enumi})}
+	\item
+	row mean in \((\mathbf{x}_{1},\ldots,\mathbf{x}_{T})\) is 0,
+	\(\mathbf{C}'^{(j)}\mathbf{C}^{(j)} = \mathbf{I}_{p}\), \(\mathbf{Q}\) is full while \(\mathbf{A}\) is
+	diagonal
+	\item
+	row mean in \((\mathbf{x}_{1},\ldots,\mathbf{x}_{T})\) is 0,
+	\(\mathbf{C}'^{(j)}\mathbf{C}^{(j)} = \mathbf{I}_{p}\), both \(\mathbf{A}\) and \(\mathbf{Q}\) are diagonal
+\end{enumerate}
+
+If we really care about the interactions between clusters, just use constraint (1). Otherwise, either is fine.
+
+\subsection{Comments on Previous Models}
+When fitting the LDS or factor analysis (e.g. GPFA) model, I may only believe the temporal pattern or the change of the pattern. The pattern itself at a specific time point doesn't make a lot of sense, because of the affine transformation invariance.
+
+In previous work, they fit models by EM, variational Bayes or some other MAP/ MLE method. \textbf{This is quite dangerous} if they don't check the uniqueness (Thanks to the gold standard MCMC, otherwise I will never check this issue...). 
+
+In the PLDS code that Ian shared me before, the default model has no constraint. They fit it by EM, and use ELBO as the convergence criteria. Although the parameters are not unique, the likelihood keeps the same, using ELBO is justified. However, since there's no randomness in EM, it's impossible to detect the non-uniqueness. Actually, I think their results are even not local optima, but just a single point in the optimal surface (I guess if they use something like stochastic EM, they will find the issue).  
+
+The PLDS also provides some constraint options, but some of them are still not enough to ensure unique solution. BTW, this might be another reason they choose to use EM, since adding constraint in EM is trivial: just do unconstrained EM in each iteration and project the value to the constraint space (i.e. add constraint) at the end of each iteration. But this doesn't work for MCMC, since we are sampling the distribution but not just the single optimal value.
+
+\textbf{I guess similar problems may happen in other LDS/ GPFA research.}
+
+Even if they make enough constraints to ensure uniqueness, these research should be careful about the pattern they found. For example, in \href{https://papers.nips.cc/paper/2020/hash/aa1f5f73327ba40d47ebce155e785aaf-Abstract.html}{Joshua et al., 2020}, the changes/ different states of interaction make sense to me, but I'm quite skeptical about their results in the dynamic matrix $\mathbf{A}$ itself. Maybe because of block-diagonal structure in loading $\mathbf{C}$, the interaction between population make sense somewhat. But at least the relationship within population doesn't make any sense, because of transformation invariance.
 
 \clearpage
 
@@ -758,7 +1140,11 @@ Besides fitting 3 clusters with 10 neurons each, I further fit a larger scale ex
 	\def\labelenumi{(\arabic{enumi})}
 	\item
 %	Think about MV-(Poisson)-GLM. Check \href{https://www.tandfonline.com/doi/full/10.1080/03610926.2012.743565?journalCode=lsta20}{ref1} and \href{https://www.tandfonline.com/doi/full/10.1080/02664763.2021.1877637?src=recsys}{ref2}.
-	Do MH adaptively.
+	Improve the NUTS.
+	\item
+	Debug the clustering.
+	\item
+	Check and clear typo.
 %	\item
 %	After resolving (1), see if the MCMC is still trapped in local optima sometimes. Now, the chain seems will get stuck in local mode. Maybe updating the loading as a whole will remedy the problem a bit.
 	\item

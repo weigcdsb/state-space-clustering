@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.12.6)  16 SEP 2021 18:49
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.12.6)  27 SEP 2021 09:34
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -355,22 +355,16 @@ LaTeX Warning: Label `fig:b' multiply defined.
 LaTeX Warning: Label `sub@fig:b' multiply defined.
 
 
-LaTeX Warning: Label `fig:c' multiply defined.
-
-
-LaTeX Warning: Label `sub@fig:c' multiply defined.
-
-
 LaTeX Warning: Label `fig:a' multiply defined.
 
 
 LaTeX Warning: Label `sub@fig:a' multiply defined.
 
 
-LaTeX Warning: Label `fig:c' multiply defined.
+LaTeX Warning: Label `fig:b' multiply defined.
 
 
-LaTeX Warning: Label `sub@fig:c' multiply defined.
+LaTeX Warning: Label `sub@fig:b' multiply defined.
 
 
 LaTeX Warning: Label `fig:a' multiply defined.
@@ -385,24 +379,6 @@ LaTeX Warning: Label `fig:b' multiply defined.
 LaTeX Warning: Label `sub@fig:b' multiply defined.
 
 
-LaTeX Warning: Label `fig:c' multiply defined.
-
-
-LaTeX Warning: Label `sub@fig:c' multiply defined.
-
-
-LaTeX Warning: Label `fig:a' multiply defined.
-
-
-LaTeX Warning: Label `sub@fig:a' multiply defined.
-
-
-LaTeX Warning: Label `fig:c' multiply defined.
-
-
-LaTeX Warning: Label `sub@fig:c' multiply defined.
-
-
 LaTeX Warning: Label `fig:a' multiply defined.
 
 
@@ -415,24 +391,6 @@ LaTeX Warning: Label `fig:b' multiply defined.
 LaTeX Warning: Label `sub@fig:b' multiply defined.
 
 
-LaTeX Warning: Label `fig:c' multiply defined.
-
-
-LaTeX Warning: Label `sub@fig:c' multiply defined.
-
-
-LaTeX Warning: Label `fig:a' multiply defined.
-
-
-LaTeX Warning: Label `sub@fig:a' multiply defined.
-
-
-LaTeX Warning: Label `fig:c' multiply defined.
-
-
-LaTeX Warning: Label `sub@fig:c' multiply defined.
-
-
 LaTeX Warning: Label `fig:a' multiply defined.
 
 
@@ -443,42 +401,6 @@ LaTeX Warning: Label `fig:b' multiply defined.
 
 
 LaTeX Warning: Label `sub@fig:b' multiply defined.
-
-
-LaTeX Warning: Label `fig:c' multiply defined.
-
-
-LaTeX Warning: Label `sub@fig:c' multiply defined.
-
-
-LaTeX Warning: Label `fig:a' multiply defined.
-
-
-LaTeX Warning: Label `sub@fig:a' multiply defined.
-
-
-LaTeX Warning: Label `fig:c' multiply defined.
-
-
-LaTeX Warning: Label `sub@fig:c' multiply defined.
-
-
-LaTeX Warning: Label `fig:a' multiply defined.
-
-
-LaTeX Warning: Label `sub@fig:a' multiply defined.
-
-
-LaTeX Warning: Label `fig:b' multiply defined.
-
-
-LaTeX Warning: Label `sub@fig:b' multiply defined.
-
-
-LaTeX Warning: Label `fig:c' multiply defined.
-
-
-LaTeX Warning: Label `sub@fig:c' multiply defined.
 
 )
 \openout1 = `cluster_neural_population.aux'.
@@ -782,265 +704,170 @@ Overfull \hbox (15.8365pt too wide) detected at line 469
 []
  []
 
-[9]
-LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <14.4> on input line 472.
+[9] [10]
+Overfull \hbox (44.74449pt too wide) in paragraph at lines 824--831
+\OT1/lmr/m/n/10 con-sid-er-ing two strate-gies: (1) make $\OT1/lmr/bx/n/10 C[]C
+[] \OT1/lmr/m/n/10 = \OT1/lmr/bx/n/10 I[]$\OT1/lmr/m/n/10 ; (2) make $(\OT1/lmr
+/bx/n/10 C[]\OML/lmm/m/it/10 ; []  ; \OT1/lmr/bx/n/10 C[]\OT1/lmr/m/n/10 ) [] =
+
+ []
+
+[11]
+Overfull \hbox (28.49228pt too wide) in paragraph at lines 909--912
+\OT1/lmr/m/n/10 , then we are just sam-pling from full con-di-tional dis-tri-bu
+-tion of $(\OT1/lmr/bx/n/10 I[] \OMS/lmsy/m/n/10 ^^@ []\OT1/lmr/m/n/10 )\OML/lm
+m/m/it/10 vec\OT1/lmr/m/n/10 (\OT1/lmr/bx/n/10 X\OT1/lmr/m/n/10 )$ 
+ []
+
+
+Overfull \hbox (2.74602pt too wide) in paragraph at lines 914--927
+\OT1/lmr/m/n/10 ($\OML/lmm/m/it/10 MN[]$ \OT1/lmr/m/n/10 means a ma-trix nor-ma
+l dis-tri-bu-tion), $\OT1/lmr/bx/n/10 C[] \OMS/lmsy/m/n/10 ^^X \OML/lmm/m/it/10
+ MACG\OT1/lmr/m/n/10 (\OT1/cmr/bx/n/10 ^^F[]\OT1/lmr/m/n/10 )$. $\OML/lmm/m/it/
+10 MACG\OT1/lmr/m/n/10 (\OT1/cmr/bx/n/10 ^^F\OT1/lmr/m/n/10 )$
+ []
+
+[12]
+Overfull \hbox (39.00948pt too wide) in paragraph at lines 928--936
+\OT1/lmr/m/n/10 do-ing clus-ter-ing. One easy so-lu-tion is just use the con-st
+raint $(\OT1/lmr/bx/n/10 C[]\OML/lmm/m/it/10 ; []  ; \OT1/lmr/bx/n/10 C[]\OT1/l
+mr/m/n/10 ) [] =
+ []
+
+
+Overfull \hbox (24.39397pt too wide) detected at line 956
+\OT1/lmr/bx/n/10 Y[] \OT1/lmr/m/n/10 = [] = [] [] + \OT1/lmr/bx/n/10 E \OT1/lmr
+/m/n/10 = \OT1/lmr/bx/n/10 X[]F[] \OT1/lmr/m/n/10 + \OT1/lmr/bx/n/10 E
+ []
+
+
+Overfull \hbox (38.23094pt too wide) detected at line 979
+\OT1/lmr/bx/n/10 Y[] \OT1/lmr/m/n/10 = \OML/lmm/m/it/10 vec [] \OT1/lmr/m/n/10 
+= [] [] + \OML/lmm/m/it/10 vec\OT1/lmr/m/n/10 (\OT1/lmr/bx/n/10 E\OT1/lmr/m/n/1
+0 ) = \OT1/lmr/bx/n/10 X[]f[] \OT1/lmr/m/n/10 + \OML/lmm/m/it/10 vec\OT1/lmr/m/
+n/10 (\OT1/lmr/bx/n/10 E\OT1/lmr/m/n/10 )
+ []
+
+[13]
+Overfull \hbox (80.07704pt too wide) detected at line 1017
+[]
+ []
+
+[14]
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 1043.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 472.
+(hyperref)                removing `math shift' on input line 1043.
 
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 472.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 474.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 474.
-
-<image016.png, id=207, 421.1986pt x 315.80484pt>
-File: image016.png Graphic file (type png)
-<use image016.png>
-Package pdftex.def Info: image016.png  used on input line 482.
-(pdftex.def)             Requested size: 207.0021pt x 155.20833pt.
-<image017.png, id=209, 421.1986pt x 315.80484pt>
-File: image017.png Graphic file (type png)
-<use image017.png>
-Package pdftex.def Info: image017.png  used on input line 482.
-(pdftex.def)             Requested size: 207.0021pt x 155.20833pt.
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 489.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 489.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 489.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 489.
-
-<image018.png, id=212, 421.1986pt x 315.80484pt>
-File: image018.png Graphic file (type png)
-<use image018.png>
-Package pdftex.def Info: image018.png  used on input line 498.
-(pdftex.def)             Requested size: 207.0021pt x 155.20833pt.
-<image020.png, id=213, 421.1986pt x 315.80484pt>
-File: image020.png Graphic file (type png)
-<use image020.png>
-Package pdftex.def Info: image020.png  used on input line 498.
-(pdftex.def)             Requested size: 207.0021pt x 155.20833pt.
-[10 <./image016.png> <./image017.png>]
-<image019.png, id=227, 421.1986pt x 315.80484pt>
-File: image019.png Graphic file (type png)
-<use image019.png>
-Package pdftex.def Info: image019.png  used on input line 509.
-(pdftex.def)             Requested size: 207.0021pt x 155.20833pt.
-<image021.png, id=228, 421.1986pt x 315.80484pt>
-File: image021.png Graphic file (type png)
-<use image021.png>
-Package pdftex.def Info: image021.png  used on input line 509.
-(pdftex.def)             Requested size: 207.0021pt x 155.20833pt.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 516.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 516.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 516.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 516.
-
-
-Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 516.
-
-[11 <./image018.png> <./image020.png> <./image019.png> <./image021.png>]
-<bAX_blkDiag_trace.png, id=244, 421.1986pt x 315.80484pt>
-File: bAX_blkDiag_trace.png Graphic file (type png)
-<use bAX_blkDiag_trace.png>
-Package pdftex.def Info: bAX_blkDiag_trace.png  used on input line 525.
-(pdftex.def)             Requested size: 189.75105pt x 142.26988pt.
-<bAX_blkDiag_latent.png, id=245, 421.1986pt x 315.80484pt>
-File: bAX_blkDiag_latent.png Graphic file (type png)
-<use bAX_blkDiag_latent.png>
-Package pdftex.def Info: bAX_blkDiag_latent.png  used on input line 525.
-(pdftex.def)             Requested size: 189.75105pt x 142.26988pt.
-<bAX_blkDiag_A.png, id=246, 421.1986pt x 315.80484pt>
-File: bAX_blkDiag_A.png Graphic file (type png)
-<use bAX_blkDiag_A.png>
-Package pdftex.def Info: bAX_blkDiag_A.png  used on input line 525.
-(pdftex.def)             Requested size: 189.75105pt x 142.26988pt.
-<bAX_full_trace.png, id=247, 421.1986pt x 315.80484pt>
-File: bAX_full_trace.png Graphic file (type png)
-<use bAX_full_trace.png>
-Package pdftex.def Info: bAX_full_trace.png  used on input line 536.
-(pdftex.def)             Requested size: 189.75105pt x 142.26988pt.
-<bAX_full_latent.png, id=248, 421.1986pt x 315.80484pt>
-File: bAX_full_latent.png Graphic file (type png)
-<use bAX_full_latent.png>
-Package pdftex.def Info: bAX_full_latent.png  used on input line 536.
-(pdftex.def)             Requested size: 189.75105pt x 142.26988pt.
-<bAX_full_A.png, id=249, 421.1986pt x 315.80484pt>
-File: bAX_full_A.png Graphic file (type png)
-<use bAX_full_A.png>
-Package pdftex.def Info: bAX_full_A.png  used on input line 536.
-(pdftex.def)             Requested size: 189.75105pt x 142.26988pt.
-
-[12 <./bAX_blkDiag_trace.png> <./bAX_blkDiag_latent.png> <./bAX_blkDiag_A.png> 
-<./bAX_full_trace.png> <./bAX_full_latent.png> <./bAX_full_A.png>]
-<xnorm_doubleN.png, id=275, 420.82219pt x 315.80484pt>
-File: xnorm_doubleN.png Graphic file (type png)
-<use xnorm_doubleN.png>
-Package pdftex.def Info: xnorm_doubleN.png  used on input line 566.
-(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<trace_doubleN.png, id=276, 420.82219pt x 315.80484pt>
-File: trace_doubleN.png Graphic file (type png)
-<use trace_doubleN.png>
-Package pdftex.def Info: trace_doubleN.png  used on input line 566.
-(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
- [13 <./xnorm_doubleN.png> <./trace_doubleN.png>]
-<FR_doubleN.png, id=288, 420.82219pt x 315.80484pt>
-File: FR_doubleN.png Graphic file (type png)
-<use FR_doubleN.png>
-Package pdftex.def Info: FR_doubleN.png  used on input line 579.
-(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<latent_doubleN.png, id=289, 420.82219pt x 315.80484pt>
-File: latent_doubleN.png Graphic file (type png)
-<use latent_doubleN.png>
-Package pdftex.def Info: latent_doubleN.png  used on input line 579.
-(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<A_doubleN.png, id=290, 420.82219pt x 315.80484pt>
-File: A_doubleN.png Graphic file (type png)
-<use A_doubleN.png>
-Package pdftex.def Info: A_doubleN.png  used on input line 579.
-(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<xnorm_dcMH.png, id=292, 420.82219pt x 315.80484pt>
-File: xnorm_dcMH.png Graphic file (type png)
-<use xnorm_dcMH.png>
-Package pdftex.def Info: xnorm_dcMH.png  used on input line 593.
-(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<trace_dcMH.png, id=293, 420.82219pt x 315.80484pt>
-File: trace_dcMH.png Graphic file (type png)
-<use trace_dcMH.png>
-Package pdftex.def Info: trace_dcMH.png  used on input line 593.
-(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<FR_dcMH.png, id=295, 420.82219pt x 315.80484pt>
-File: FR_dcMH.png Graphic file (type png)
-<use FR_dcMH.png>
-Package pdftex.def Info: FR_dcMH.png  used on input line 606.
-(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<latent_dcMH.png, id=296, 420.82219pt x 315.80484pt>
-File: latent_dcMH.png Graphic file (type png)
-<use latent_dcMH.png>
-Package pdftex.def Info: latent_dcMH.png  used on input line 606.
-(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<A_dcMH.png, id=297, 420.82219pt x 315.80484pt>
-File: A_dcMH.png Graphic file (type png)
-<use A_dcMH.png>
-Package pdftex.def Info: A_dcMH.png  used on input line 606.
-(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-
+<trace_X_full_diagA.png, id=234, 421.1986pt x 315.80484pt>
+File: trace_X_full_diagA.png Graphic file (type png)
+<use trace_X_full_diagA.png>
+Package pdftex.def Info: trace_X_full_diagA.png  used on input line 1049.
+(pdftex.def)             Requested size: 258.75pt x 194.0092pt.
+<trace_dbAQ_full_diagA.png, id=236, 421.1986pt x 315.80484pt>
+File: trace_dbAQ_full_diagA.png Graphic file (type png)
+<use trace_dbAQ_full_diagA.png>
+Package pdftex.def Info: trace_dbAQ_full_diagA.png  used on input line 1049.
+(pdftex.def)             Requested size: 258.75pt x 194.0092pt.
+<trace_X_part_diagA.png, id=237, 421.1986pt x 315.80484pt>
+File: trace_X_part_diagA.png Graphic file (type png)
+<use trace_X_part_diagA.png>
+Package pdftex.def Info: trace_X_part_diagA.png  used on input line 1059.
+(pdftex.def)             Requested size: 258.75pt x 194.0092pt.
+<trace_dbAQ_part_diagA.png, id=238, 421.1986pt x 315.80484pt>
+File: trace_dbAQ_part_diagA.png Graphic file (type png)
+<use trace_dbAQ_part_diagA.png>
+Package pdftex.def Info: trace_dbAQ_part_diagA.png  used on input line 1059.
+(pdftex.def)             Requested size: 258.75pt x 194.0092pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[14 <./FR_doubleN.png> <./latent_doubleN.png> <./A_doubleN.png> <./xnorm_dcMH.p
-ng> <./trace_dcMH.png>]
-<xnorm_doubleMH.png, id=316, 420.82219pt x 315.80484pt>
-File: xnorm_doubleMH.png Graphic file (type png)
-<use xnorm_doubleMH.png>
-Package pdftex.def Info: xnorm_doubleMH.png  used on input line 623.
-(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<trace_doubleMH.png, id=317, 420.82219pt x 315.80484pt>
-File: trace_doubleMH.png Graphic file (type png)
-<use trace_doubleMH.png>
-Package pdftex.def Info: trace_doubleMH.png  used on input line 623.
-(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<FR_doubleMH.png, id=319, 420.82219pt x 315.80484pt>
-File: FR_doubleMH.png Graphic file (type png)
-<use FR_doubleMH.png>
-Package pdftex.def Info: FR_doubleMH.png  used on input line 638.
-(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<latent_doubleMH.png, id=320, 420.82219pt x 315.80484pt>
-File: latent_doubleMH.png Graphic file (type png)
-<use latent_doubleMH.png>
-Package pdftex.def Info: latent_doubleMH.png  used on input line 638.
-(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<A_doubleMH.png, id=321, 420.82219pt x 315.80484pt>
-File: A_doubleMH.png Graphic file (type png)
-<use A_doubleMH.png>
-Package pdftex.def Info: A_doubleMH.png  used on input line 638.
-(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-
+<FR_diagA.png, id=239, 421.1986pt x 315.80484pt>
+File: FR_diagA.png Graphic file (type png)
+<use FR_diagA.png>
+Package pdftex.def Info: FR_diagA.png  used on input line 1069.
+(pdftex.def)             Requested size: 258.75pt x 194.0092pt.
+<latent_diagA.png, id=240, 421.1986pt x 315.80484pt>
+File: latent_diagA.png Graphic file (type png)
+<use latent_diagA.png>
+Package pdftex.def Info: latent_diagA.png  used on input line 1069.
+(pdftex.def)             Requested size: 258.75pt x 194.0092pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[15 <./FR_dcMH.png> <./latent_dcMH.png> <./A_dcMH.png> <./xnorm_doubleMH.png> <
-./trace_doubleMH.png>]
-<xnorm_halfMH.png, id=340, 420.82219pt x 315.80484pt>
-File: xnorm_halfMH.png Graphic file (type png)
-<use xnorm_halfMH.png>
-Package pdftex.def Info: xnorm_halfMH.png  used on input line 657.
-(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<trace_halfMH.png, id=341, 420.82219pt x 315.80484pt>
-File: trace_halfMH.png Graphic file (type png)
-<use trace_halfMH.png>
-Package pdftex.def Info: trace_halfMH.png  used on input line 657.
-(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<FR_halfMH.png, id=343, 420.82219pt x 315.80484pt>
-File: FR_halfMH.png Graphic file (type png)
-<use FR_halfMH.png>
-Package pdftex.def Info: FR_halfMH.png  used on input line 670.
-(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<latent_halfMH.png, id=344, 420.82219pt x 315.80484pt>
-File: latent_halfMH.png Graphic file (type png)
-<use latent_halfMH.png>
-Package pdftex.def Info: latent_halfMH.png  used on input line 670.
-(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
-<A_halfMH.png, id=345, 420.82219pt x 315.80484pt>
-File: A_halfMH.png Graphic file (type png)
-<use A_halfMH.png>
-Package pdftex.def Info: A_halfMH.png  used on input line 670.
-(pdftex.def)             Requested size: 189.75105pt x 142.39998pt.
- [16 <./FR_doubleMH.png> <./latent_doubleMH.png> <./A_doubleMH.png> <./xnorm_ha
-lfMH.png> <./trace_halfMH.png>] [17 <./FR_halfMH.png> <./latent_halfMH.png> <./
-A_halfMH.png>] [18] [19
+[15 <./trace_X_full_diagA.png> <./trace_dbAQ_full_diagA.png>] [16 <./trace_X_pa
+rt_diagA.png> <./trace_dbAQ_part_diagA.png> <./FR_diagA.png> <./latent_diagA.pn
+g>]
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 1075.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 1075.
+
+<trace_X_full_diagAQ.png, id=272, 421.1986pt x 315.80484pt>
+File: trace_X_full_diagAQ.png Graphic file (type png)
+<use trace_X_full_diagAQ.png>
+Package pdftex.def Info: trace_X_full_diagAQ.png  used on input line 1081.
+(pdftex.def)             Requested size: 258.75pt x 194.0092pt.
+<trace_dbAQ_full_diagAQ.png, id=273, 421.1986pt x 315.80484pt>
+File: trace_dbAQ_full_diagAQ.png Graphic file (type png)
+<use trace_dbAQ_full_diagAQ.png>
+Package pdftex.def Info: trace_dbAQ_full_diagAQ.png  used on input line 1081.
+(pdftex.def)             Requested size: 258.75pt x 194.0092pt.
+<trace_X_part_diagAQ.png, id=274, 421.1986pt x 315.80484pt>
+File: trace_X_part_diagAQ.png Graphic file (type png)
+<use trace_X_part_diagAQ.png>
+Package pdftex.def Info: trace_X_part_diagAQ.png  used on input line 1091.
+(pdftex.def)             Requested size: 258.75pt x 194.0092pt.
+<trace_dbAQ_part_diagAQ.png, id=275, 421.1986pt x 315.80484pt>
+File: trace_dbAQ_part_diagAQ.png Graphic file (type png)
+<use trace_dbAQ_part_diagAQ.png>
+Package pdftex.def Info: trace_dbAQ_part_diagAQ.png  used on input line 1091.
+(pdftex.def)             Requested size: 258.75pt x 194.0092pt.
+<FR_diagAQ.png, id=276, 421.1986pt x 315.80484pt>
+File: FR_diagAQ.png Graphic file (type png)
+<use FR_diagAQ.png>
+Package pdftex.def Info: FR_diagAQ.png  used on input line 1101.
+(pdftex.def)             Requested size: 258.75pt x 194.0092pt.
+<latent_diagAQ.png, id=277, 421.1986pt x 315.80484pt>
+File: latent_diagAQ.png Graphic file (type png)
+<use latent_diagAQ.png>
+Package pdftex.def Info: latent_diagAQ.png  used on input line 1101.
+(pdftex.def)             Requested size: 258.75pt x 194.0092pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[17
+
+ <./trace_X_full_diagAQ.png> <./trace_dbAQ_full_diagAQ.png> <./trace_X_part_dia
+gAQ.png> <./trace_dbAQ_part_diagAQ.png>] [18 <./FR_diagAQ.png> <./latent_diagAQ
+.png>] [19] [20
 
 ] (./cluster_neural_population.aux)
 Package rerunfilecheck Info: File `cluster_neural_population.out' has not chang
 ed.
-(rerunfilecheck)             Checksum: E6455AE4D42888AA948E9A0F2EB38C46;1925.
+(rerunfilecheck)             Checksum: 72F58528BFF4AA3DCEA12A067E882F17;1877.
 
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 7748 strings out of 479383
- 113674 string characters out of 5868871
- 432766 words of memory out of 5000000
- 24527 multiletter control sequences out of 15000+600000
- 464722 words of font info for 93 fonts, out of 8000000 for 9000
+ 7599 strings out of 479383
+ 111472 string characters out of 5868871
+ 432275 words of memory out of 5000000
+ 24410 multiletter control sequences out of 15000+600000
+ 462733 words of font info for 86 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 66i,14n,72p,876b,400s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 66i,14n,72p,858b,400s stack positions out of 5000i,500n,10000p,200000b,80000s
 {e:/software/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{e:/softwar
-e/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{e:/software/texlive
-/2020/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{e:/software/texlive/2020/tex
+e/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{e:/software/texlive
+/2020/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{e:/software/texlive/2020/tex
 mf-dist/fonts/enc/dvips/lm/lm-mathex.enc}<e:/software/texlive/2020/texmf-dist/f
 onts/type1/public/amsfonts/cm/cmbx10.pfb><e:/software/texlive/2020/texmf-dist/f
 onts/type1/public/amsfonts/cm/cmmib10.pfb><e:/software/texlive/2020/texmf-dist/
@@ -1054,20 +881,19 @@ pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/lmex10.pfb><e:/s
 oftware/texlive/2020/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><e:/software/t
 exlive/2020/texmf-dist/fonts/type1/public/lm/lmmi5.pfb><e:/software/texlive/202
 0/texmf-dist/fonts/type1/public/lm/lmmi7.pfb><e:/software/texlive/2020/texmf-di
-st/fonts/type1/public/lm/lmmi8.pfb><e:/software/texlive/2020/texmf-dist/fonts/t
-ype1/public/lm/lmr10.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/publi
-c/lm/lmr17.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr5.
-pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr7.pfb><e:/sof
-tware/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr8.pfb><e:/software/texli
-ve/2020/texmf-dist/fonts/type1/public/lm/lmro10.pfb><e:/software/texlive/2020/t
-exmf-dist/fonts/type1/public/lm/lmsy10.pfb><e:/software/texlive/2020/texmf-dist
-/fonts/type1/public/lm/lmsy5.pfb><e:/software/texlive/2020/texmf-dist/fonts/typ
-e1/public/lm/lmsy7.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/
-amsfonts/symbols/msbm10.pfb>
-Output written on cluster_neural_population.pdf (19 pages, 3058271 bytes).
+st/fonts/type1/public/lm/lmr10.pfb><e:/software/texlive/2020/texmf-dist/fonts/t
+ype1/public/lm/lmr17.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/publi
+c/lm/lmr5.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr7.p
+fb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr8.pfb><e:/soft
+ware/texlive/2020/texmf-dist/fonts/type1/public/lm/lmro10.pfb><e:/software/texl
+ive/2020/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><e:/software/texlive/2020/
+texmf-dist/fonts/type1/public/lm/lmsy5.pfb><e:/software/texlive/2020/texmf-dist
+/fonts/type1/public/lm/lmsy7.pfb><e:/software/texlive/2020/texmf-dist/fonts/typ
+e1/public/amsfonts/symbols/msbm10.pfb>
+Output written on cluster_neural_population.pdf (20 pages, 1745842 bytes).
 PDF statistics:
- 500 PDF objects out of 1000 (max. 8388607)
- 387 compressed objects within 4 object streams
- 130 named destinations out of 1000 (max. 500000)
- 361 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 425 PDF objects out of 1000 (max. 8388607)
+ 352 compressed objects within 4 object streams
+ 118 named destinations out of 1000 (max. 500000)
+ 269 words of extra memory for PDF output out of 10000 (max. 10000000)
 
