@@ -1,5 +1,6 @@
 addpath(genpath('C:\Users\gaw19004\Documents\GitHub\state-space-clustering'));
 % addpath(genpath('D:\github\state-space-clustering'));
+
 %%
 rng(1)
 n = 10;
@@ -56,29 +57,24 @@ end
 Y = poissrnd(exp(logLam));
 clusterPlot(Y, Lab)
 
-% do transformation/ constraint: C_j'*C_j = I
-S1 = {};
-V1 = {};
-for j = 1:nClus
-    latId = id2id(j, p);
-    [~,S1{j},V1{j}] = svd(C_trans(:,latId),0);
-end
-M = sparse(blkdiag(S1{:})*(blkdiag(V1{:}))');
 
-X = M*X;
-x0 = M*x0;
-Q0 = M*Q0*M';
-C_trans = C_trans/M;
-b = M*b;
-A = M*A/M;
-Q = M*Q*M';
-
+% standardize the latent vectors
 % center X around 0
-g = mean(X, 2);
-X = X - g;
-x0 = x0 - g;
-d = d - C_trans* g;
-b = b + g - A*g;
+% scale X, s.t. each row has sd 1
+gtmp = -mean(X, 2);
+M = inv(diag(std(X, 0, 2)));
+g = M*gtmp;
+
+X = M*X + g;
+
+x0 = M*x0 + g;
+d = d - (C_trans/M)*g;
+C_trans = C_trans/M;
+A = M*A/M;
+b = M*b + g - (M*A/M)*g;
+Q = M*Q*M';
+Q0 = M*Q0*M';
+
 
 figure(1)
 imagesc(A)
@@ -106,93 +102,91 @@ plot(X(p+1:2*p,:)')
 subplot(1,3,3)
 plot(X(2*p+1:3*p,:)')
 
-%% d & C are cluster-dependent & Q: blk-diag
-% for computation (update blk-by-blk) & clustering
+figure(5)
+plot(X')
+
+
+
+
+
+%%
 rng(3)
 ng = 10000;
 
+% pre-allocation
 X_fit = zeros(nClus*p, T, ng);
-x0_fit = zeros(nClus*p, ng);
-
 d_fit = zeros(N, nClus, ng);
-mud_fit = zeros(nClus, ng);
-sig2d_fit = zeros(nClus, ng);
-
-% do I need to update mean of K?
-K_fit = zeros(N, nClus*p, ng);
-muK_fit = zeros(nClus, ng);
-sig2K_fit = ones(nClus, ng);
 C_fit = zeros(N, nClus*p, ng);
-
+mudc_fit = zeros(p+1, nClus, ng);
+Sigdc_fit = zeros(p+1, p+1, nClus, ng);
+x0_fit = zeros(nClus*p, ng);
 A_fit = zeros(nClus*p, nClus*p, ng);
 b_fit = zeros(nClus*p, ng);
 Q_fit = zeros(nClus*p, nClus*p, ng);
 
-% priors...
+
+% priors
+% place-holder...
 Q0 = eye(nClus*p)*1e-2;
 
-% priors for initial (x0)
 mux00 = zeros(nClus*p, 1);
 Sigx00 = eye(nClus*p);
 
-% prior for K: C = K*(K'*K)^{-1/2}
-% vec(K) ~ N(mu_k*1, sig2K*I)
-% i.e. k_{ij} ~ (i.i.d.) N(mu_k, sig2K)
-nuK0 = 1;
-sig2K0 = 1;
-deltaK0 = 0;
-kK0 = 1;
+deltadc0 = zeros(p+1,1);
+Taudc0 = eye(p+1);
 
-% prior for d
-nud0 = 1;
-sig2d0 = 1e-2;
-deltad0 = 0;
-kd0 = 1;
+% Psidc0 = eye(p+1);
+Psidc0 = eye(p+1);
+nudc0 = p+1+2;
+% 
+BA0 =[0 1]';
+Lamb0 = eye(2);
+Psi0 = 1e-4;
+nu0 = 1+2;
 
-% prior for linear dyanmics (b, A, Q)
-BA0 = [zeros(nClus*p,1) eye(nClus*p)]';
-Lamb0 = eye(nClus*p + 1)*.25;
-Psi0 = eye(nClus*p)*1e-4;
-nu0 = nClus*p+2;
 
-% initials...
-sig2d_fit(:,1) = ones(nClus,1)*1e-2;
-mud_fit(:,1) = zeros(nClus,1);
-d_fit(:,:,1) = zeros(N,nClus);
-
-muK_fit(:,1) = zeros(nClus, 1);
-sig2K_fit(:,1) = ones(nClus, 1);
-
-K_raw = randn(N, p);
+% initials
+% initial for d_fit: 0
+C_raw = reshape(normrnd(0,1e-2,N*p,1), [], p);
 d_tmp = zeros(N,1);
 for k = unique(Lab)
     ladid_tmp = id2id(k, p);
-    K_tmp = K_raw(Lab == k, :);
-    K_fit(Lab == k, ladid_tmp, 1) = K_tmp;
-    C_fit(Lab == k, ladid_tmp, 1) = K_tmp/(sqrtm(K_tmp'*K_tmp));
+    C_fit(Lab == k, ladid_tmp, 1) = C_raw(Lab == k, :);
     d_tmp(Lab == k) = d_fit(Lab ==k, k);
 end
 
+% mudc_fit(:,:,1) = zeros(p+1, 1);
+Sigdc_fit(:,:,1:nClus,1) = repmat(eye(p+1)*1e-2,1,1,nClus);
+
 A_fit(:,:,1) = eye(nClus*p);
-b_fit(:,1) = zeros(nClus*p, 1);
+% initial for b_fit: 0
 Q_fit(:,:,1) = eye(nClus*p)*1e-4;
 
+
 x0_fit(:,1) = lsqr(C_fit(:,:,1),(log(mean(Y(:,1:10),2))-d_tmp));
-[X_fit(:,:,1),~,~] = ppasmoo_poissexp_v2(Y,C_fit(:,:,1),d_tmp,...
+[X_tmp,~,~] = ppasmoo_poissexp_v2(Y,C_fit(:,:,1),d_tmp,...
     x0_fit(:,1),Q0,A_fit(:,:,1),b_fit(:,1),Q_fit(:,:,1));
+gradHess = @(vecX) gradHessX(vecX, d_tmp, C_fit(:,:,1), x0_fit(:,1), Q0,...
+    Q_fit(:,:,1), A_fit(:,:,1), b_fit(:,1), Y);
+[muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp(:),1e-10,1000);
+X_fit(:,:,1) = reshape(muXvec, [], T);
 X_fit(:,:,1) = X_fit(:,:,1) - mean(X_fit(:,:,1), 2);
+X_fit(:,:,1) = (diag(std(X_fit(:,:,1), 0, 2)))\X_fit(:,:,1);
 
 
 %% MCMC
-optdK.M=1;
-optdK.Madapt=0;
-epsilon = 0.01*ones(nClus,1);
+
+optdc.M=1;
+optdc.Madapt=0;
+epsilon = 0.01*ones(N,1);
 burnIn = round(ng/10);
 flg = 0;
-nX = p*T;
+nX = numel(X_fit(:,:,1));
 
 xnorm = zeros(ng,1);
 xnorm(1) = norm(X_fit(:,:,1), 'fro');
+qnorm = zeros(ng,1);
+qnorm(1) = norm(Q_fit(:,:,1), 'fro');
 for g = 2:ng
     
     % disp(g)
@@ -220,20 +214,24 @@ for g = 2:ng
         [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp(:),1e-8,1000);
     end
     
-    % use Cholesky decomposition to sample efficiently
     R = chol(-hess_tmp,'lower'); % sparse
     z = randn(length(muXvec), 1) + R'*muXvec;
-    Xsamp = R'\z;
-    X_fit(:,:,g) = reshape(Xsamp,[], T);
-    % hard centering...
+    x_all = R'\z;
+    X_fit(:,:,g) = reshape(x_all,[], T);
     X_fit(:,:,g) = X_fit(:,:,g) - mean(X_fit(:,:,g), 2);
+    X_fit(:,:,g) = (diag(std(X_fit(:,:,g), 0, 2)))\X_fit(:,:,g);
+    
+    % toc;
     
     % (2) update x0_fit
     Sigx0 = inv(inv(Sigx00) + inv(Q0));
     mux0 = Sigx0*(Sigx00\mux00 + Q0\X_fit(:,1,g));
     x0_fit(:,g) = mvnrnd(mux0, Sigx0)';
+    % disp(x0_fit(:,g))
+    
     
     xnorm_change = norm(X_fit(:,:,g) - X_fit(:,:,g-1), 'fro');
+    
     if(g < round(burnIn/10))
         tuneState = 1; % change epsilon
         disp("iter " + g + ": " + xnorm_change + ", changing");
@@ -241,7 +239,7 @@ for g = 2:ng
         tuneState = 3; % fix epsilon
         disp("iter " + g + ": " + xnorm_change + ", tuned");
     else
-        if(g > burnIn || xnorm_change < sqrt(1e-2*nX))
+        if(g > burnIn || xnorm_change < sqrt(1e-1*nX))
             tuneState = 2; % tune epsilon
             flg = 1;
             disp("iter " + g + ": " + xnorm_change + ", tuning");
@@ -251,71 +249,54 @@ for g = 2:ng
         end
     end
     
-    % (3) update  C_fit (K_fit): cluster-wise
-    % NUTS (no U turn sampler)
-    for l = unique(Lab(:))'
+    % (3) update d_fit & C_fit
+    
+    for i = 1:N
+        l = Lab(i);
         latentId = id2id(l,p);
-        nj = sum(Lab == l);
+        X_tmp = [ones(1, T) ;X_fit(latentId,:,g)]';
         
-        lpdf = @(dKvec) dKlpdf_blk(Y(Lab == l,:), dKvec(1:nj),...
-            reshape(dKvec((nj+1):end), [], p), X_fit(latentId,:,g),...
-            mud_fit(l,g-1), sig2d_fit(l,g-1), muK_fit(l,g-1), sig2K_fit(l,g-1));
-        glpdf = @(dKvec) getGrad(lpdf, dKvec);
-        fg=@(dKvec_r) deal(lpdf(dKvec_r'), glpdf(dKvec_r')'); % log density and gradient
+        lamdc = @(dc) exp(X_tmp*dc);
         
-        dKvec0 = [d_fit(Lab == l,l, g-1); reshape(K_fit(Lab == l,latentId,g-1), [], 1)];
+        lpdf = @(dc) sum(log(poisspdf(Y(i,:)', lamdc(dc)))) +...
+            log(mvnpdf(dc, mudc_fit(:,l,g-1), Sigdc_fit(:,:,l,g-1)));
+        glpdf = @(dc) X_tmp'*(Y(i,:)' - lamdc(dc)) - Sigdc_fit(:,:,l,g-1)\(dc - mudc_fit(:,l,g-1));
+        fg=@(dc_r) deal(lpdf(dc_r'), glpdf(dc_r')'); % log density and gradient
+        dc0 = [d_fit(i,l, g-1) C_fit(i,latentId,g-1)]';
         
         switch tuneState
             case 1
-                [dK_NUTS, ~, ~]=hmc_nuts(fg, dKvec0',optdK);
+                [dc_NUTS, ~, ~]=hmc_nuts(fg, dc0',optdc);
             case 2
-                optdK.Madapt=50;
-                [dK_NUTS, ~, diagn]=hmc_nuts(fg, dKvec0',optdK);
-                epsilon(l) = diagn.opt.epsilonbar;
-                optdK.Madapt=0;
+                optdc.Madapt=50;
+                [dc_NUTS, ~, diagn]=hmc_nuts(fg, dc0',optdc);
+                epsilon(i) = diagn.opt.epsilonbar;
+                optdc.Madapt=0;
             case 3
-                optdK.epsilon = epsilon(l);
-                [dK_NUTS, ~, ~]=hmc_nuts(fg, dKvec0',optdK);
+                optdc.epsilon = epsilon(i);
+                [dc_NUTS, ~, ~]=hmc_nuts(fg, dc0',optdc);
         end
         
-        % d_fit
-        d_fit(Lab == l,l,g) = dK_NUTS(end,1:nj)';
-        Kfit_tmp = reshape(dK_NUTS(end,(nj+1):end), [], p);
-        K_fit(Lab == l,latentId,g) = Kfit_tmp;
-        C_fit(Lab == l,latentId,g) = Kfit_tmp/(sqrtm(Kfit_tmp'*Kfit_tmp));
+        d_fit(i,l,g) = dc_NUTS(end,1);
+        C_fit(i,latentId,g) = dc_NUTS(end,2:end);
         
-         % (4) update mud_fit & sig2d_fit
-        dj = d_fit(Lab == l, l, g);
-        dbar = mean(dj);
-        kdn = kd0 + nj;
-        
-        % sig2d_fit
-        alph = (nud0 + nj)/2;
-        beta = (nud0*sig2d0 + sum((dj - dbar).^2) +...
-            (kd0*nj/kdn)*((dbar - deltad0)^2))/2;
-        sig2d_fit(l, g) = 1/gamrnd(alph, 1/beta);
-        
-        % mud_fit
-        mud_fit(l,g) = normrnd((kd0*deltad0 + sum(dj))/kdn,...
-            sqrt(sig2d_fit(l, g)/kdn));
-        
-        % (5) update muK_fit & sig2K_fit
-        k_tmp = reshape(K_fit(Lab == l,latentId,g), [], 1);
-        nk = length(k_tmp);
-        kbar = mean(k_tmp);
-        kKn = kK0 + nk;
-        
-        % sig2K_fit
-        alph = (nuK0 + nk)/2;
-        beta = (nuK0*sig2K0 + sum((k_tmp - kbar).^2) +...
-            (kK0*nk/kKn)*((kbar - deltaK0)^2))/2;
-        sig2K_fit(l, g) = 1/gamrnd(alph, 1/beta);
-        
-        % muK_fit
-        muK_fit(l,g) = normrnd((kK0*deltaK0 + sum(k_tmp))/kKn,...
-            sqrt(sig2K_fit(l, g)/kKn));
     end
     
+    
+    % (4) update mudc_fit & Sigdc_fit
+    for l = unique(Lab)
+        dc_tmp = [d_fit(Lab == l, l, g) C_fit(Lab == l, id2id(l,p), g)];
+        invTaudc = inv(Taudc0) + sum(Lab == l)*inv(Sigdc_fit(:,:,l,g-1));
+        deltadc = invTaudc\(Taudc0\deltadc0 + Sigdc_fit(:,:,l,g-1)\sum(dc_tmp,1)');
+        mudc_fit(:,l,g) = mvnrnd(deltadc, inv(invTaudc));
+        
+        % assume different covariances
+        dcRes = dc_tmp' - mudc_fit(:,l,g);
+        Psidc = Psidc0 + dcRes*dcRes';
+        nudc = sum(Lab == l) + nudc0;
+        Sigdc_fit(:,:,l,g) = iwishrnd(Psidc,nudc);
+        
+    end
     
     for k = 1:size(X_fit, 1)
         
@@ -336,6 +317,10 @@ for g = 2:ng
         A_fit(k,k,g) = BAsamp(2);
     end
     
+    qnorm(g) = norm(Q_fit(:,:,g), 'fro');
+    figure(3)    
+    plot(qnorm(1:g))
+    
     
     figure(1)
     subplot(3,2,1)
@@ -353,9 +338,25 @@ for g = 2:ng
     subplot(3,2,6)
     plot(X_fit(2*p+1:3*p,:,g)')
     
-    xnorm(g) = norm(X_fit(:,:,g), 'fro');
     figure(2)
-    plot(xnorm(1:g))
+    plot(squeeze(X_fit(:,round(T/2),1:g))')
+    
+    figure(5)
+    subplot(1,2,1)
+    imagesc(exp(C_trans*X + d))
+    cLim = caxis;
+    title('true')
+    colorbar()
+    subplot(1,2,2)
+    C_fit_mean = mean(C_fit(:,:,g), 3);
+    imagesc(exp(C_fit_mean*mean(X_fit(:,:,g), 3) + sum(d_fit(:,:,g), 2)))
+    set(gca,'CLim',cLim)
+    title('fit')
+    colorbar()
+    
+    
+    %     figure(3)
+    %     xnorm(g) = norm(X_fit(:,:,g), 'fro');
+    %     plot(xnorm(1:g))
+    
 end
-
-save('C:\Users\gaw19004\Desktop\LDS_backup\new2\lds_NUTS_CCI_blk_AQ_diag_d_on.mat')
