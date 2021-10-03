@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.12.6)  27 SEP 2021 09:34
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.12.6)  3 OCT 2021 10:09
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -402,6 +402,54 @@ LaTeX Warning: Label `fig:b' multiply defined.
 
 LaTeX Warning: Label `sub@fig:b' multiply defined.
 
+
+LaTeX Warning: Label `fig:a' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:a' multiply defined.
+
+
+LaTeX Warning: Label `fig:b' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:b' multiply defined.
+
+
+LaTeX Warning: Label `fig:a' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:a' multiply defined.
+
+
+LaTeX Warning: Label `fig:b' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:b' multiply defined.
+
+
+LaTeX Warning: Label `fig:a' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:a' multiply defined.
+
+
+LaTeX Warning: Label `fig:b' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:b' multiply defined.
+
+
+LaTeX Warning: Label `fig:a' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:a' multiply defined.
+
+
+LaTeX Warning: Label `fig:b' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:b' multiply defined.
+
 )
 \openout1 = `cluster_neural_population.aux'.
 
@@ -705,195 +753,337 @@ Overfull \hbox (15.8365pt too wide) detected at line 469
  []
 
 [9] [10]
-Overfull \hbox (44.74449pt too wide) in paragraph at lines 824--831
-\OT1/lmr/m/n/10 con-sid-er-ing two strate-gies: (1) make $\OT1/lmr/bx/n/10 C[]C
-[] \OT1/lmr/m/n/10 = \OT1/lmr/bx/n/10 I[]$\OT1/lmr/m/n/10 ; (2) make $(\OT1/lmr
-/bx/n/10 C[]\OML/lmm/m/it/10 ; []  ; \OT1/lmr/bx/n/10 C[]\OT1/lmr/m/n/10 ) [] =
 
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 542.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `subscript' on input line 542.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 542.
+
+
+Overfull \hbox (14.7302pt too wide) in paragraph at lines 543--548
+\OT1/lmr/m/n/10 The eas-i-est way to con-straint is to nor-mal-ize or stan-dard
+-ize each row of $(\OT1/lmr/bx/n/10 x[]\OML/lmm/m/it/10 ; [] ; \OT1/lmr/bx/n/10
+ x[]\OT1/lmr/m/n/10 )$.
  []
 
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 559.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `subscript' on input line 559.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 559.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 559.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 559.
+
 [11]
-Overfull \hbox (28.49228pt too wide) in paragraph at lines 909--912
+Overfull \hbox (28.49228pt too wide) in paragraph at lines 583--586
 \OT1/lmr/m/n/10 , then we are just sam-pling from full con-di-tional dis-tri-bu
 -tion of $(\OT1/lmr/bx/n/10 I[] \OMS/lmsy/m/n/10 ^^@ []\OT1/lmr/m/n/10 )\OML/lm
 m/m/it/10 vec\OT1/lmr/m/n/10 (\OT1/lmr/bx/n/10 X\OT1/lmr/m/n/10 )$ 
  []
 
+<norm_AQ_diag_dCX_trace_full.png, id=231, 420.82219pt x 315.80484pt>
+File: norm_AQ_diag_dCX_trace_full.png Graphic file (type png)
+<use norm_AQ_diag_dCX_trace_full.png>
+Package pdftex.def Info: norm_AQ_diag_dCX_trace_full.png  used on input line 62
+6.
+(pdftex.def)             Requested size: 258.75pt x 194.17786pt.
+<norm_A_diag_dCX_trace_full.png, id=233, 420.82219pt x 315.80484pt>
+File: norm_A_diag_dCX_trace_full.png Graphic file (type png)
+<use norm_A_diag_dCX_trace_full.png>
+Package pdftex.def Info: norm_A_diag_dCX_trace_full.png  used on input line 626
+.
+(pdftex.def)             Requested size: 258.75pt x 194.17786pt.
 
-Overfull \hbox (2.74602pt too wide) in paragraph at lines 914--927
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<std_AQ_diag_dCX_trace_full.png, id=234, 420.82219pt x 315.80484pt>
+File: std_AQ_diag_dCX_trace_full.png Graphic file (type png)
+<use std_AQ_diag_dCX_trace_full.png>
+Package pdftex.def Info: std_AQ_diag_dCX_trace_full.png  used on input line 636
+.
+(pdftex.def)             Requested size: 258.75pt x 194.17786pt.
+<std_A_diag_dCX_trace_full.png, id=235, 420.82219pt x 315.80484pt>
+File: std_A_diag_dCX_trace_full.png Graphic file (type png)
+<use std_A_diag_dCX_trace_full.png>
+Package pdftex.def Info: std_A_diag_dCX_trace_full.png  used on input line 636.
+
+(pdftex.def)             Requested size: 258.75pt x 194.17786pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<norm_AQ_diag_bAQ_trace_full.png, id=236, 420.82219pt x 315.80484pt>
+File: norm_AQ_diag_bAQ_trace_full.png Graphic file (type png)
+<use norm_AQ_diag_bAQ_trace_full.png>
+Package pdftex.def Info: norm_AQ_diag_bAQ_trace_full.png  used on input line 64
+6.
+(pdftex.def)             Requested size: 258.75pt x 194.17786pt.
+<norm_A_diag_bAQ_trace_full.png, id=237, 420.82219pt x 315.80484pt>
+File: norm_A_diag_bAQ_trace_full.png Graphic file (type png)
+<use norm_A_diag_bAQ_trace_full.png>
+Package pdftex.def Info: norm_A_diag_bAQ_trace_full.png  used on input line 646
+.
+(pdftex.def)             Requested size: 258.75pt x 194.17786pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+<std_AQ_diag_bAQ_trace_full.png, id=238, 420.82219pt x 315.80484pt>
+File: std_AQ_diag_bAQ_trace_full.png Graphic file (type png)
+<use std_AQ_diag_bAQ_trace_full.png>
+Package pdftex.def Info: std_AQ_diag_bAQ_trace_full.png  used on input line 656
+.
+(pdftex.def)             Requested size: 258.75pt x 194.17786pt.
+<std_A_diag_bAQ_trace_full.png, id=239, 420.82219pt x 315.80484pt>
+File: std_A_diag_bAQ_trace_full.png Graphic file (type png)
+<use std_A_diag_bAQ_trace_full.png>
+Package pdftex.def Info: std_A_diag_bAQ_trace_full.png  used on input line 656.
+
+(pdftex.def)             Requested size: 258.75pt x 194.17786pt.
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+[12] [13 <./norm_AQ_diag_dCX_trace_full.png> <./norm_A_diag_dCX_trace_full.png>
+ <./std_AQ_diag_dCX_trace_full.png> <./std_A_diag_dCX_trace_full.png>] [14 <./n
+orm_AQ_diag_bAQ_trace_full.png> <./norm_A_diag_bAQ_trace_full.png> <./std_AQ_di
+ag_bAQ_trace_full.png> <./std_A_diag_bAQ_trace_full.png>] [15] [16
+
+]
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 710.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `subscript' on input line 710.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 710.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 710.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 710.
+
+
+Overfull \hbox (2.74602pt too wide) in paragraph at lines 771--784
 \OT1/lmr/m/n/10 ($\OML/lmm/m/it/10 MN[]$ \OT1/lmr/m/n/10 means a ma-trix nor-ma
 l dis-tri-bu-tion), $\OT1/lmr/bx/n/10 C[] \OMS/lmsy/m/n/10 ^^X \OML/lmm/m/it/10
  MACG\OT1/lmr/m/n/10 (\OT1/cmr/bx/n/10 ^^F[]\OT1/lmr/m/n/10 )$. $\OML/lmm/m/it/
 10 MACG\OT1/lmr/m/n/10 (\OT1/cmr/bx/n/10 ^^F\OT1/lmr/m/n/10 )$
  []
 
-[12]
-Overfull \hbox (39.00948pt too wide) in paragraph at lines 928--936
-\OT1/lmr/m/n/10 do-ing clus-ter-ing. One easy so-lu-tion is just use the con-st
-raint $(\OT1/lmr/bx/n/10 C[]\OML/lmm/m/it/10 ; []  ; \OT1/lmr/bx/n/10 C[]\OT1/l
-mr/m/n/10 ) [] =
- []
+[17
+
+]
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 787.
 
 
-Overfull \hbox (24.39397pt too wide) detected at line 956
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 787.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 787.
+
+
+Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
+(hyperref)                removing `math shift' on input line 787.
+
+
+Overfull \hbox (24.39397pt too wide) detected at line 805
 \OT1/lmr/bx/n/10 Y[] \OT1/lmr/m/n/10 = [] = [] [] + \OT1/lmr/bx/n/10 E \OT1/lmr
 /m/n/10 = \OT1/lmr/bx/n/10 X[]F[] \OT1/lmr/m/n/10 + \OT1/lmr/bx/n/10 E
  []
 
 
-Overfull \hbox (38.23094pt too wide) detected at line 979
+Overfull \hbox (38.23094pt too wide) detected at line 828
 \OT1/lmr/bx/n/10 Y[] \OT1/lmr/m/n/10 = \OML/lmm/m/it/10 vec [] \OT1/lmr/m/n/10 
 = [] [] + \OML/lmm/m/it/10 vec\OT1/lmr/m/n/10 (\OT1/lmr/bx/n/10 E\OT1/lmr/m/n/1
 0 ) = \OT1/lmr/bx/n/10 X[]f[] \OT1/lmr/m/n/10 + \OML/lmm/m/it/10 vec\OT1/lmr/m/
 n/10 (\OT1/lmr/bx/n/10 E\OT1/lmr/m/n/10 )
  []
 
-[13]
-Overfull \hbox (80.07704pt too wide) detected at line 1017
+[18]
+Overfull \hbox (80.07704pt too wide) detected at line 866
 []
  []
 
-[14]
+[19]
+
+Package hyperref Warning: Difference (2) between bookmark levels is greater 
+(hyperref)                than one, level fixed on input line 892.
+
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 1043.
+(hyperref)                removing `math shift' on input line 892.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 1043.
+(hyperref)                removing `math shift' on input line 892.
 
-<trace_X_full_diagA.png, id=234, 421.1986pt x 315.80484pt>
-File: trace_X_full_diagA.png Graphic file (type png)
-<use trace_X_full_diagA.png>
-Package pdftex.def Info: trace_X_full_diagA.png  used on input line 1049.
-(pdftex.def)             Requested size: 258.75pt x 194.0092pt.
-<trace_dbAQ_full_diagA.png, id=236, 421.1986pt x 315.80484pt>
-File: trace_dbAQ_full_diagA.png Graphic file (type png)
-<use trace_dbAQ_full_diagA.png>
-Package pdftex.def Info: trace_dbAQ_full_diagA.png  used on input line 1049.
-(pdftex.def)             Requested size: 258.75pt x 194.0092pt.
-<trace_X_part_diagA.png, id=237, 421.1986pt x 315.80484pt>
-File: trace_X_part_diagA.png Graphic file (type png)
-<use trace_X_part_diagA.png>
-Package pdftex.def Info: trace_X_part_diagA.png  used on input line 1059.
-(pdftex.def)             Requested size: 258.75pt x 194.0092pt.
-<trace_dbAQ_part_diagA.png, id=238, 421.1986pt x 315.80484pt>
-File: trace_dbAQ_part_diagA.png Graphic file (type png)
-<use trace_dbAQ_part_diagA.png>
-Package pdftex.def Info: trace_dbAQ_part_diagA.png  used on input line 1059.
-(pdftex.def)             Requested size: 258.75pt x 194.0092pt.
+<CCI_AQ_diag_dCX_trace_full.png, id=323, 420.82219pt x 315.80484pt>
+File: CCI_AQ_diag_dCX_trace_full.png Graphic file (type png)
+<use CCI_AQ_diag_dCX_trace_full.png>
+Package pdftex.def Info: CCI_AQ_diag_dCX_trace_full.png  used on input line 898
+.
+(pdftex.def)             Requested size: 258.75pt x 194.17786pt.
+<CCI_AQ_diag_bAQ_trace_full.png, id=324, 420.82219pt x 315.80484pt>
+File: CCI_AQ_diag_bAQ_trace_full.png Graphic file (type png)
+<use CCI_AQ_diag_bAQ_trace_full.png>
+Package pdftex.def Info: CCI_AQ_diag_bAQ_trace_full.png  used on input line 898
+.
+(pdftex.def)             Requested size: 258.75pt x 194.17786pt.
+<CCI_AQ_diag_dCX_trace_part.png, id=325, 420.82219pt x 315.80484pt>
+File: CCI_AQ_diag_dCX_trace_part.png Graphic file (type png)
+<use CCI_AQ_diag_dCX_trace_part.png>
+Package pdftex.def Info: CCI_AQ_diag_dCX_trace_part.png  used on input line 908
+.
+(pdftex.def)             Requested size: 258.75pt x 194.17786pt.
+<CCI_AQ_diag_bAQ_trace_part.png, id=326, 420.82219pt x 315.80484pt>
+File: CCI_AQ_diag_bAQ_trace_part.png Graphic file (type png)
+<use CCI_AQ_diag_bAQ_trace_part.png>
+Package pdftex.def Info: CCI_AQ_diag_bAQ_trace_part.png  used on input line 908
+.
+(pdftex.def)             Requested size: 258.75pt x 194.17786pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<FR_diagA.png, id=239, 421.1986pt x 315.80484pt>
+<FR_diagA.png, id=327, 421.1986pt x 315.80484pt>
 File: FR_diagA.png Graphic file (type png)
 <use FR_diagA.png>
-Package pdftex.def Info: FR_diagA.png  used on input line 1069.
+Package pdftex.def Info: FR_diagA.png  used on input line 918.
 (pdftex.def)             Requested size: 258.75pt x 194.0092pt.
-<latent_diagA.png, id=240, 421.1986pt x 315.80484pt>
+<latent_diagA.png, id=328, 421.1986pt x 315.80484pt>
 File: latent_diagA.png Graphic file (type png)
 <use latent_diagA.png>
-Package pdftex.def Info: latent_diagA.png  used on input line 1069.
+Package pdftex.def Info: latent_diagA.png  used on input line 918.
 (pdftex.def)             Requested size: 258.75pt x 194.0092pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[15 <./trace_X_full_diagA.png> <./trace_dbAQ_full_diagA.png>] [16 <./trace_X_pa
-rt_diagA.png> <./trace_dbAQ_part_diagA.png> <./FR_diagA.png> <./latent_diagA.pn
-g>]
+[20 <./CCI_AQ_diag_dCX_trace_full.png> <./CCI_AQ_diag_bAQ_trace_full.png>]
+[21 <./CCI_AQ_diag_dCX_trace_part.png> <./CCI_AQ_diag_bAQ_trace_part.png> <./FR
+_diagA.png> <./latent_diagA.png>]
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 1075.
+(hyperref)                removing `math shift' on input line 924.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 1075.
+(hyperref)                removing `math shift' on input line 924.
 
-<trace_X_full_diagAQ.png, id=272, 421.1986pt x 315.80484pt>
-File: trace_X_full_diagAQ.png Graphic file (type png)
-<use trace_X_full_diagAQ.png>
-Package pdftex.def Info: trace_X_full_diagAQ.png  used on input line 1081.
-(pdftex.def)             Requested size: 258.75pt x 194.0092pt.
-<trace_dbAQ_full_diagAQ.png, id=273, 421.1986pt x 315.80484pt>
-File: trace_dbAQ_full_diagAQ.png Graphic file (type png)
-<use trace_dbAQ_full_diagAQ.png>
-Package pdftex.def Info: trace_dbAQ_full_diagAQ.png  used on input line 1081.
-(pdftex.def)             Requested size: 258.75pt x 194.0092pt.
-<trace_X_part_diagAQ.png, id=274, 421.1986pt x 315.80484pt>
-File: trace_X_part_diagAQ.png Graphic file (type png)
-<use trace_X_part_diagAQ.png>
-Package pdftex.def Info: trace_X_part_diagAQ.png  used on input line 1091.
-(pdftex.def)             Requested size: 258.75pt x 194.0092pt.
-<trace_dbAQ_part_diagAQ.png, id=275, 421.1986pt x 315.80484pt>
-File: trace_dbAQ_part_diagAQ.png Graphic file (type png)
-<use trace_dbAQ_part_diagAQ.png>
-Package pdftex.def Info: trace_dbAQ_part_diagAQ.png  used on input line 1091.
-(pdftex.def)             Requested size: 258.75pt x 194.0092pt.
-<FR_diagAQ.png, id=276, 421.1986pt x 315.80484pt>
+<CCI_A_diag_dCX_trace_full.png, id=355, 420.82219pt x 315.80484pt>
+File: CCI_A_diag_dCX_trace_full.png Graphic file (type png)
+<use CCI_A_diag_dCX_trace_full.png>
+Package pdftex.def Info: CCI_A_diag_dCX_trace_full.png  used on input line 930.
+
+(pdftex.def)             Requested size: 258.75pt x 194.17786pt.
+<CCI_A_diag_bAQ_trace_full.png, id=356, 420.82219pt x 315.80484pt>
+File: CCI_A_diag_bAQ_trace_full.png Graphic file (type png)
+<use CCI_A_diag_bAQ_trace_full.png>
+Package pdftex.def Info: CCI_A_diag_bAQ_trace_full.png  used on input line 930.
+
+(pdftex.def)             Requested size: 258.75pt x 194.17786pt.
+<CCI_A_diag_dCX_trace_part.png, id=357, 420.82219pt x 315.80484pt>
+File: CCI_A_diag_dCX_trace_part.png Graphic file (type png)
+<use CCI_A_diag_dCX_trace_part.png>
+Package pdftex.def Info: CCI_A_diag_dCX_trace_part.png  used on input line 940.
+
+(pdftex.def)             Requested size: 258.75pt x 194.17786pt.
+<CCI_A_diag_bAQ_trace_part.png, id=358, 420.82219pt x 315.80484pt>
+File: CCI_A_diag_bAQ_trace_part.png Graphic file (type png)
+<use CCI_A_diag_bAQ_trace_part.png>
+Package pdftex.def Info: CCI_A_diag_bAQ_trace_part.png  used on input line 940.
+
+(pdftex.def)             Requested size: 258.75pt x 194.17786pt.
+<FR_diagAQ.png, id=359, 421.1986pt x 315.80484pt>
 File: FR_diagAQ.png Graphic file (type png)
 <use FR_diagAQ.png>
-Package pdftex.def Info: FR_diagAQ.png  used on input line 1101.
+Package pdftex.def Info: FR_diagAQ.png  used on input line 950.
 (pdftex.def)             Requested size: 258.75pt x 194.0092pt.
-<latent_diagAQ.png, id=277, 421.1986pt x 315.80484pt>
+<latent_diagAQ.png, id=360, 421.1986pt x 315.80484pt>
 File: latent_diagAQ.png Graphic file (type png)
 <use latent_diagAQ.png>
-Package pdftex.def Info: latent_diagAQ.png  used on input line 1101.
+Package pdftex.def Info: latent_diagAQ.png  used on input line 950.
 (pdftex.def)             Requested size: 258.75pt x 194.0092pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[17
+[22
 
- <./trace_X_full_diagAQ.png> <./trace_dbAQ_full_diagAQ.png> <./trace_X_part_dia
-gAQ.png> <./trace_dbAQ_part_diagAQ.png>] [18 <./FR_diagAQ.png> <./latent_diagAQ
-.png>] [19] [20
-
-] (./cluster_neural_population.aux)
+ <./CCI_A_diag_dCX_trace_full.png> <./CCI_A_diag_bAQ_trace_full.png> <./CCI_A_d
+iag_dCX_trace_part.png> <./CCI_A_diag_bAQ_trace_part.png>] [23 <./FR_diagAQ.png
+> <./latent_diagAQ.png>] (./cluster_neural_population.aux)
 Package rerunfilecheck Info: File `cluster_neural_population.out' has not chang
 ed.
-(rerunfilecheck)             Checksum: 72F58528BFF4AA3DCEA12A067E882F17;1877.
+(rerunfilecheck)             Checksum: 05E7C03E1879A07DDB3BCD90A25C2BC1;2129.
 
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 7599 strings out of 479383
- 111472 string characters out of 5868871
- 432275 words of memory out of 5000000
- 24410 multiletter control sequences out of 15000+600000
+ 7683 strings out of 479383
+ 113719 string characters out of 5868871
+ 432612 words of memory out of 5000000
+ 24457 multiletter control sequences out of 15000+600000
  462733 words of font info for 86 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 66i,14n,72p,858b,400s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 66i,14n,72p,801b,400s stack positions out of 5000i,500n,10000p,200000b,80000s
 {e:/software/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-rm.enc}{e:/softwar
-e/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{e:/software/texlive
-/2020/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{e:/software/texlive/2020/tex
+e/texlive/2020/texmf-dist/fonts/enc/dvips/lm/lm-mathit.enc}{e:/software/texlive
+/2020/texmf-dist/fonts/enc/dvips/lm/lm-mathsy.enc}{e:/software/texlive/2020/tex
 mf-dist/fonts/enc/dvips/lm/lm-mathex.enc}<e:/software/texlive/2020/texmf-dist/f
 onts/type1/public/amsfonts/cm/cmbx10.pfb><e:/software/texlive/2020/texmf-dist/f
 onts/type1/public/amsfonts/cm/cmmib10.pfb><e:/software/texlive/2020/texmf-dist/
 fonts/type1/public/amsfonts/cmextra/cmmib5.pfb><e:/software/texlive/2020/texmf-
 dist/fonts/type1/public/amsfonts/cmextra/cmmib7.pfb><e:/software/texlive/2020/t
-exmf-dist/fonts/type1/public/lm/lmbx10.pfb><e:/software/texlive/2020/texmf-dist
-/fonts/type1/public/lm/lmbx12.pfb><e:/software/texlive/2020/texmf-dist/fonts/ty
-pe1/public/lm/lmbx5.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public
-/lm/lmbx7.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/lmbx8.
-pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/lmex10.pfb><e:/s
-oftware/texlive/2020/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><e:/software/t
-exlive/2020/texmf-dist/fonts/type1/public/lm/lmmi5.pfb><e:/software/texlive/202
-0/texmf-dist/fonts/type1/public/lm/lmmi7.pfb><e:/software/texlive/2020/texmf-di
-st/fonts/type1/public/lm/lmr10.pfb><e:/software/texlive/2020/texmf-dist/fonts/t
-ype1/public/lm/lmr17.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/publi
-c/lm/lmr5.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr7.p
-fb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr8.pfb><e:/soft
-ware/texlive/2020/texmf-dist/fonts/type1/public/lm/lmro10.pfb><e:/software/texl
-ive/2020/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><e:/software/texlive/2020/
-texmf-dist/fonts/type1/public/lm/lmsy5.pfb><e:/software/texlive/2020/texmf-dist
-/fonts/type1/public/lm/lmsy7.pfb><e:/software/texlive/2020/texmf-dist/fonts/typ
-e1/public/amsfonts/symbols/msbm10.pfb>
-Output written on cluster_neural_population.pdf (20 pages, 1745842 bytes).
+exmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib8.pfb><e:/software/texlive/2
+020/texmf-dist/fonts/type1/public/lm/lmbx10.pfb><e:/software/texlive/2020/texmf
+-dist/fonts/type1/public/lm/lmbx12.pfb><e:/software/texlive/2020/texmf-dist/fon
+ts/type1/public/lm/lmbx5.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/p
+ublic/lm/lmbx7.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/l
+mbx8.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/lmex10.pfb>
+<e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/lmmi10.pfb><e:/softw
+are/texlive/2020/texmf-dist/fonts/type1/public/lm/lmmi5.pfb><e:/software/texliv
+e/2020/texmf-dist/fonts/type1/public/lm/lmmi7.pfb><e:/software/texlive/2020/tex
+mf-dist/fonts/type1/public/lm/lmmi8.pfb><e:/software/texlive/2020/texmf-dist/fo
+nts/type1/public/lm/lmr10.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/
+public/lm/lmr17.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/
+lmr5.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr7.pfb><e
+:/software/texlive/2020/texmf-dist/fonts/type1/public/lm/lmr8.pfb><e:/software/
+texlive/2020/texmf-dist/fonts/type1/public/lm/lmro10.pfb><e:/software/texlive/2
+020/texmf-dist/fonts/type1/public/lm/lmsy10.pfb><e:/software/texlive/2020/texmf
+-dist/fonts/type1/public/lm/lmsy5.pfb><e:/software/texlive/2020/texmf-dist/font
+s/type1/public/lm/lmsy7.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/pu
+blic/amsfonts/symbols/msbm10.pfb>
+Output written on cluster_neural_population.pdf (23 pages, 3358347 bytes).
 PDF statistics:
- 425 PDF objects out of 1000 (max. 8388607)
- 352 compressed objects within 4 object streams
- 118 named destinations out of 1000 (max. 500000)
- 269 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 503 PDF objects out of 1000 (max. 8388607)
+ 408 compressed objects within 5 object streams
+ 147 named destinations out of 1000 (max. 500000)
+ 333 words of extra memory for PDF output out of 10000 (max. 10000000)
 

@@ -14,13 +14,16 @@
 \BOOKMARK [1][-]{section.4}{Simulations}{}% 14
 \BOOKMARK [1][-]{section.5}{Problem from Affine Transformation}{}% 15
 \BOOKMARK [2][-]{subsection.5.1}{Constraints}{section.5}% 16
-\BOOKMARK [3][-]{subsubsection.5.1.1}{Translation}{subsection.5.1}% 17
-\BOOKMARK [3][-]{subsubsection.5.1.2}{Linear Transformation}{subsection.5.1}% 18
+\BOOKMARK [3][-]{subsubsection.5.1.1}{Constraint on latent vectors xt only}{subsection.5.1}% 17
+\BOOKMARK [3][-]{subsubsection.5.1.2}{Joint constraint on xt, C and linear dynamics}{subsection.5.1}% 18
 \BOOKMARK [2][-]{subsection.5.2}{Constraint Implementation}{section.5}% 19
-\BOOKMARK [3][-]{subsubsection.5.2.1}{Translation}{subsection.5.2}% 20
-\BOOKMARK [3][-]{subsubsection.5.2.2}{Linear Transformation}{subsection.5.2}% 21
-\BOOKMARK [2][-]{subsection.5.3}{Simulation}{section.5}% 22
-\BOOKMARK [3][-]{subsubsection.5.3.1}{Q is full while A is diagonal}{subsection.5.3}% 23
-\BOOKMARK [3][-]{subsubsection.5.3.2}{both A and Q are diagonal}{subsection.5.3}% 24
-\BOOKMARK [2][-]{subsection.5.4}{Comments on Previous Models}{section.5}% 25
-\BOOKMARK [1][-]{section.6}{TODO}{}% 26
+\BOOKMARK [2][-]{subsection.5.3}{Simulation}{section.5}% 20
+\BOOKMARK [2][-]{subsection.5.4}{Comments on Previous Models}{section.5}% 21
+\BOOKMARK [1][-]{section.6}{TODO}{}% 22
+\BOOKMARK [1][-]{section.7}{Appendix}{}% 23
+\BOOKMARK [2][-]{subsection.7.1}{Joint constraint on xt, C and linear dynamics}{section.7}% 24
+\BOOKMARK [2][-]{subsection.7.2}{sample the orthogonal loading}{section.7}% 25
+\BOOKMARK [2][-]{subsection.7.3}{diagonal A and full Q}{section.7}% 26
+\BOOKMARK [1][-]{section.8}{Simulation on joint constraint}{}% 27
+\BOOKMARK [2][-]{subsubsection.8.0.1}{Q is full while A is diagonal}{section.8}% 28
+\BOOKMARK [3][-]{subsubsection.8.0.2}{both A and Q are diagonal}{subsubsection.8.0.1}% 29

@@ -58,9 +58,13 @@ Y = poissrnd(exp(logLam));
 clusterPlot(Y, Lab)
 
 % standardize the latent vectors
-% center X around 0
-gtmp = -mean(X, 2);
-M = inv(diag(std(X, 0, 2)));
+
+% gtmp = -mean(X, 2);
+% M = inv(diag(max(abs(X),[], 2)));
+gtmp = -min(X,[], 2);
+M = inv(diag(range(X,2)));
+
+
 g = M*gtmp;
 
 X = M*X + g;
@@ -161,9 +165,10 @@ gradHess = @(vecX) gradHessX(vecX, d_tmp, C_fit(:,:,1), x0_fit(:,1), Q0,...
     Q_fit(:,:,1), A_fit(:,:,1), b_fit(:,1), Y);
 [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp(:),1e-10,1000);
 X_fit(:,:,1) = reshape(muXvec, [], T);
-X_fit(:,:,1) = X_fit(:,:,1) - mean(X_fit(:,:,1), 2);
-X_fit(:,:,1) = (diag(std(X_fit(:,:,1), 0, 2)))\X_fit(:,:,1);
-
+% X_fit(:,:,1) = X_fit(:,:,1) - mean(X_fit(:,:,1), 2);
+% X_fit(:,:,1) = (diag(max(abs(X_fit(:,:,1)),[], 2)))\X_fit(:,:,1);
+X_fit(:,:,1) = X_fit(:,:,1) - min(X_fit(:,:,1),[], 2);
+X_fit(:,:,1) = (diag(range(X_fit(:,:,1),2)))\X_fit(:,:,1);
 
 %% MCMC
 optdc.M=1;
@@ -208,8 +213,11 @@ for g = 2:ng
     z = randn(length(muXvec), 1) + R'*muXvec;
     x_all = R'\z;
     X_fit(:,:,g) = reshape(x_all,[], T);
-    X_fit(:,:,g) = X_fit(:,:,g) - mean(X_fit(:,:,g), 2);
-    X_fit(:,:,g) = (diag(std(X_fit(:,:,g), 0, 2)))\X_fit(:,:,g);
+    X_fit(:,:,g) = X_fit(:,:,g) - min(X_fit(:,:,g),[], 2);
+    X_fit(:,:,g) = (diag(range(X_fit(:,:,g),2)))\X_fit(:,:,g);
+
+%     X_fit(:,:,g) = X_fit(:,:,g) - mean(X_fit(:,:,g), 2);
+%     X_fit(:,:,g) = (diag(max(abs(X_fit(:,:,g)),[], 2)))\X_fit(:,:,g);
     
     % toc;
     

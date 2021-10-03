@@ -54,96 +54,65 @@ end
 
 Y = poissrnd(exp(logLam));
 clusterPlot(Y, Lab)
+
+gtmp = -min(X,[], 2);
+M = inv(diag(range(X,2)));
+g = M*gtmp;
+
+X = M*X + g;
+x0 = M*x0 + g;
+d = d - (C_trans/M)*g;
+C_trans = C_trans/M;
+A = M*A/M;
+b = M*b + g - (M*A/M)*g;
+Q = M*Q*M';
+Q0 = M*Q0*M';
+
 %%
-rng(3)
+rng(6)
 ng = 50;
-kMM = 3;
+kMM = 10;
 
 % pre-allocation
 Z_fit = zeros(N, ng);
 RHO_fit = zeros(kMM, ng);
-
-X_fit = zeros(kMM*p, T, ng);
-x0_fit = zeros(kMM*p, ng);
-
 d_fit = zeros(N, kMM, ng);
-mud_fit = zeros(kMM, ng);
-sig2d_fit = zeros(kMM, ng);
-
-% do I need to update mean of K?
-K_fit = zeros(N, kMM*p, ng);
-muK_fit = zeros(kMM, ng);
-sig2K_fit = ones(kMM, ng);
-C_fit = zeros(N, kMM*p, ng);
-
-A_fit = zeros(kMM*p, kMM*p, ng);
+C_fit = zeros(N, p*kMM, ng);
+mudc_fit = zeros(p+1, kMM, ng);
+Sigdc_fit = zeros(p+1, p+1, kMM, ng);
 b_fit = zeros(kMM*p, ng);
+A_fit = zeros(kMM*p, kMM*p, ng);
 Q_fit = zeros(kMM*p, kMM*p, ng);
+x0_fit = zeros(kMM*p, ng);
+X_fit = zeros(kMM*p, T, ng);
 
-% priors...
+% priors
 delta0 = ones(1, kMM);
 Q0 = eye(kMM*p)*1e-2;
 
-% priors for initial (x0)
 mux00 = zeros(kMM*p, 1);
 Sigx00 = eye(kMM*p);
 
-% prior for K: C = K*(K'*K)^{-1/2}
-% vec(K) ~ N(mu_k*1, sig2K*I)
-% i.e. k_{ij} ~ (i.i.d.) N(mu_k, sig2K)
-nuK0 = 1;
-sig2K0 = 1;
-deltaK0 = 0;
-kK0 = 1;
+deltadc0 = zeros(p+1,1);
+Taudc0 = eye(p+1);
 
-% prior for d
-nud0 = 1;
-sig2d0 = 1e-2;
-deltad0 = 0;
-kd0 = 1;
+Psidc0 = eye(p+1)*1e-4;
+nudc0 = p+1+2;
 
-% prior for linear dyanmics (b, A, Q)
 BA0 =[0 1]';
 Lamb0 = eye(2);
 Psi0 = 1e-4;
 nu0 = 1+2;
+
 
 % initials
 Z_fit(:,1) = ones(1, N);
 % Z_fit(:,1) = randsample(kMM, N, true);
 RHO_fit(:,1) = ones(kMM,1)/kMM;
 
-d_fit(:,:,1) = zeros(N,kMM);
-mud_fit(:,1) = zeros(kMM, 1);
-sig2d_fit(:, 1) = ones(kMM, 1);
-
-muK_fit(:,1) = zeros(kMM, 1);
-sig2K_fit(:,1) = ones(kMM, 1);
-
-% reorder Y by labels
-[Zsort_tmp,id] = sort(Z_fit(:,1));
-uniZsort_tmp = unique(Zsort_tmp);
-nClus_tmp = length(uniZsort_tmp);
-
-Csort_trans_tmp = zeros(N, p*nClus_tmp);
-Zsort_trans_tmp = zeros(N, p*nClus_tmp);
-
-
-
-K_raw = randn(N, p);
-d_tmp = zeros(N,1);
-for k = unique(Lab)
-    ladid_tmp = id2id(k, p);
-    K_tmp = K_raw(Lab == k, :);
-    K_fit(Lab == k, ladid_tmp, 1) = K_tmp;
-    C_fit(Lab == k, ladid_tmp, 1) = K_tmp/(sqrtm(K_tmp'*K_tmp));
-    d_tmp(Lab == k) = d_fit(Lab ==k, k);
-end
-
-
-
-
-
+mudc_fit(:,:,1) = zeros(p+1, kMM);
+Sigdc_fit(:,:,:,1) = repmat(eye(p+1)*1e-2,1,1,kMM);
+% initial for d_fit: 0
 C_fit(:,:,1) = reshape(normrnd(0,1e-2,N*p*kMM,1), N, []);
 
 % initial for b_fit: 0
@@ -176,6 +145,9 @@ x0_fit(latID,1) =...
 X_fit(latID, :, 1) = ppasmoo_poissexp_v2(Y(id,:),Csort_trans_tmp,d_tmp(id,1),...
     x0_fit(latID,1),Q0(latID, latID),...
     A_fit(latID, latID,1),b_fit(latID, 1),Q_fit(latID, latID,1));
+X_fit(latID, :, 1) = X_fit(latID, :, 1) - min(X_fit(latID, :, 1),[], 2);
+X_fit(latID, :, 1) = (diag(range(X_fit(latID, :, 1),2)))\X_fit(latID, :, 1);
+
 
 % no labels: generate by priors
 outLab = setdiff(1:kMM, uniZsort_tmp);
@@ -187,10 +159,51 @@ if(~isempty(outLab))
         X_fit(outLatID, t,1) = mvnrnd(A_fit(outLatID,:,1)*X_fit(:,t-1,1) +...
             b_fit(outLatID,1), Q_fit(outLatID,outLatID,1));
     end
+    X_fit(outLatID, :, 1) = X_fit(outLatID, :, 1) - min(X_fit(outLatID, :, 1),[], 2);
+    X_fit(outLatID, :, 1) = (diag(range(X_fit(outLatID, :, 1),2)))\X_fit(outLatID, :, 1);
+    
 end
 
 
+%% MCMC
+optdc.M=1;
+optdc.Madapt=0;
+epsilon = 0.01*ones(N,1);
+burnIn = 10;
 
+for g = 2:ng
+    
+    % (1) update Z_fit
+    LAM_tmp = zeros(N, T, kMM);
+    LLHD = zeros(N, kMM);
+    for k = 1:kMM
+        latID = id2id(k,p);
+        LAM_tmp(:,:,k) = exp(C_fit(:,latID,g-1)*X_fit(latID,:,g-1) + d_fit(:,k,g-1));
+        LLHD(:, k) = sum(log(poisspdf(Y, LAM_tmp(:,:,k))), 2);
+    end
+    
+    logp_tmp = repmat(log(RHO_fit(:,g-1)'), N, 1) + LLHD;
+    clus_tmp = mnrnd(ones(N, 1), softmax(logp_tmp')');
+    [Z_fit(:,g), ~] = find(clus_tmp');
+    
+    
+    % (2) update RHO_fit
+    nClus = histc(Z_fit(:,g),1:kMM);
+    RHO_fit(:,g) = drchrnd(delta0 + nClus', 1);
+    
+    % (3) update model-related parameters
+    [X_fit(:,:,g),x0_fit(:,g),d_fit(:,:,g),C_fit(:,:,g),...
+    mudc_fit(:,:,g), Sigdc_fit(:,:,:,g),...
+    b_fit(:,g),A_fit(:,:,g),Q_fit(:,:,g), optdc, epsilon] =...
+    norm_AQ_diag_MM_MCMCLoop(Y,X_fit(:,:,g-1), Z_fit(:,g), d_fit(:,:,g-1), C_fit(:,:,g-1),... % cluster-invariant
+    mudc_fit(:,:,g-1), Sigdc_fit(:,:,:,g-1),...
+    x0_fit(:,g-1), b_fit(:,g-1), A_fit(:,:,g-1), Q_fit(:,:,g-1), kMM,... % cluster-related
+    Q0, mux00, Sigx00, deltadc0, Taudc0,Psidc0,nudc0,...
+    BA0, Lamb0, Psi0,nu0, g, optdc, epsilon, burnIn);
+    
+    figure(1)
+    clusterPlot(Y, Z_fit(:,g)')
+end
 
 
 
