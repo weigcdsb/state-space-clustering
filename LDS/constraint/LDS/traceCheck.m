@@ -24,49 +24,55 @@ end
 
 
 figure(1)
-subplot(2,1,1)
-plot(C_norm_fro)
-title("Frobenius norm of C, dim: " + nClus*p + "\times" + T)
-subplot(2,1,2)
-plot(squeeze(X_fit(:,round(T/2),1:g))')
-title("values of x_{500}, dim: " + size(X_fit, 1))
-
-figure(2)
-subplot(4,1,1)
+subplot(3,1,1)
 plot(d_norm_fro)
 title('norm of d')
-subplot(4,1,2)
+subplot(3,1,2)
+plot(C_norm_fro)
+title("Frobenius norm of C, dim: " + N + "\times" + p)
+subplot(3,1,3)
+plot(X_norm_fro)
+title("Frobenius norm of X, dim: " + nClus*p + "\times" + T)
+
+% subplot(2,1,2)
+% plot(squeeze(X_fit(:,round(T/2),1:g))')
+% title("values of x_{500}, dim: " + size(X_fit, 1))
+
+figure(2)
+subplot(3,1,1)
 plot(b_norm)
 title('norm of b')
-subplot(4,1,3)
+subplot(3,1,2)
 plot(A_norm_fro)
 title('Frobenius norm of A')
-subplot(4,1,4)
+subplot(3,1,3)
 plot(Q_norm_fro)
 title('Frobenius norm of Q')
 
-
+gTrunc = 1000;
 figure(3)
-subplot(2,1,1)
-plot(X_norm_fro(1:100))
+subplot(3,1,1)
+plot(d_norm_fro(1:gTrunc))
+title('norm of d')
+subplot(3,1,2)
+plot(C_norm_fro(1:gTrunc))
+title("Frobenius norm of C, dim: " + N + "\times" + p)
+subplot(3,1,3)
+plot(X_norm_fro(1:gTrunc))
 title("Frobenius norm of X, dim: " + nClus*p + "\times" + T)
-subplot(2,1,2)
-plot(squeeze(X_fit(:,round(T/2),1:100))')
-title("values of x_{500}, dim: " + size(X_fit, 1))
+
 
 figure(4)
-subplot(4,1,1)
-plot(d_norm_fro(1:100))
-title('norm of d')
-subplot(4,1,2)
-plot(b_norm(1:100))
+subplot(3,1,1)
+plot(b_norm(1:gTrunc))
 title('norm of b')
-subplot(4,1,3)
-plot(A_norm_fro(1:100))
+subplot(3,1,2)
+plot(A_norm_fro(1:gTrunc))
 title('Frobenius norm of A')
-subplot(4,1,4)
-plot(Q_norm_fro(1:100))
+subplot(3,1,3)
+plot(Q_norm_fro(1:gTrunc))
 title('Frobenius norm of Q')
+
 
 idx = round(ng/2): ng;
 
@@ -107,25 +113,4 @@ subplot(3,2,5)
 plot(X(2*p+1:3*p,:)')
 subplot(3,2,6)
 plot(mean(X_fit(2*p+1:3*p,:,idx), 3)')
-
-
-for k = 1:ng
-    
-    figure(5)
-    subplot(1,2,1)
-    imagesc(exp(C_trans*X + d))
-    cLim = caxis;
-    title('true')
-    colorbar()
-    subplot(1,2,2)
-    C_fit_mean = mean(C_fit(:,:,k), 3);
-    imagesc(exp(C_fit_mean*mean(X_fit(:,:,k), 3)))
-    set(gca,'CLim',cLim)
-    title("fit: " + k)
-    colorbar()
-end
-
-
-
-
 
