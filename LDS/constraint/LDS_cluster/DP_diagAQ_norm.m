@@ -77,7 +77,7 @@ plot(X')
 %% MCMC setting
 rng(3)
 alphaDP = 5;
-ng = 500;
+ng = 1000;
 
 % pre-allocation
 Z_fit = zeros(N, ng);
@@ -101,9 +101,9 @@ nu0 = 1+2;
 
 % initials
 % single cluster
-Z_fit(:,1) = ones(N, 1);
+% Z_fit(:,1) = ones(N, 1);
 % N cluster
-% Z_fit(:,1) = 1:N;
+Z_fit(:,1) = 1:N;
 % Z_fit(:,1) = randsample(2, N, true);
 
 % reorder Y by labels
@@ -151,7 +151,7 @@ X_fit{1}(latID,:) = (diag(range(X_fit{1}(latID,:),2)))\X_fit{1}(latID,:);
 optdc.M=1;
 optdc.Madapt=0;
 epsilon = 0.01*ones(N,1);
-burnIn = 10;
+burnIn = 100;
 
 for g = 2:ng
     
@@ -204,46 +204,46 @@ for g = 2:ng
     [Z_fit(~isnan(clus_tmp(:,1)),g), ~] = find(clus_tmp(~isnan(clus_tmp(:,1)),:)');
     
     % delete the redundant...
-%     oldLab_uni = unique(Z_fit(:,g));
-%     nClus_new = length(oldLab_uni);
-%     
-%     X_new = zeros(nClus_new*p, T);
-%     x0_new = zeros(nClus_new*p, 1);
-%     d_new = zeros(N, nClus_new);
-%     C_new = zeros(N, p*nClus_new);
-%     mudc_new = zeros(p+1, nClus_new);
-%     Sigdc_new = zeros(p+1,p+1, nClus_new);
-%     b_new = zeros(nClus_new*p,1);
-%     A_new = eye(nClus_new*p);
-%     Q_new = eye(nClus_new*p);
-%     
-%     for k = 1:nClus_new
-%         Z_fit(Z_fit(:,g) == oldLab_uni(k), g) = k;
-%         
-%         latid_old = id2id(oldLab_uni(k), p);
-%         latid_new = id2id(k,p);
-%         
-%         X_new(latid_new, :) = X_fit{g}(latid_old,:);
-%         x0_new(latid_new) = x0_fit{g}(latid_old);
-%         d_new(:, k) = d_fit{g}(:,oldLab_uni(k));
-%         C_new(:,latid_new) = C_fit{g}(:,latid_old);
-%         mudc_new(:, k) = mudc_fit{g}(:, oldLab_uni(k));
-%         Sigdc_new(:,:,k) = Sigdc_fit{g}(:,:,oldLab_uni(k));
-%         b_new(latid_new,:) = b_fit{g}(latid_old,:);
-%         A_new(latid_new,latid_new) = A_fit{g}(latid_old,latid_old);
-%         Q_new(latid_new,latid_new) = Q_fit{g}(latid_old,latid_old);
-%     end
-%     
-%     X_fit{g} = X_new;
-%     x0_fit{g} = x0_new;
-%     d_fit{g} = d_new;
-%     C_fit{g} = C_new;
-%     mudc_fit{g} = mudc_new;
-%     Sigdc_fit{g} = Sigdc_new;
-%     b_fit{g} = b_new;
-%     A_fit{g} = A_new;
-%     Q_fit{g} = Q_new;
-%     
+    oldLab_uni = unique(Z_fit(:,g));
+    nClus_new = length(oldLab_uni);
+    
+    X_new = zeros(nClus_new*p, T);
+    x0_new = zeros(nClus_new*p, 1);
+    d_new = zeros(N, nClus_new);
+    C_new = zeros(N, p*nClus_new);
+    mudc_new = zeros(p+1, nClus_new);
+    Sigdc_new = zeros(p+1,p+1, nClus_new);
+    b_new = zeros(nClus_new*p,1);
+    A_new = eye(nClus_new*p);
+    Q_new = eye(nClus_new*p);
+    
+    for k = 1:nClus_new
+        Z_fit(Z_fit(:,g) == oldLab_uni(k), g) = k;
+        
+        latid_old = id2id(oldLab_uni(k), p);
+        latid_new = id2id(k,p);
+        
+        X_new(latid_new, :) = X_fit{g}(latid_old,:);
+        x0_new(latid_new) = x0_fit{g}(latid_old);
+        d_new(:, k) = d_fit{g}(:,oldLab_uni(k));
+        C_new(:,latid_new) = C_fit{g}(:,latid_old);
+        mudc_new(:, k) = mudc_fit{g}(:, oldLab_uni(k));
+        Sigdc_new(:,:,k) = Sigdc_fit{g}(:,:,oldLab_uni(k));
+        b_new(latid_new,:) = b_fit{g}(latid_old,:);
+        A_new(latid_new,latid_new) = A_fit{g}(latid_old,latid_old);
+        Q_new(latid_new,latid_new) = Q_fit{g}(latid_old,latid_old);
+    end
+    
+    X_fit{g} = X_new;
+    x0_fit{g} = x0_new;
+    d_fit{g} = d_new;
+    C_fit{g} = C_new;
+    mudc_fit{g} = mudc_new;
+    Sigdc_fit{g} = Sigdc_new;
+    b_fit{g} = b_new;
+    A_fit{g} = A_new;
+    Q_fit{g} = Q_new;
+    
     figure(2)
     clusterPlot(Y, Z_fit(:,g)')
     

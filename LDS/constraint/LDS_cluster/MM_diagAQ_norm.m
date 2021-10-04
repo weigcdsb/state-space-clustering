@@ -76,9 +76,9 @@ plot(X')
 
 
 %%
-rng(2)
+rng(1)
 ng = 100;
-kMM = 4;
+kMM = 30;
 
 % pre-allocation
 Z_fit = zeros(N, ng);
