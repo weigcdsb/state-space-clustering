@@ -57,8 +57,8 @@ clusterPlot(Y, Lab)
 
 %%
 rng(2)
-ng = 30;
-kMM = 10;
+ng = 100;
+kMM = 30;
 
 % pre-allocation
 Z_fit = zeros(N, ng);

@@ -15,7 +15,8 @@ pLab = repelem(1:nClus, p);
 d = randn(n*nClus,1)*0;
 C_trans = zeros(n*nClus, p*nClus);
 for k = 1:length(Lab)
-    C_trans(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = sum(Lab(1:k)==Lab(k))/sum(Lab==Lab(k))+1;
+    C_trans(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) =...
+        sum(Lab(1:k)==Lab(k))/sum(Lab==Lab(k))+[-2 2];
 end
 
 X = zeros(p*nClus, T);
@@ -23,24 +24,25 @@ x0 = zeros(p*nClus, 1);
 Q0 = eye(nClus*p)*1e-2;
 X(:,1) = mvnrnd(x0, Q0)';
 
-b1 = ones(p,1)*0;
-b2 = ones(p,1)*0;
-b3 = ones(p,1)*0;
+b1 = randn(p, 1)*1e-3;
+b2 = randn(p, 1)*1e-3;
+b3 = randn(p, 1)*1e-4;
 b = [b1;b2;b3];
 
 Q1 = 1e-3*eye(p);
-Q2 = 1e-3*eye(p);
-Q3 = 1e-3*eye(p);
+Q2 = 1e-4*eye(p);
+Q3 = 1e-5*eye(p);
 Q = blkdiag(Q1, Q2, Q3);
 
-% 
+%
 A = eye(size(Q,1));
 while any(imag(eig(A))==0)
     A= randn(size(Q));
     A = A-diag(diag(A));
-	A(squareform(pdist(pLab'))==0)=0;
+    A(squareform(pdist(pLab'))==0)=0;
     A = A./sqrt(sum((A-diag(diag(A))).^2,2))*0.1;
-    A = A+eye(size(Q,1))*0.92;
+    %     A = A+eye(size(Q,1))*0.92;
+    A = A + diag(randn(nClus*p, 1)*1e-1 + 0.92);
 end
 
 % let's generate lambda
@@ -52,6 +54,7 @@ for t=2:T
     logLam(:, t) = d + C_trans*X(:,t);
 end
 
+figure(1)
 Y = poissrnd(exp(logLam));
 clusterPlot(Y, Lab)
 
@@ -68,10 +71,14 @@ b = M*b + g - (M*A/M)*g;
 Q = M*Q*M';
 Q0 = M*Q0*M';
 
+figure(2)
+plot(X')
+
+
 %%
-rng(6)
-ng = 50;
-kMM = 10;
+rng(2)
+ng = 100;
+kMM = 4;
 
 % pre-allocation
 Z_fit = zeros(N, ng);
@@ -101,7 +108,7 @@ nudc0 = p+1+2;
 
 BA0 =[0 1]';
 Lamb0 = eye(2);
-Psi0 = 1e-4;
+Psi0 = 1e-2;
 nu0 = 1+2;
 
 
@@ -154,14 +161,13 @@ outLab = setdiff(1:kMM, uniZsort_tmp);
 if(~isempty(outLab))
     outLatID = id2id(outLab , p);
     x0_fit(outLatID,1) = mvnrnd(mux00(outLatID), Sigx00(outLatID,outLatID))';
-    X_fit(outLatID, 1,1) = mvnrnd(x0_fit(outLatID,1), Q0(outLatID,outLatID))';
-    for t= 2:T
-        X_fit(outLatID, t,1) = mvnrnd(A_fit(outLatID,:,1)*X_fit(:,t-1,1) +...
-            b_fit(outLatID,1), Q_fit(outLatID,outLatID,1));
-    end
-    X_fit(outLatID, :, 1) = X_fit(outLatID, :, 1) - min(X_fit(outLatID, :, 1),[], 2);
-    X_fit(outLatID, :, 1) = (diag(range(X_fit(outLatID, :, 1),2)))\X_fit(outLatID, :, 1);
     
+    lFreq = mode(Z_fit(:,1));
+    latIDFreq = id2id(lFreq, p);
+    for l=outLab(:)'
+        outLatID_tmp = id2id(l , p);
+        X_fit(outLatID_tmp, :, 1) = X_fit(latIDFreq, :, 1);
+    end
 end
 
 
@@ -192,14 +198,24 @@ for g = 2:ng
     RHO_fit(:,g) = drchrnd(delta0 + nClus', 1);
     
     % (3) update model-related parameters
+%     [X_fit(:,:,g),x0_fit(:,g),d_fit(:,:,g),C_fit(:,:,g),...
+%         mudc_fit(:,:,g), Sigdc_fit(:,:,:,g),...
+%         b_fit(:,g),A_fit(:,:,g),Q_fit(:,:,g), optdc, epsilon] =...
+%         norm_AQ_diag_MM_MCMCLoop(Y,X_fit(:,:,g-1), Z_fit(:,g), d_fit(:,:,g-1), C_fit(:,:,g-1),... % cluster-invariant
+%         mudc_fit(:,:,g-1), Sigdc_fit(:,:,:,g-1),...
+%         x0_fit(:,g-1), b_fit(:,g-1), A_fit(:,:,g-1), Q_fit(:,:,g-1), kMM,... % cluster-related
+%         Q0, mux00, Sigx00, deltadc0, Taudc0,Psidc0,nudc0,...
+%         BA0, Lamb0, Psi0,nu0, g, optdc, epsilon, burnIn);
+    
+    
     [X_fit(:,:,g),x0_fit(:,g),d_fit(:,:,g),C_fit(:,:,g),...
-    mudc_fit(:,:,g), Sigdc_fit(:,:,:,g),...
-    b_fit(:,g),A_fit(:,:,g),Q_fit(:,:,g), optdc, epsilon] =...
-    norm_AQ_diag_MM_MCMCLoop(Y,X_fit(:,:,g-1), Z_fit(:,g), d_fit(:,:,g-1), C_fit(:,:,g-1),... % cluster-invariant
-    mudc_fit(:,:,g-1), Sigdc_fit(:,:,:,g-1),...
-    x0_fit(:,g-1), b_fit(:,g-1), A_fit(:,:,g-1), Q_fit(:,:,g-1), kMM,... % cluster-related
-    Q0, mux00, Sigx00, deltadc0, Taudc0,Psidc0,nudc0,...
-    BA0, Lamb0, Psi0,nu0, g, optdc, epsilon, burnIn);
+        mudc_fit(:,:,g), Sigdc_fit(:,:,:,g),...
+        b_fit(:,g),A_fit(:,:,g),Q_fit(:,:,g), optdc, epsilon] =...
+        norm_AQ_diag_MM_MCMCLoop_v2(Y,X_fit(:,:,g-1), Z_fit(:,g), d_fit(:,:,g-1), C_fit(:,:,g-1),... % cluster-invariant
+        mudc_fit(:,:,g-1), Sigdc_fit(:,:,:,g-1),...
+        x0_fit(:,g-1), b_fit(:,g-1), A_fit(:,:,g-1), Q_fit(:,:,g-1), kMM,... % cluster-related
+        Q0, mux00, Sigx00, deltadc0, Taudc0,Psidc0,nudc0,...
+        BA0, Lamb0, Psi0,nu0, g, optdc, epsilon, burnIn);
     
     figure(1)
     clusterPlot(Y, Z_fit(:,g)')

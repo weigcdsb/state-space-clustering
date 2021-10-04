@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.12.6)  3 OCT 2021 10:09
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.12.6)  4 OCT 2021 10:30
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -799,13 +799,13 @@ Overfull \hbox (28.49228pt too wide) in paragraph at lines 583--586
 m/m/it/10 vec\OT1/lmr/m/n/10 (\OT1/lmr/bx/n/10 X\OT1/lmr/m/n/10 )$ 
  []
 
-<norm_AQ_diag_dCX_trace_full.png, id=231, 420.82219pt x 315.80484pt>
+<norm_AQ_diag_dCX_trace_full.png, id=235, 420.82219pt x 315.80484pt>
 File: norm_AQ_diag_dCX_trace_full.png Graphic file (type png)
 <use norm_AQ_diag_dCX_trace_full.png>
 Package pdftex.def Info: norm_AQ_diag_dCX_trace_full.png  used on input line 62
 6.
 (pdftex.def)             Requested size: 258.75pt x 194.17786pt.
-<norm_A_diag_dCX_trace_full.png, id=233, 420.82219pt x 315.80484pt>
+<norm_A_diag_dCX_trace_full.png, id=237, 420.82219pt x 315.80484pt>
 File: norm_A_diag_dCX_trace_full.png Graphic file (type png)
 <use norm_A_diag_dCX_trace_full.png>
 Package pdftex.def Info: norm_A_diag_dCX_trace_full.png  used on input line 626
@@ -814,13 +814,13 @@ Package pdftex.def Info: norm_A_diag_dCX_trace_full.png  used on input line 626
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<std_AQ_diag_dCX_trace_full.png, id=234, 420.82219pt x 315.80484pt>
+<std_AQ_diag_dCX_trace_full.png, id=238, 420.82219pt x 315.80484pt>
 File: std_AQ_diag_dCX_trace_full.png Graphic file (type png)
 <use std_AQ_diag_dCX_trace_full.png>
 Package pdftex.def Info: std_AQ_diag_dCX_trace_full.png  used on input line 636
 .
 (pdftex.def)             Requested size: 258.75pt x 194.17786pt.
-<std_A_diag_dCX_trace_full.png, id=235, 420.82219pt x 315.80484pt>
+<std_A_diag_dCX_trace_full.png, id=239, 420.82219pt x 315.80484pt>
 File: std_A_diag_dCX_trace_full.png Graphic file (type png)
 <use std_A_diag_dCX_trace_full.png>
 Package pdftex.def Info: std_A_diag_dCX_trace_full.png  used on input line 636.
@@ -829,13 +829,13 @@ Package pdftex.def Info: std_A_diag_dCX_trace_full.png  used on input line 636.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<norm_AQ_diag_bAQ_trace_full.png, id=236, 420.82219pt x 315.80484pt>
+<norm_AQ_diag_bAQ_trace_full.png, id=240, 420.82219pt x 315.80484pt>
 File: norm_AQ_diag_bAQ_trace_full.png Graphic file (type png)
 <use norm_AQ_diag_bAQ_trace_full.png>
 Package pdftex.def Info: norm_AQ_diag_bAQ_trace_full.png  used on input line 64
 6.
 (pdftex.def)             Requested size: 258.75pt x 194.17786pt.
-<norm_A_diag_bAQ_trace_full.png, id=237, 420.82219pt x 315.80484pt>
+<norm_A_diag_bAQ_trace_full.png, id=241, 420.82219pt x 315.80484pt>
 File: norm_A_diag_bAQ_trace_full.png Graphic file (type png)
 <use norm_A_diag_bAQ_trace_full.png>
 Package pdftex.def Info: norm_A_diag_bAQ_trace_full.png  used on input line 646
@@ -844,13 +844,13 @@ Package pdftex.def Info: norm_A_diag_bAQ_trace_full.png  used on input line 646
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<std_AQ_diag_bAQ_trace_full.png, id=238, 420.82219pt x 315.80484pt>
+<std_AQ_diag_bAQ_trace_full.png, id=242, 420.82219pt x 315.80484pt>
 File: std_AQ_diag_bAQ_trace_full.png Graphic file (type png)
 <use std_AQ_diag_bAQ_trace_full.png>
 Package pdftex.def Info: std_AQ_diag_bAQ_trace_full.png  used on input line 656
 .
 (pdftex.def)             Requested size: 258.75pt x 194.17786pt.
-<std_A_diag_bAQ_trace_full.png, id=239, 420.82219pt x 315.80484pt>
+<std_A_diag_bAQ_trace_full.png, id=243, 420.82219pt x 315.80484pt>
 File: std_A_diag_bAQ_trace_full.png Graphic file (type png)
 <use std_A_diag_bAQ_trace_full.png>
 Package pdftex.def Info: std_A_diag_bAQ_trace_full.png  used on input line 656.
@@ -867,26 +867,26 @@ ag_bAQ_trace_full.png> <./std_A_diag_bAQ_trace_full.png>] [15] [16
 ]
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 710.
+(hyperref)                removing `math shift' on input line 732.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `subscript' on input line 710.
+(hyperref)                removing `subscript' on input line 732.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 710.
+(hyperref)                removing `math shift' on input line 732.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 710.
+(hyperref)                removing `math shift' on input line 732.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 710.
+(hyperref)                removing `math shift' on input line 732.
 
 
-Overfull \hbox (2.74602pt too wide) in paragraph at lines 771--784
+Overfull \hbox (2.74602pt too wide) in paragraph at lines 793--806
 \OT1/lmr/m/n/10 ($\OML/lmm/m/it/10 MN[]$ \OT1/lmr/m/n/10 means a ma-trix nor-ma
 l dis-tri-bu-tion), $\OT1/lmr/bx/n/10 C[] \OMS/lmsy/m/n/10 ^^X \OML/lmm/m/it/10
  MACG\OT1/lmr/m/n/10 (\OT1/cmr/bx/n/10 ^^F[]\OT1/lmr/m/n/10 )$. $\OML/lmm/m/it/
@@ -898,28 +898,28 @@ l dis-tri-bu-tion), $\OT1/lmr/bx/n/10 C[] \OMS/lmsy/m/n/10 ^^X \OML/lmm/m/it/10
 ]
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 787.
+(hyperref)                removing `math shift' on input line 809.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 787.
+(hyperref)                removing `math shift' on input line 809.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 787.
+(hyperref)                removing `math shift' on input line 809.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 787.
+(hyperref)                removing `math shift' on input line 809.
 
 
-Overfull \hbox (24.39397pt too wide) detected at line 805
+Overfull \hbox (24.39397pt too wide) detected at line 827
 \OT1/lmr/bx/n/10 Y[] \OT1/lmr/m/n/10 = [] = [] [] + \OT1/lmr/bx/n/10 E \OT1/lmr
 /m/n/10 = \OT1/lmr/bx/n/10 X[]F[] \OT1/lmr/m/n/10 + \OT1/lmr/bx/n/10 E
  []
 
 
-Overfull \hbox (38.23094pt too wide) detected at line 828
+Overfull \hbox (38.23094pt too wide) detected at line 850
 \OT1/lmr/bx/n/10 Y[] \OT1/lmr/m/n/10 = \OML/lmm/m/it/10 vec [] \OT1/lmr/m/n/10 
 = [] [] + \OML/lmm/m/it/10 vec\OT1/lmr/m/n/10 (\OT1/lmr/bx/n/10 E\OT1/lmr/m/n/1
 0 ) = \OT1/lmr/bx/n/10 X[]f[] \OT1/lmr/m/n/10 + \OML/lmm/m/it/10 vec\OT1/lmr/m/
@@ -927,59 +927,59 @@ n/10 (\OT1/lmr/bx/n/10 E\OT1/lmr/m/n/10 )
  []
 
 [18]
-Overfull \hbox (80.07704pt too wide) detected at line 866
+Overfull \hbox (80.07704pt too wide) detected at line 888
 []
  []
 
 [19]
 
 Package hyperref Warning: Difference (2) between bookmark levels is greater 
-(hyperref)                than one, level fixed on input line 892.
+(hyperref)                than one, level fixed on input line 914.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 892.
+(hyperref)                removing `math shift' on input line 914.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 892.
+(hyperref)                removing `math shift' on input line 914.
 
-<CCI_AQ_diag_dCX_trace_full.png, id=323, 420.82219pt x 315.80484pt>
+<CCI_AQ_diag_dCX_trace_full.png, id=327, 420.82219pt x 315.80484pt>
 File: CCI_AQ_diag_dCX_trace_full.png Graphic file (type png)
 <use CCI_AQ_diag_dCX_trace_full.png>
-Package pdftex.def Info: CCI_AQ_diag_dCX_trace_full.png  used on input line 898
+Package pdftex.def Info: CCI_AQ_diag_dCX_trace_full.png  used on input line 920
 .
 (pdftex.def)             Requested size: 258.75pt x 194.17786pt.
-<CCI_AQ_diag_bAQ_trace_full.png, id=324, 420.82219pt x 315.80484pt>
+<CCI_AQ_diag_bAQ_trace_full.png, id=328, 420.82219pt x 315.80484pt>
 File: CCI_AQ_diag_bAQ_trace_full.png Graphic file (type png)
 <use CCI_AQ_diag_bAQ_trace_full.png>
-Package pdftex.def Info: CCI_AQ_diag_bAQ_trace_full.png  used on input line 898
+Package pdftex.def Info: CCI_AQ_diag_bAQ_trace_full.png  used on input line 920
 .
 (pdftex.def)             Requested size: 258.75pt x 194.17786pt.
-<CCI_AQ_diag_dCX_trace_part.png, id=325, 420.82219pt x 315.80484pt>
+<CCI_AQ_diag_dCX_trace_part.png, id=329, 420.82219pt x 315.80484pt>
 File: CCI_AQ_diag_dCX_trace_part.png Graphic file (type png)
 <use CCI_AQ_diag_dCX_trace_part.png>
-Package pdftex.def Info: CCI_AQ_diag_dCX_trace_part.png  used on input line 908
+Package pdftex.def Info: CCI_AQ_diag_dCX_trace_part.png  used on input line 930
 .
 (pdftex.def)             Requested size: 258.75pt x 194.17786pt.
-<CCI_AQ_diag_bAQ_trace_part.png, id=326, 420.82219pt x 315.80484pt>
+<CCI_AQ_diag_bAQ_trace_part.png, id=330, 420.82219pt x 315.80484pt>
 File: CCI_AQ_diag_bAQ_trace_part.png Graphic file (type png)
 <use CCI_AQ_diag_bAQ_trace_part.png>
-Package pdftex.def Info: CCI_AQ_diag_bAQ_trace_part.png  used on input line 908
+Package pdftex.def Info: CCI_AQ_diag_bAQ_trace_part.png  used on input line 930
 .
 (pdftex.def)             Requested size: 258.75pt x 194.17786pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<FR_diagA.png, id=327, 421.1986pt x 315.80484pt>
+<FR_diagA.png, id=331, 421.1986pt x 315.80484pt>
 File: FR_diagA.png Graphic file (type png)
 <use FR_diagA.png>
-Package pdftex.def Info: FR_diagA.png  used on input line 918.
+Package pdftex.def Info: FR_diagA.png  used on input line 940.
 (pdftex.def)             Requested size: 258.75pt x 194.0092pt.
-<latent_diagA.png, id=328, 421.1986pt x 315.80484pt>
+<latent_diagA.png, id=332, 421.1986pt x 315.80484pt>
 File: latent_diagA.png Graphic file (type png)
 <use latent_diagA.png>
-Package pdftex.def Info: latent_diagA.png  used on input line 918.
+Package pdftex.def Info: latent_diagA.png  used on input line 940.
 (pdftex.def)             Requested size: 258.75pt x 194.0092pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
@@ -989,45 +989,45 @@ LaTeX Warning: `!h' float specifier changed to `!ht'.
 _diagA.png> <./latent_diagA.png>]
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 924.
+(hyperref)                removing `math shift' on input line 946.
 
 
 Package hyperref Warning: Token not allowed in a PDF string (PDFDocEncoding):
-(hyperref)                removing `math shift' on input line 924.
+(hyperref)                removing `math shift' on input line 946.
 
-<CCI_A_diag_dCX_trace_full.png, id=355, 420.82219pt x 315.80484pt>
+<CCI_A_diag_dCX_trace_full.png, id=359, 420.82219pt x 315.80484pt>
 File: CCI_A_diag_dCX_trace_full.png Graphic file (type png)
 <use CCI_A_diag_dCX_trace_full.png>
-Package pdftex.def Info: CCI_A_diag_dCX_trace_full.png  used on input line 930.
+Package pdftex.def Info: CCI_A_diag_dCX_trace_full.png  used on input line 952.
 
 (pdftex.def)             Requested size: 258.75pt x 194.17786pt.
-<CCI_A_diag_bAQ_trace_full.png, id=356, 420.82219pt x 315.80484pt>
+<CCI_A_diag_bAQ_trace_full.png, id=360, 420.82219pt x 315.80484pt>
 File: CCI_A_diag_bAQ_trace_full.png Graphic file (type png)
 <use CCI_A_diag_bAQ_trace_full.png>
-Package pdftex.def Info: CCI_A_diag_bAQ_trace_full.png  used on input line 930.
+Package pdftex.def Info: CCI_A_diag_bAQ_trace_full.png  used on input line 952.
 
 (pdftex.def)             Requested size: 258.75pt x 194.17786pt.
-<CCI_A_diag_dCX_trace_part.png, id=357, 420.82219pt x 315.80484pt>
+<CCI_A_diag_dCX_trace_part.png, id=361, 420.82219pt x 315.80484pt>
 File: CCI_A_diag_dCX_trace_part.png Graphic file (type png)
 <use CCI_A_diag_dCX_trace_part.png>
-Package pdftex.def Info: CCI_A_diag_dCX_trace_part.png  used on input line 940.
+Package pdftex.def Info: CCI_A_diag_dCX_trace_part.png  used on input line 962.
 
 (pdftex.def)             Requested size: 258.75pt x 194.17786pt.
-<CCI_A_diag_bAQ_trace_part.png, id=358, 420.82219pt x 315.80484pt>
+<CCI_A_diag_bAQ_trace_part.png, id=362, 420.82219pt x 315.80484pt>
 File: CCI_A_diag_bAQ_trace_part.png Graphic file (type png)
 <use CCI_A_diag_bAQ_trace_part.png>
-Package pdftex.def Info: CCI_A_diag_bAQ_trace_part.png  used on input line 940.
+Package pdftex.def Info: CCI_A_diag_bAQ_trace_part.png  used on input line 962.
 
 (pdftex.def)             Requested size: 258.75pt x 194.17786pt.
-<FR_diagAQ.png, id=359, 421.1986pt x 315.80484pt>
+<FR_diagAQ.png, id=363, 421.1986pt x 315.80484pt>
 File: FR_diagAQ.png Graphic file (type png)
 <use FR_diagAQ.png>
-Package pdftex.def Info: FR_diagAQ.png  used on input line 950.
+Package pdftex.def Info: FR_diagAQ.png  used on input line 972.
 (pdftex.def)             Requested size: 258.75pt x 194.0092pt.
-<latent_diagAQ.png, id=360, 421.1986pt x 315.80484pt>
+<latent_diagAQ.png, id=364, 421.1986pt x 315.80484pt>
 File: latent_diagAQ.png Graphic file (type png)
 <use latent_diagAQ.png>
-Package pdftex.def Info: latent_diagAQ.png  used on input line 950.
+Package pdftex.def Info: latent_diagAQ.png  used on input line 972.
 (pdftex.def)             Requested size: 258.75pt x 194.0092pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
@@ -1039,17 +1039,17 @@ iag_dCX_trace_part.png> <./CCI_A_diag_bAQ_trace_part.png>] [23 <./FR_diagAQ.png
 > <./latent_diagAQ.png>] (./cluster_neural_population.aux)
 Package rerunfilecheck Info: File `cluster_neural_population.out' has not chang
 ed.
-(rerunfilecheck)             Checksum: 05E7C03E1879A07DDB3BCD90A25C2BC1;2129.
+(rerunfilecheck)             Checksum: 2333F977B3BE9CE43233BB9053E0258F;2190.
 
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 7683 strings out of 479383
- 113719 string characters out of 5868871
- 432612 words of memory out of 5000000
- 24457 multiletter control sequences out of 15000+600000
+ 7685 strings out of 479383
+ 113739 string characters out of 5868871
+ 432630 words of memory out of 5000000
+ 24458 multiletter control sequences out of 15000+600000
  462733 words of font info for 86 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
  66i,14n,72p,801b,400s stack positions out of 5000i,500n,10000p,200000b,80000s
@@ -1080,10 +1080,10 @@ texlive/2020/texmf-dist/fonts/type1/public/lm/lmro10.pfb><e:/software/texlive/2
 -dist/fonts/type1/public/lm/lmsy5.pfb><e:/software/texlive/2020/texmf-dist/font
 s/type1/public/lm/lmsy7.pfb><e:/software/texlive/2020/texmf-dist/fonts/type1/pu
 blic/amsfonts/symbols/msbm10.pfb>
-Output written on cluster_neural_population.pdf (23 pages, 3358347 bytes).
+Output written on cluster_neural_population.pdf (23 pages, 3360155 bytes).
 PDF statistics:
- 503 PDF objects out of 1000 (max. 8388607)
- 408 compressed objects within 5 object streams
- 147 named destinations out of 1000 (max. 500000)
- 333 words of extra memory for PDF output out of 10000 (max. 10000000)
+ 507 PDF objects out of 1000 (max. 8388607)
+ 412 compressed objects within 5 object streams
+ 148 named destinations out of 1000 (max. 500000)
+ 341 words of extra memory for PDF output out of 10000 (max. 10000000)
 

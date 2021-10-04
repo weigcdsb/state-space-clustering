@@ -44,13 +44,12 @@ outLab = setdiff(1:kMM, uniZsort_tmp);
 if(~isempty(outLab))
     
     x0Out =  mvnrnd(mux00, Sigx00)';
-    for k =1:kMM
-        latID_tmp = id2id(k, p);
-        QOut(latID_tmp,latID_tmp) = iwishrnd(Psi0,nu0);
+    for k = 1:(p*kMM)
+        QOut(k,k) = iwishrnd(Psi0,nu0);
+        bATmp = mvnrnd(BA0, kron(QOut(k,k), inv(Lamb0)));
+        bOut(k) = 0;% bATmp(1)
+        AOut(k,k) = 1; % bATmp(2)
     end
-    
-    bOut = zeros(kMM*p, 1);
-    AOut = eye(kMM*p);
     
     invQ0 = inv(sparse(Q0));
     R = chol(invQ0,'lower');
@@ -85,32 +84,16 @@ A_tmp2 = A_tmp(latID, latID);
 b_tmp2 = b_tmp(latID);
 Q_tmp2 = Q_tmp(latID, latID);
 
-% [muX,~,~] = ppasmoo_poissexp_v2(Y_tmp2,Csort_trans_tmp,...
-%     d_tmp2,x0_tmp2,Q0_tmp2,A_tmp2,b_tmp2,Q_tmp2);
-% hess_tmp = hessX(muX(:),d_tmp2,Csort_trans_tmp,Q0_tmp2,Q_tmp2,A_tmp2,Y_tmp2);
-
-% if use Newton-Raphson directly?
-% X_tmp = ppasmoo_poissexp_v2(Y_tmp2,Csort_trans_tmp,...
-%     d_tmp2,x0_tmp2,Q0_tmp2,A_tmp2,b_tmp2,Q_tmp2);
-% gradHess = @(vecX) gradHessX(vecX, d_tmp2, Csort_trans_tmp, x0_tmp2, Q0_tmp2, Q_tmp2, A_tmp2, b_tmp2, Y_tmp2);
-% [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp(:),1e-6,1000);
-
-
+X_tmp2 = X_tmp(latID, :);
 gradHess = @(vecX) gradHessX(vecX, d_tmp2, Csort_trans_tmp, x0_tmp2, Q0_tmp2, Q_tmp2, A_tmp2, b_tmp2, Y_tmp2);
-X_tmp2 = ppasmoo_poissexp_v2(Y_tmp2,Csort_trans_tmp,...
-    d_tmp2,x0_tmp2,Q0_tmp2,A_tmp2,b_tmp2,Q_tmp2);
 [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp2(:),1e-6,1000);
 
 if(sum(isnan(muXvec)) ~= 0)
-    disp('use previous step')
-    X_tmp2 = X_tmp(latID, :);
+    disp('use adaptive smoother initial')
+    X_tmp2 = ppasmoo_poissexp_v2(Y_tmp2,Csort_trans_tmp,...
+        d_tmp2,x0_tmp2,Q0_tmp2,A_tmp2,b_tmp2,Q_tmp2);
     [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp2(:),1e-6,1000);
-    
 end
-
-
-% muX = reshape(muXvec, [], T);
-% hess_tmp = (hess_tmp + hess_tmp')/2;
 
 
 % use Cholesky decomposition to sample efficiently
@@ -150,43 +133,43 @@ for i = 1:N
     X_tmpdc = [ones(1, T) ; XOut(latentId,:)]';
     lamdc = @(dc) exp(X_tmpdc*dc);
     
-%     lpdf = @(dc) sum(log(poisspdf(Y(i,:)', lamdc(dc)))) +...
-%         log(mvnpdf(dc, mudc_tmp(:,l), Sigdc_tmp(:,:,l)));
-%     glpdf = @(dc) X_tmpdc'*(Y(i,:)' - lamdc(dc)) - Sigdc_tmp(:,:,l)\(dc - mudc_tmp(:,l));
-%     fg=@(dc_r) deal(lpdf(dc_r'), glpdf(dc_r')'); % log density and gradient
-%     dc0 = [d_tmp(i, l) C_tmp(i,latentId)]';
+    lpdf = @(dc) sum(log(poisspdf(Y(i,:)', lamdc(dc)))) +...
+        log(mvnpdf(dc, mudc_tmp(:,l), Sigdc_tmp(:,:,l)));
+    glpdf = @(dc) X_tmpdc'*(Y(i,:)' - lamdc(dc)) - Sigdc_tmp(:,:,l)\(dc - mudc_tmp(:,l));
+    fg=@(dc_r) deal(lpdf(dc_r'), glpdf(dc_r')'); % log density and gradient
+    dc0 = [d_tmp(i, l) C_tmp(i,latentId)]';
+    
+    switch tuneState
+        case 1
+            [dc_NUTS, ~, ~]=hmc_nuts(fg, dc0',optdc);
+        case 2
+            optdc.Madapt=50;
+            [dc_NUTS, ~, diagn]=hmc_nuts(fg, dc0',optdc);
+            epsilon(i) = diagn.opt.epsilonbar;
+            optdc.Madapt=0;
+        case 3
+            optdc.epsilon = epsilon(i);
+            [dc_NUTS, ~, ~]=hmc_nuts(fg, dc0',optdc);
+    end
+    
+    dOut(i,l) = dc_NUTS(end,1);
+    COut(i,latentId) = dc_NUTS(end,2:end);
+    
+%         derdc = @(dc) X_tmpdc'*(Y(i,:)' - lamdc(dc)) - Sigdc_tmp(:,:,l)\(dc - mudc_tmp(:,l));
+%         hessdc = @(dc) -X_tmpdc'*diag(lamdc(dc))*X_tmpdc - inv(Sigdc_tmp(:,:,l));
+%         [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
+%             [d_tmp(i, l) C_tmp(i,latentId)]',1e-6,1000);
 %     
-%     switch tuneState
-%         case 1
-%             [dc_NUTS, ~, ~]=hmc_nuts(fg, dc0',optdc);
-%         case 2
-%             optdc.Madapt=50;
-%             [dc_NUTS, ~, diagn]=hmc_nuts(fg, dc0',optdc);
-%             epsilon(i) = diagn.opt.epsilonbar;
-%             optdc.Madapt=0;
-%         case 3
-%             optdc.epsilon = epsilon(i);
-%             [dc_NUTS, ~, ~]=hmc_nuts(fg, dc0',optdc);
-%     end
+%         if(sum(isnan(mudc)) ~= 0)
+%             [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
+%                 deltadc0,1e-6,1000);
+%         end
 %     
-%     dOut(i,l) = dc_NUTS(end,1);
-%     COut(i,latentId) = dc_NUTS(end,2:end);
-    
-        derdc = @(dc) X_tmpdc'*(Y(i,:)' - lamdc(dc)) - Sigdc_tmp(:,:,l)\(dc - mudc_tmp(:,l));
-        hessdc = @(dc) -X_tmpdc'*diag(lamdc(dc))*X_tmpdc - inv(Sigdc_tmp(:,:,l));
-        [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
-            [d_tmp(i, l) C_tmp(i,latentId)]',1e-6,1000);
-    
-        if(sum(isnan(mudc)) ~= 0)
-            [mudc,~,niSigdc,~] = newton(derdc,hessdc,...
-                deltadc0,1e-6,1000);
-        end
-    
-        R = chol(-niSigdc,'lower'); % sparse
-        z = randn(length(mudc), 1) + R'*mudc;
-        dc = R'\z;
-        dOut(i,l) = dc(1);
-        COut(i,latentId) = dc(2:end);
+%         R = chol(-niSigdc,'lower'); % sparse
+%         z = randn(length(mudc), 1) + R'*mudc;
+%         dc = R'\z;
+%         dOut(i,l) = dc(1);
+%         COut(i,latentId) = dc(2:end);
 end
 
 
