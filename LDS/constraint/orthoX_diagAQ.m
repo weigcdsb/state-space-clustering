@@ -57,21 +57,22 @@ end
 Y = poissrnd(exp(logLam));
 clusterPlot(Y, Lab)
 
+% X_jX_j' = I
+% X' = X*'R --> inv(R')X = X*
 
-% standardize the latent vectors
-% center X around 0
-% scale X, s.t. each row has sd 1
-gtmp = -mean(X, 2);
-M = inv(diag(std(X, 0, 2)));
-g = M*gtmp;
+Mdiag = {};
+for l = unique(Lab)
+    latidTmp = id2id(l,p);
+    [QX, RX] = mgson(X(latidTmp,:)');
+    Mdiag{l} = inv(RX');
+end
+M = sparse(blkdiag(Mdiag{:}));
 
-X = M*X + g;
-
-x0 = M*x0 + g;
-d = d - (C_trans/M)*g;
+X = M*X;
+x0 = M*x0;
 C_trans = C_trans/M;
 A = M*A/M;
-b = M*b + g - (M*A/M)*g;
+b = M*b;
 Q = M*Q*M';
 Q0 = M*Q0*M';
 
@@ -102,8 +103,11 @@ plot(X(p+1:2*p,:)')
 subplot(1,3,3)
 plot(X(2*p+1:3*p,:)')
 
-figure(5)
-plot(X')
+% for l = unique(Lab)
+%     latidTmp = id2id(l,p);
+%     disp(X(latidTmp,:)*X(latidTmp,:)')
+% end
+
 %%
 rng(3)
 ng = 10000;
@@ -133,7 +137,8 @@ Taudc0 = eye(p+1);
 % Psidc0 = eye(p+1);
 Psidc0 = eye(p+1);
 nudc0 = p+1+2;
-% 
+
+% prior for linear dyanmics (b, A, Q)
 BA0 =[0 1]';
 Lamb0 = eye(2);
 Psi0 = 1e-4;
@@ -165,12 +170,16 @@ gradHess = @(vecX) gradHessX(vecX, d_tmp, C_fit(:,:,1), x0_fit(:,1), Q0,...
     Q_fit(:,:,1), A_fit(:,:,1), b_fit(:,1), Y);
 [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp(:),1e-10,1000);
 X_fit(:,:,1) = reshape(muXvec, [], T);
-X_fit(:,:,1) = X_fit(:,:,1) - mean(X_fit(:,:,1), 2);
-X_fit(:,:,1) = (diag(std(X_fit(:,:,1), 0, 2)))\X_fit(:,:,1);
+
+for l = unique(Lab)
+    latidTmp = id2id(l,p);
+    [QX, ~] = mgson(X_fit(latidTmp,:,1)');
+    X_fit(latidTmp,:,1) = QX';
+end
+
 
 
 %% MCMC
-
 optdc.M=1;
 optdc.Madapt=0;
 epsilon = 0.01*ones(N,1);
@@ -185,6 +194,16 @@ qnorm(1) = norm(Q_fit(:,:,1), 'fro');
 for g = 2:ng
     
     % disp(g)
+    if(g < burnIn)
+        tuneState = 1; % change epsilon
+        disp("iter " + g + ", changing");
+    elseif(g == burnIn)
+        tuneState = 2; % tune epsilon
+        disp("iter " + g + ", tuning");
+    else
+        tuneState = 3; % fix epsilon
+        disp("iter " + g + ", tuned");
+    end
     
     % (1) update X_fit
     % adaptive smoothing
@@ -213,8 +232,11 @@ for g = 2:ng
     z = randn(length(muXvec), 1) + R'*muXvec;
     x_all = R'\z;
     X_fit(:,:,g) = reshape(x_all,[], T);
-    X_fit(:,:,g) = X_fit(:,:,g) - mean(X_fit(:,:,g), 2);
-    X_fit(:,:,g) = (diag(std(X_fit(:,:,g), 0, 2)))\X_fit(:,:,g);
+    for l = unique(Lab)
+        latidTmp = id2id(l,p);
+        [QX, ~] = mgson(X_fit(latidTmp,:,g)');
+        X_fit(latidTmp,:,g) = QX';
+    end
     
     % toc;
     
@@ -222,27 +244,6 @@ for g = 2:ng
     Sigx0 = inv(inv(Sigx00) + inv(Q0));
     mux0 = Sigx0*(Sigx00\mux00 + Q0\X_fit(:,1,g));
     x0_fit(:,g) = mvnrnd(mux0, Sigx0)';
-    % disp(x0_fit(:,g))
-    
-    
-    xnorm_change = norm(X_fit(:,:,g) - X_fit(:,:,g-1), 'fro');
-    
-    if(g < round(burnIn/10))
-        tuneState = 1; % change epsilon
-        disp("iter " + g + ": " + xnorm_change + ", changing");
-    elseif(flg == 1)
-        tuneState = 3; % fix epsilon
-        disp("iter " + g + ": " + xnorm_change + ", tuned");
-    else
-        if(g > burnIn || xnorm_change < sqrt(1e-1*nX))
-            tuneState = 2; % tune epsilon
-            flg = 1;
-            disp("iter " + g + ": " + xnorm_change + ", tuning");
-        else
-            tuneState = 1; % change epsilon
-            disp("iter " + g + ": " + xnorm_change + ", changing");
-        end
-    end
     
     % (3) update d_fit & C_fit
     
@@ -274,7 +275,6 @@ for g = 2:ng
         
         d_fit(i,l,g) = dc_NUTS(end,1);
         C_fit(i,latentId,g) = dc_NUTS(end,2:end);
-        
     end
     
     
@@ -313,7 +313,7 @@ for g = 2:ng
     end
     
     qnorm(g) = norm(Q_fit(:,:,g), 'fro');
-    figure(3)    
+    figure(3)
     plot(qnorm(1:g))
     
     
@@ -348,10 +348,4 @@ for g = 2:ng
     set(gca,'CLim',cLim)
     title('fit')
     colorbar()
-    
-    
-    %     figure(3)
-    %     xnorm(g) = norm(X_fit(:,:,g), 'fro');
-    %     plot(xnorm(1:g))
-    
 end
