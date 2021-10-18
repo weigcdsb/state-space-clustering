@@ -28,7 +28,8 @@ end
 % latent: Xori & X
 % with hyper parameter: x0ori & x0
 theta.Xori = zeros(p, T);
-theta.x0 =  mvnrnd(prior.mux00, prior.Sigx00)';
+% theta.x0 =  mvnrnd(prior.mux00, prior.Sigx00)';
+theta.x0 =  0*prior.mux00;
 invQ0 = inv(sparse(prior.Q0));
 R = chol(invQ0,'lower');
 z = randn(p, 1) + R'*theta.x0;
@@ -37,7 +38,9 @@ for t= 2:T
     theta.Xori(:, t) = mvnrnd(theta.b + theta.A*theta.Xori(:, t-1), theta.Q);
 end
 
-theta.X = theta.Xori - min(theta.Xori,[], 2);
-theta.X = (diag(range(theta.X,2)))\theta.X;
+theta.X = theta.Xori - mean(theta.Xori, 2);
+[QX, ~] = mgson(theta.X');
+theta.X = QX';
+
 
 end

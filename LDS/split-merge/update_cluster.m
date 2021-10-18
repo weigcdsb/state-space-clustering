@@ -32,8 +32,10 @@ if active
     zX = randn(length(muXvec), 1) + RX'*muXvec;
     Xsamp = RX'\zX;
     theta_b.Xori = reshape(Xsamp,[], T);
-    theta_b.X = theta_b.Xori - min(theta_b.Xori,[], 2);
-    theta_b.X = (diag(range(theta_b.X,2)))\theta_b.X;
+    
+    theta_b.X = theta_b.Xori - mean(theta_b.Xori, 2);
+    [QX, ~] = mgson(theta_b.X');
+    theta_b.X = QX';
 end
 
 if density
@@ -43,17 +45,17 @@ end
 
 
 % (2) update x0_fit
-invSigx0 = sparse(inv(prior.Sigx00) + inv(prior.Q0));
-mux0 = invSigx0\(prior.Sigx00\prior.mux00 + prior.Q0\theta_b.X(:,1));
-if active
-    R = chol(invSigx0,'lower'); % sparse
-    z = randn(length(mux0), 1) + R'*mux0;
-    theta_b.x0 = R'\z;
-end
-
-if density
-    log_pdf = log_pdf + mvnlpdf(theta_b.x0, mux0, invSigx0);
-end
+% invSigx0 = sparse(inv(prior.Sigx00) + inv(prior.Q0));
+% mux0 = invSigx0\(prior.Sigx00\prior.mux00 + prior.Q0\theta_b.X(:,1));
+% if active
+%     R = chol(invSigx0,'lower'); % sparse
+%     z = randn(length(mux0), 1) + R'*mux0;
+%     theta_b.x0 = R'\z;
+% end
+% 
+% if density
+%     log_pdf = log_pdf + mvnlpdf(theta_b.x0, mux0, invSigx0);
+% end
 
 % (3) update d_fit & C_fit
 % the transition kernel for NUTS is symmetric --> no need for calculation

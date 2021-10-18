@@ -22,7 +22,7 @@ end
 
 X = zeros(p*nClus, T);
 x0 = zeros(p*nClus, 1);
-Q0 = eye(nClus*p)*1e-2;
+Q0 = eye(nClus*p);
 X(:,1) = mvnrnd(x0, Q0)';
 
 b1 = randn(p, 1)*1e-3;
@@ -57,8 +57,14 @@ end
 
 Y = poissrnd(exp(logLam));
 
-gtmp = -min(X,[], 2);
-M = inv(diag(range(X,2)));
+gtmp = -mean(X, 2);
+Mdiag = {};
+for l = unique(Lab)
+    latidTmp = id2id(l,p);
+    [QX, RX] = mgson(X(latidTmp,:)');
+    Mdiag{l} = inv(RX');
+end
+M = sparse(blkdiag(Mdiag{:}));
 g = M*gtmp;
 
 X = M*X + g;
@@ -120,7 +126,8 @@ log_v = MFMcoeff(log_pk, MFMgamma, N, t_max + 1);
 logNb = log((1:N) + b);
 
 % priors...
-prior.Q0 = eye(p)*1e-2;
+% prior.Q0 = eye(p)*1e-2;
+prior.Q0 = eye(p)*0.5^2;
 prior.mux00 = zeros(p, 1);
 prior.Sigx00 = eye(p);
 
@@ -166,6 +173,7 @@ for k = 1:t_max+3
 end
 
 %% MCMC
+useSplitMerge = true;
 for k = 1:N
     optdc.M=1;
     optdc.Madapt=0;
@@ -227,7 +235,7 @@ for g = 2:ng
     
     
     % (2) split and merge
-    if(1)
+    if(useSplitMerge)
         [Z_fit(:,g), actList, numClus_fit(:,g), t_fit(g), THETA{g}] =...
             splitMerge(Y, Z_fit(:,g), zs, S, THETA{g}, actList, N, T, p,...
             numClus_fit(:,g), t_fit(g), prior, a, b, log_v, n_split, n_merge, OPTDC);
@@ -243,7 +251,7 @@ for g = 2:ng
         numClus_fit(c,g) = numClus_fit(c,g) - 1;
         if(numClus_fit(c,g) > 0)
             c_prop = c_next;
-            THETA{g}(c_prop) = sample_prior2(prior, N, T, p, false);
+            THETA{g}(c_prop) = sample_prior2(prior, N, T, p, true);
         else
             c_prop = c;
             actList = ordered_remove(c, actList, t_fit(g));

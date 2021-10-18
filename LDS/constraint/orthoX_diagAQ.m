@@ -59,7 +59,7 @@ clusterPlot(Y, Lab)
 
 % X_jX_j' = I
 % X' = X*'R --> inv(R')X = X*
-
+gtmp = -mean(X, 2);
 Mdiag = {};
 for l = unique(Lab)
     latidTmp = id2id(l,p);
@@ -67,14 +67,17 @@ for l = unique(Lab)
     Mdiag{l} = inv(RX');
 end
 M = sparse(blkdiag(Mdiag{:}));
+g = M*gtmp;
 
-X = M*X;
-x0 = M*x0;
+X = M*X + g;
+x0 = M*x0 + g;
+d = d - (C_trans/M)*g;
 C_trans = C_trans/M;
 A = M*A/M;
-b = M*b;
+b = M*b + g - (M*A/M)*g;
 Q = M*Q*M';
 Q0 = M*Q0*M';
+
 
 
 figure(1)
@@ -127,6 +130,8 @@ Q_fit = zeros(nClus*p, nClus*p, ng);
 % priors
 % place-holder...
 Q0 = eye(nClus*p)*1e-2;
+% Q0 = eye(nClus*p)*0.5^2;
+
 
 mux00 = zeros(nClus*p, 1);
 Sigx00 = eye(nClus*p);
@@ -170,14 +175,14 @@ gradHess = @(vecX) gradHessX(vecX, d_tmp, C_fit(:,:,1), x0_fit(:,1), Q0,...
     Q_fit(:,:,1), A_fit(:,:,1), b_fit(:,1), Y);
 [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp(:),1e-10,1000);
 X_fit(:,:,1) = reshape(muXvec, [], T);
-
+X_fit(:,:,1) = X_fit(:,:,1) - mean(X_fit(:,:,1), 2);
 for l = unique(Lab)
     latidTmp = id2id(l,p);
     [QX, ~] = mgson(X_fit(latidTmp,:,1)');
     X_fit(latidTmp,:,1) = QX';
 end
 
-
+% x0_fit = zeros(nClus*p, ng);
 
 %% MCMC
 optdc.M=1;
@@ -232,6 +237,7 @@ for g = 2:ng
     z = randn(length(muXvec), 1) + R'*muXvec;
     x_all = R'\z;
     X_fit(:,:,g) = reshape(x_all,[], T);
+    X_fit(:,:,g) = X_fit(:,:,g) - mean(X_fit(:,:,g), 2);
     for l = unique(Lab)
         latidTmp = id2id(l,p);
         [QX, ~] = mgson(X_fit(latidTmp,:,g)');

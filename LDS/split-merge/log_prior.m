@@ -37,7 +37,7 @@ for kk = 1:p
 end
 
 % (6) x0
-lpdf = lpdf + mvnlpdf(theta.x0, prior.mux00, inv(prior.Sigx00));
+% lpdf = lpdf + mvnlpdf(theta.x0, prior.mux00, inv(prior.Sigx00));
 
 % (7) Xori
 lpdf = lpdf + mvnlpdf(theta.Xori(:,1), theta.x0, inv(prior.Q0));
