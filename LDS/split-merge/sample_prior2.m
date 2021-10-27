@@ -27,7 +27,8 @@ R = chol(invQ0,'lower');
 z = randn(p, 1) + R'*theta.x0;
 theta.Xori(:, 1) = R'\z;
 
-while(sum(isinf(theta.Xori), 'all') > 0 || sum(isnan(theta.Xori), 'all') > 0)
+flag = 1;
+while flag
     if sampleDynamics
         for k = 1:p
             theta.Q(k,k)= iwishrnd(prior.Psi0, prior.nu0);
@@ -36,15 +37,22 @@ while(sum(isinf(theta.Xori), 'all') > 0 || sum(isnan(theta.Xori), 'all') > 0)
             theta.A(k,k) = baSamp(2);
         end
     end
-    for t= 2:T
-        theta.Xori(:, t) = mvnrnd(theta.b + theta.A*theta.Xori(:, t-1), theta.Q);
+    
+    try
+        for t= 2:T
+            theta.Xori(:, t) = mvnrnd(theta.b + theta.A*theta.Xori(:, t-1), theta.Q);
+        end
+        theta.X = theta.Xori - mean(theta.Xori, 2);
+        [UX, ~, VX] = svd(theta.X', 'econ');
+        theta.X = VX*UX';
+        flag = 0;
+    catch
+        flag = 1;
     end
+    
 end
 
 
-theta.X = theta.Xori - mean(theta.Xori, 2);
-[UX, ~, VX] = svd(theta.X', 'econ');
-theta.X = VX*UX';
 
 
 end

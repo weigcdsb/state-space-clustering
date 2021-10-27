@@ -176,11 +176,6 @@ optdc.Madapt=0;
 epsilon = 0.01*ones(N,1);
 burnIn = 10;
 
-% to debug
-for g = 2:ng
-   Z_fit(:,g) = Z_fit(:,1); 
-end
-
 for g = 2:ng
     
     % (1) update parameters
