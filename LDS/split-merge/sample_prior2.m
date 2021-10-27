@@ -16,31 +16,35 @@ theta.A = eye(p);
 theta.b = zeros(p,1);
 theta.Q = eye(p)*prior.Psi0;
 
-if sampleDynamics
-    for k = 1:p
-        theta.Q(k,k)= iwishrnd(prior.Psi0, prior.nu0);
-        baSamp = mvnrnd(prior.BA0, kron(theta.Q(k,k), inv(prior.Lamb0)))';
-        theta.b(k) = baSamp(1);
-        theta.A(k,k) = baSamp(2);
-    end
-end
-
 % latent: Xori & X
 % with hyper parameter: x0ori & x0
-theta.Xori = zeros(p, T);
+theta.Xori = ones(p, T)*Inf;
+
 % theta.x0 =  mvnrnd(prior.mux00, prior.Sigx00)';
 theta.x0 =  0*prior.mux00;
 invQ0 = inv(sparse(prior.Q0));
 R = chol(invQ0,'lower');
 z = randn(p, 1) + R'*theta.x0;
 theta.Xori(:, 1) = R'\z;
-for t= 2:T
-    theta.Xori(:, t) = mvnrnd(theta.b + theta.A*theta.Xori(:, t-1), theta.Q);
+
+while(sum(isinf(theta.Xori), 'all') > 0 || sum(isnan(theta.Xori), 'all') > 0)
+    if sampleDynamics
+        for k = 1:p
+            theta.Q(k,k)= iwishrnd(prior.Psi0, prior.nu0);
+            baSamp = mvnrnd(prior.BA0, kron(theta.Q(k,k), inv(prior.Lamb0)))';
+            theta.b(k) = baSamp(1);
+            theta.A(k,k) = baSamp(2);
+        end
+    end
+    for t= 2:T
+        theta.Xori(:, t) = mvnrnd(theta.b + theta.A*theta.Xori(:, t-1), theta.Q);
+    end
 end
 
+
 theta.X = theta.Xori - mean(theta.Xori, 2);
-[QX, ~] = mgson(theta.X');
-theta.X = QX';
+[UX, ~, VX] = svd(theta.X', 'econ');
+theta.X = VX*UX';
 
 
 end

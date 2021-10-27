@@ -90,11 +90,11 @@ t_fit = zeros(1, ng);
 Z_fit = zeros(N, ng);
 numClus_fit = zeros(t_max + 3, ng);
 
-% t_fit(1) = 1;
-% Z_fit(:,1) = ones(N, 1);
-% numClus_fit(1,1) = N;
-% actList = zeros(t_max+3,1); actList(1) = 1;
-% c_next = 2;
+t_fit(1) = 1;
+Z_fit(:,1) = ones(N, 1);
+numClus_fit(1,1) = N;
+actList = zeros(t_max+3,1); actList(1) = 1;
+c_next = 2;
 
 % t_fit(1) = 30;
 % Z_fit(:,1) = 1:N;
@@ -103,12 +103,12 @@ numClus_fit = zeros(t_max + 3, ng);
 % actList(1:N) = 1:N;
 % c_next = N+1;
 
-t_fit(1) = 4;
-Z_fit(:,1) = [ones(1,n) 2*ones(1,n/2) 3*ones(1,n/2) 4*ones(1,n)];
-numClus_fit(1:4,1) = [n n/2 n/2 n];
-actList = zeros(t_max+3,1);
-actList(1:4) = 1:4;
-c_next = 5;
+% t_fit(1) = 4;
+% Z_fit(:,1) = [ones(1,n) 2*ones(1,n/2) 3*ones(1,n/2) 4*ones(1,n)];
+% numClus_fit(1:4,1) = [n n/2 n/2 n];
+% actList = zeros(t_max+3,1);
+% actList(1:4) = 1:4;
+% c_next = 5;
 
 
 % priors
@@ -193,15 +193,15 @@ for g = 2:ng
         Q0_f, mux00_f, Sigx00_f, deltadc0, Taudc0,Psidc0,nudc0,...
         BA0, Lamb0, Psi0,nu0, g, optdc, epsilon, burnIn);
     
-    figure(3)
-    subplot(2,2,1)
-    plot(X_fit{g}(1:2,:)')
-    subplot(2,2,2)
-    plot(X_fit{g}(3:4,:)')
-    subplot(2,2,3)
-    plot(X_fit{g}(5:6,:)')
-    subplot(2,2,4)
-    plot(X_fit{g}(7:8,:)')
+%     figure(3)
+%     subplot(2,2,1)
+%     plot(X_fit{g}(1:2,:)')
+%     subplot(2,2,2)
+%     plot(X_fit{g}(3:4,:)')
+%     subplot(2,2,3)
+%     plot(X_fit{g}(5:6,:)')
+%     subplot(2,2,4)
+%     plot(X_fit{g}(7:8,:)')
     % (2) resamle Z
     t_fit(g) = t_fit(g-1);
     numClus_fit(:,g) = numClus_fit(:,g-1);
@@ -254,38 +254,38 @@ for g = 2:ng
         numClus_fit(c,g) = numClus_fit(c,g) + 1;
     end
     
-    % (3) split-merge
-    % (a) randomly choose a pair of indices
-    zs = ones(N,1);
-    S = zeros(N,1);
-    
-    rdIdx = randsample(N,2);
-    ism = rdIdx(1);
-    jsm = rdIdx(2);
-    
-    ci0 = Z_fit(ism,g);
-    cj0 = Z_fit(jsm,g);
-    
-    ns = 0;
-    for k = 1:N
-        if(Z_fit(k,g) == ci0 || Z_fit(k,g) == cj0)
-            ns = ns + 1;
-            S(ns) = k;
-        end
-    end
-    
-    % (b) find available cluster IDs for merge & split parameters
-    k = 1;
-    while(actList(k) == k); k = k+1;end;cm = k;
-    while(actList(k) == k+1); k = k+1;end;ci = k+1;
-    while(actList(k) == k+2); k = k+1;end;cj = k+2;
-    
-    
+%     % (3) split-merge
+%     % (a) randomly choose a pair of indices
+%     zs = ones(N,1);
+%     S = zeros(N,1);
+%     
+%     rdIdx = randsample(N,2);
+%     ism = rdIdx(1);
+%     jsm = rdIdx(2);
+%     
+%     ci0 = Z_fit(ism,g);
+%     cj0 = Z_fit(jsm,g);
+%     
+%     ns = 0;
+%     for k = 1:N
+%         if(Z_fit(k,g) == ci0 || Z_fit(k,g) == cj0)
+%             ns = ns + 1;
+%             S(ns) = k;
+%         end
+%     end
+%     
+%     % (b) find available cluster IDs for merge & split parameters
+%     k = 1;
+%     while(actList(k) == k); k = k+1;end;cm = k;
+%     while(actList(k) == k+1); k = k+1;end;ci = k+1;
+%     while(actList(k) == k+2); k = k+1;end;cj = k+2;
     
     
     
-%     figure(2)
-%     clusterPlot(Y, Z_fit(:,g)')
+    
+    
+    figure(2)
+    clusterPlot(Y, Z_fit(:,g)')
     
 end
 

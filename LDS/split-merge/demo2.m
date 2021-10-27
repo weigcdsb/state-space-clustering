@@ -104,21 +104,16 @@ MFMgamma = 1;
 % determine r: use CDF cutoff
 % F(k) = 1-(1-r)^k
 % let F(N/3) = 0.95
-r = 1 - (1-0.95)^(1/round(N/3));
+r = 1 - (1-0.95)^(1/10);
 log_pk = @(k) log(r) + (k-1)*log(1-r);
-
 % K-1 ~ Poisson(lam)
 % lam = 1;
 % log_pk = @(k) log(poisspdf(k-1, lam));
-
 % pk = zeros(N,1);
 % for gg = 1:N
 %    pk(gg) = exp(log_pk(gg)); 
 % end
 % plot(pk)
-
-
-
 a = MFMgamma;
 b = MFMgamma;
 log_v = MFMcoeff(log_pk, MFMgamma, N, t_max + 1);
@@ -173,7 +168,7 @@ for k = 1:t_max+3
 end
 
 %% MCMC
-useSplitMerge = true;
+useSplitMerge = false;
 for k = 1:N
     optdc.M=1;
     optdc.Madapt=0;
@@ -235,7 +230,7 @@ for g = 2:ng
     
     
     % (2) split and merge
-    if(useSplitMerge)
+    if(useSplitMerge) % useSplitMerge; g<burnIn;
         [Z_fit(:,g), actList, numClus_fit(:,g), t_fit(g), THETA{g}] =...
             splitMerge(Y, Z_fit(:,g), zs, S, THETA{g}, actList, N, T, p,...
             numClus_fit(:,g), t_fit(g), prior, a, b, log_v, n_split, n_merge, OPTDC);

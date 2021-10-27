@@ -3,13 +3,13 @@ function [theta_b, epsilonOut, log_pdf] =...
     prior, N, T, p, obsIdx, active, density, OPTDC_tmp)
 
 % for debug
-% obsIdx = mIdx;
-% Y_tmp = Y(mIdx,:);
-% theta_a = tm;
-% theta_b = ti0;
-% active = false;
-% density = true;
-% OPTDC_tmp = OPTDC(mIdx);
+% obsIdx = obsIdx;
+% Y_tmp = Y(obsIdx,:);
+% theta_a = THETA{g-1}(c);
+% theta_b = THETA{g}(c);
+% active = true;
+% density = false;
+% OPTDC_tmp = OPTDC(obsIdx);
 
 N_tmp = size(Y_tmp, 1);
 log_pdf = NaN;
@@ -34,8 +34,11 @@ if active
     theta_b.Xori = reshape(Xsamp,[], T);
     
     theta_b.X = theta_b.Xori - mean(theta_b.Xori, 2);
-    [QX, ~] = mgson(theta_b.X');
-    theta_b.X = QX';
+    [UX, ~, VX] = svd(theta_b.X', 'econ');
+    theta_b.X = VX*UX';
+
+%     [QX, ~] = mgson(theta_b.X');
+%     theta_b.X = QX';
 end
 
 if density
@@ -66,13 +69,14 @@ epsilonOut = ones(N_tmp, 1)*0.01;
 if active
     for i = 1:N_tmp
         X_tmpdc = [ones(1, T) ; theta_b.X]';
-        lamdc = @(dc) exp(X_tmpdc*dc);
+%         X_tmpdc = [ones(1, T) ; theta_b.Xori]';
         
+        lamdc = @(dc) exp(X_tmpdc*dc);
         lpdf = @(dc) sum(log(poisspdf(Y_tmp(i,:)', lamdc(dc)))) +...
             log(mvnpdf(dc, theta_a.mudc, theta_a.Sigdc));
         glpdf = @(dc) X_tmpdc'*(Y_tmp(i,:)' - lamdc(dc)) - theta_a.Sigdc\(dc - theta_a.mudc);
         fg=@(dc_r) deal(lpdf(dc_r'), glpdf(dc_r')'); % log density and gradient
-        dc0 = [theta_a.d(i) theta_a.C(i,:)]';
+        dc0 = [theta_a.d(obsIdx(i)) theta_a.C(obsIdx(i),:)]';
         
         [dc_NUTS, ~, diagn]=hmc_nuts(fg, dc0',OPTDC_tmp{i});
         epsilonOut(i) = diagn.opt.epsilonbar;
@@ -80,6 +84,17 @@ if active
         dOut_obs(i) = dc_NUTS(end,1);
         COut_obs(i,:) = dc_NUTS(end,2:end);
     end
+    
+    
+%     gtmp = -mean(theta_b.Xori, 2);
+%     [UX, SX, VX] = svd(theta_b.Xori' - mean(theta_b.Xori, 2)', 'econ');
+%     M = VX*inv(SX)*VX';
+%     gtrans = M*gtmp;
+%     
+%     theta_b.X = M*theta_b.Xori + gtrans;
+%     dOut_obs = dOut_obs - (COut_obs/M)*gtrans;
+%     COut_obs = COut_obs/M;
+    
 else
     dOut_obs = theta_b.d(obsIdx);
     COut_obs = theta_b.C(obsIdx, :);
