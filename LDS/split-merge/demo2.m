@@ -104,7 +104,8 @@ MFMgamma = 1;
 % determine r: use CDF cutoff
 % F(k) = 1-(1-r)^k
 % let F(N/3) = 0.95
-r = 1 - (1-0.95)^(1/10);
+% r = 1 - (1-0.95)^(1/15);
+r = 0.2;
 log_pk = @(k) log(r) + (k-1)*log(1-r);
 % K-1 ~ Poisson(lam)
 % lam = 1;
@@ -164,7 +165,7 @@ c_next = 2;
 
 
 for k = 1:t_max+3
-    THETA{1}(k) = sample_prior2(prior, N, T, p, false);
+    THETA{1}(k) = sample_prior2(prior, N, T, p, true);
 end
 
 %% MCMC
@@ -175,7 +176,7 @@ for k = 1:N
     OPTDC{k} = optdc;
 end
 
-burnIn = 10;
+burnIn = round(ng/10);
 epsilon = 0.01*ones(N,1);
 
 
@@ -287,6 +288,45 @@ for g = 2:ng
     clusterPlot(Y, Z_fit(:,g)')
     
 end
+
+
+%%
+figure(1)
+plot(t_fit)
+title('number of cluster')
+
+figure(2)
+zMax = max(Z_fit(:));
+Z_trace = Z_fit;
+Z_trace2 = Z_trace + 0.2*rand(N,1);
+hold on
+for k = 1:N
+    p(k)=plot(Z_trace2(k,:));
+    if k < n+1
+        set(p(k),'Color', 'r');
+    elseif k < 2*n+1
+        set(p(k),'Color', 'g');
+    else
+        set(p(k),'Color', 'b');
+    end
+end
+hold off
+ylim([0 zMax+1])
+yticks(1:zMax)
+% xlim([0 10])
+clusLab = [];
+for c = 1:zMax
+    clusLab{c} = 'cluster ' + string(c);
+end
+yticklabels(clusLab)
+title('cluster trace for each neuron')
+
+
+figure(3)
+imagesc(exp(C_trans*X + d))
+cLim = caxis;
+title('true')
+colorbar()
 
 
 

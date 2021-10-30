@@ -24,15 +24,15 @@ end
 
 
 figure(1)
-subplot(3,1,1)
+subplot(2,1,1)% subplot(3,1,1)
 plot(d_norm_fro)
 title('norm of d')
-subplot(3,1,2)
+subplot(2,1,2)% subplot(3,1,2)
 plot(C_norm_fro)
 title("Frobenius norm of C, dim: " + N + "\times" + p)
-subplot(3,1,3)
-plot(X_norm_fro)
-title("Frobenius norm of X, dim: " + nClus*p + "\times" + T)
+% subplot(3,1,3)
+% plot(X_norm_fro)
+% title("Frobenius norm of X, dim: " + nClus*p + "\times" + T)
 
 % subplot(2,1,2)
 % plot(squeeze(X_fit(:,round(T/2),1:g))')
@@ -51,15 +51,15 @@ title('Frobenius norm of Q')
 
 gTrunc = 1000;
 figure(3)
-subplot(3,1,1)
+subplot(2,1,1)% subplot(3,1,1)
 plot(d_norm_fro(1:gTrunc))
 title('norm of d')
-subplot(3,1,2)
+subplot(2,1,2)% subplot(3,1,2)
 plot(C_norm_fro(1:gTrunc))
 title("Frobenius norm of C, dim: " + N + "\times" + p)
-subplot(3,1,3)
-plot(X_norm_fro(1:gTrunc))
-title("Frobenius norm of X, dim: " + nClus*p + "\times" + T)
+% subplot(3,1,3)
+% plot(X_norm_fro(1:gTrunc))
+% title("Frobenius norm of X, dim: " + nClus*p + "\times" + T)
 
 
 figure(4)
@@ -74,8 +74,8 @@ plot(Q_norm_fro(1:gTrunc))
 title('Frobenius norm of Q')
 
 
-idx = round(ng/2): ng;
-
+% idx = round(ng/2): ng;
+idx = round(ng/10): ng;
 figure(5)
 subplot(1,2,1)
 imagesc(exp(C_trans*X + d))

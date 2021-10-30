@@ -39,8 +39,8 @@ N = length(subset2);
 lab_all_str = string(tab.ecephys_structure_acronym);
 [lab_num_sub2, clusIdx] = findgroups(lab_all_str(subset2));
 
-Tbase = 2000;
-T = 1000;
+Tbase = 3000;
+T = 4000;
 dt = 0.5;
 Yraw = zeros(N, T);
 for n = 1:N
@@ -60,6 +60,7 @@ figure(2)
 imagesc(Y)
 colorbar()
 
+clear Tlist
 
 %%
 p = 4;
@@ -70,7 +71,7 @@ lAbsGam = @(x) log(abs(gamma(x)));
 
 %% MCMC settings
 rng(1)
-ng = 1000;
+ng = 3000;
 t_max = 30;
 
 % this is the DP setting, replace to MFM later...
@@ -155,12 +156,12 @@ for k = 1:N
     OPTDC{k} = optdc;
 end
 
-burnIn = 100;
+burnIn = 1000;
 epsilon = 0.01*ones(N,1);
 
 
-n_split = 5;
-n_merge = 5;
+n_split = 6;
+n_merge = 6;
 zs = ones(N,1);
 S = zeros(N,1);
 
@@ -209,15 +210,6 @@ for g = 2:ng
     end
     
     
-    % (2) split and merge
-    if(useSplitMerge) % useSplitMerge; g<burnIn;
-        [Z_fit(:,g), actList, numClus_fit(:,g), t_fit(g), THETA{g}] =...
-            splitMerge(Y, Z_fit(:,g), zs, S, THETA{g}, actList, N, T, p,...
-            numClus_fit(:,g), t_fit(g), prior, a, b, log_v, n_split, n_merge, OPTDC);
-        c_next = ordered_next(actList);
-    end
-    
-    
     % (3) resamle Z
     for ii = 1:N
         
@@ -263,39 +255,90 @@ for g = 2:ng
     end
     
     
+    % (2) split and merge
+%     if(g<burnIn) % useSplitMerge; g<burnIn;
+%         [Z_fit(:,g), actList, numClus_fit(:,g), t_fit(g), ~] =...
+%             splitMerge(Y, Z_fit(:,g), zs, S, THETA{g}, actList, N, T, p,...
+%             numClus_fit(:,g), t_fit(g), prior, a, b, log_v, n_split, n_merge, OPTDC);
+%         c_next = ordered_next(actList);
+%     end
+    
+    
     figure(2)
     clusterPlot(Y, Z_fit(:,g)')
     
 end
 
 %% post-analysis
-
 plot(t_fit)
-idxMax = max(Z_fit(:));
 
-countMat = zeros(idxMax, length(unique(Lab)), ng-1);
-for k = 2:ng
-    for l = Lab(:)'
-        countMat(:,l,k-1) = histcounts(Z_fit(Lab == l, k), 1:(idxMax+1));
+
+idxMax = max(Z_fit((burnIn+1):end));
+
+countMat = zeros(length(unique(Lab)), idxMax, ng-burnIn);
+
+for k = 1:size(countMat, 3)
+    for l = 1:idxMax
+        idxTmp = find(Z_fit(:, k+burnIn) == l);
+        countMat(:,l,k) = histcounts(Lab(idxTmp), 1:5);
     end
 end
 
-figure(1)
-histogram(t_fit(burnIn:ng))
+% countMat = zeros(idxMax, length(unique(Lab)), ng-burnIn);
+% for k = 1:size(countMat, 3)
+%     for l = Lab(:)'
+%         countMat(:,l,k) = histcounts(Z_fit(Lab == l, k+burnIn), 1:(idxMax+1));
+%     end
+% end
 
+% imagesc(mean(countMat, 3))
+% colorbar()
+
+
+
+
+% figure(1)
+% histogram(t_fit(burnIn:ng))
+
+numEach = histcounts(Lab);
 figure(2)
-meanCount = mean(countMat(:,:,(burnIn-1):(ng-1)), 3);
-imagesc(meanCount([1 2 3 7 6 4 5], :))
+meanCount = mean(countMat, 3);
+meanCount2 = meanCount(:, sum(meanCount, 1) > 0);
+[~, sortIdx] = sort(sum(meanCount2, 1), 'descend');
+plotMat = (diag(numEach))\meanCount2(:,sortIdx);
+imagesc(plotMat(:,[3 4 1 2 5 6]))
+colormap(flipud(hot))
+xlabel('cluster-model')
+ylabel('cluster-true')
+yticks(1:4)
+yticklabels(clusIdx)
 colorbar()
-ylabel('cluster-model')
-xlabel('cluster-true')
-title('fitted vs. true: neuron counts')
+title('true vs. fitted: proportion')
+
+
+% figure(2)
+% meanCount = mean(countMat(:,:,(burnIn-1):(ng-1)), 3);
+% % imagesc(meanCount([1 2 3 7 6 4 5], :))
+% imagesc(meanCount([3 1 10 7 8 11 2 4 5 6 9], :))
+% colorbar()
+% ylabel('cluster-model')
+% xlabel('cluster-true')
+% title('fitted vs. true: neuron counts')
 
 figure(3)
 imagesc(Y)
 colorbar()
+hold on
+numEach = histcounts(Lab);
+ytickPos = zeros(1, 4);
+for k = 1:4
+    yline(sum(numEach(1:k)), 'y--', 'LineWidth', 4);
+    ytickPos(k) = sum(numEach(1:(k-1))) + numEach(k)/2;
+end
+yticks(ytickPos)
+yticklabels(clusIdx)
+hold off
 title('spking counts')
-
 
 
 
