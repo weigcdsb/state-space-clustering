@@ -171,27 +171,33 @@ latent = figure;
 subplot(3,2,1)
 plot(X(1:p,:)')
 title('true')
+y1 = ylim;
 set(gca,'FontSize',10, 'LineWidth', 1.5,'TickDir','out')
 box off
 subplot(3,2,2)
 plot(mean(X_fit(1:p,:,idx), 3)')
 title('fit')
+ylim(y1);
 set(gca,'FontSize',10, 'LineWidth', 1.5,'TickDir','out')
 box off
 subplot(3,2,3)
 plot(X(p+1:2*p,:)')
+y2 = ylim;
 set(gca,'FontSize',10, 'LineWidth', 1.5,'TickDir','out')
 box off
 subplot(3,2,4)
 plot(mean(X_fit(p+1:2*p,:,idx), 3)')
+ylim(y2);
 set(gca,'FontSize',10, 'LineWidth', 1.5,'TickDir','out')
 box off
 subplot(3,2,5)
 plot(X(2*p+1:3*p,:)')
+y3 = ylim;
 set(gca,'FontSize',10, 'LineWidth', 1.5,'TickDir','out')
 box off
 subplot(3,2,6)
 plot(mean(X_fit(2*p+1:3*p,:,idx), 3)')
+ylim(y3);
 set(gca,'FontSize',10, 'LineWidth', 1.5,'TickDir','out')
 box off
 xlabel('T')
