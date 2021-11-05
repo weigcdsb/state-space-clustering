@@ -94,8 +94,29 @@ b = M2*b;
 Q = M2*Q*M2';
 Q0 = M2*Q0*M2';
 
+
 %%
-rng(3)
+rng(1)
+nTrain = round(T*3/4);
+Y_train = nan*Y;
+Y_test = nan*Y;
+for k = 1:N
+    trIdx = randsample(T, nTrain);
+    teIdx = setdiff(1:T, trIdx);
+    Y_train(k,trIdx) = Y(k,trIdx);
+    Y_test(k, teIdx) = Y(k,teIdx);
+end
+
+
+clusterPlot(Y_train, Lab)
+clusterPlot(Y_test, Lab)
+
+%%
+nClus = 1;
+Lab =ones(1,N);
+p = 2;
+
+rng(2)
 ng = 1000;
 
 % pre-allocation
@@ -112,9 +133,7 @@ Q_fit = zeros(nClus*p, nClus*p, ng);
 
 % priors
 % place-holder...
-Q0 = eye(nClus*p)*1e-2;
-% Q0 = eye(nClus*p)*0.5^2;
-
+Q0 = eye(nClus*p)*0.5^2;
 
 mux00 = zeros(nClus*p, 1);
 Sigx00 = eye(nClus*p);
@@ -147,16 +166,13 @@ Sigdc_fit(:,:,1:nClus,1) = repmat(eye(p+1)*1e-2,1,1,nClus);
 A_fit(:,:,1) = eye(nClus*p);
 Q_fit(:,:,1) = eye(nClus*p)*1e-4;
 
-
-x0_fit(:,1) = lsqr(C_fit(:,:,1),(log(mean(Y(:,1:10),2))-d_tmp));
-[X_tmp,~,~] = ppasmoo_poissexp_v2(Y,C_fit(:,:,1),d_tmp,...
+x0_fit(:,1) = lsqr(C_fit(:,:,1),(log(nanmean(Y_train(:,1:10),2))-d_tmp));
+[X_tmp,~,~] = ppasmoo_poissexp_na(Y_train,C_fit(:,:,1),d_tmp,...
     x0_fit(:,1),Q0,A_fit(:,:,1),b_fit(:,1),Q_fit(:,:,1));
-gradHess = @(vecX) gradHessX(vecX, d_tmp, C_fit(:,:,1), x0_fit(:,1), Q0,...
-    Q_fit(:,:,1), A_fit(:,:,1), b_fit(:,1), Y);
+gradHess = @(vecX) gradHessX_na(vecX, d_tmp, C_fit(:,:,1), x0_fit(:,1), Q0,...
+    Q_fit(:,:,1), A_fit(:,:,1), b_fit(:,1), Y_train);
 [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp(:),1e-10,1000);
 X_fit(:,:,1) = reshape(muXvec, [], T);
-
-
 
 gtmp = -mean(X_fit(:,:,1), 2);
 Mdiag = {};
@@ -176,31 +192,6 @@ for l = unique(Lab)
    d_fit(Lab == l,l,1) = d_tmp(Lab == l);
 end
 C_fit(:,:,1) = C_fit(:,:,1)/M;
-
-% A_fit(:,:,1) = M*A_fit(:,:,1)/M;
-% b_fit(:,1) = M*b_fit(:,1) + gtrans - (M*A_fit(:,:,1)/M)*gtrans;
-% Q_fit(:,:,1) = M*Q_fit(:,:,1)*M';
-
-
-% % diagonalize Q within each block
-% M2 = zeros(nClus*p);
-% for l = unique(Lab)
-%     latid = id2id(l,p);
-%     [M2Tmp,Dtmp] = eig(Q_fit(latid, latid,1));
-%     sign(diag(Dtmp))
-%     M2(latid,latid) = M2Tmp;
-% end
-% 
-% X_fit(:,:,1) = M2*X_fit(:,:,1);
-% x0_fit(:,1) = M2*x0_fit(:,1);
-% C_fit(:,:,1) = C_fit(:,:,1)/M2;
-% A_fit(:,:,1) = M2*A_fit(:,:,1)/M2;
-% b_fit(:,1) = M2*b_fit(:,1);
-% Q_fit(:,:,1) = M2*Q_fit(:,:,1)*M2';
-% % Q0 = M2*Q0*M2';
-
-
-
 
 %% MCMC
 optdc.M=1;
@@ -243,11 +234,12 @@ for g = 2:ng
     Q_tmp = Q_fit(:,:,g-1);
     X_tmp = X_fit(:,:,g-1);
     
-    gradHess = @(vecX) gradHessX(vecX, d_tmp, C_tmp, x0_tmp, Q0, Q_tmp, A_tmp, b_tmp, Y);
+    gradHess = @(vecX) gradHessX_na(vecX, d_tmp, C_tmp, x0_tmp, Q0,...
+        Q_tmp, A_tmp, b_tmp, Y_train);
     [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp(:),1e-8,1000);
     if(sum(isnan(muXvec)) ~= 0)
         disp('use adaptive smoother initial')
-        X_tmp = ppasmoo_poissexp_v2(Y,C_tmp,d_tmp,x0_tmp,Q0,A_tmp,b_tmp,Q_tmp);
+        X_tmp = ppasmoo_poissexp_na(Y_train,C_tmp,d_tmp,x0_tmp,Q0,A_tmp,b_tmp,Q_tmp);
         [muXvec,~,hess_tmp,~] = newtonGH(gradHess,X_tmp(:),1e-8,1000);
     end
     
@@ -262,14 +254,17 @@ for g = 2:ng
     
     for i = 1:N
         l = Lab(i);
+        obsIdx = find(~isnan(Y_train(i,:)));
+        
         latentId = id2id(l,p);
         X_tmp = [ones(1, T) ;X_fit(latentId,:,g)]';
-        
+        X_tmp = X_tmp(obsIdx,:);
         lamdc = @(dc) exp(X_tmp*dc);
         
-        lpdf = @(dc) sum(log(poisspdf(Y(i,:)', lamdc(dc)))) +...
+        lpdf = @(dc) sum(log(poisspdf(Y_train(i,obsIdx)', lamdc(dc)))) +...
             log(mvnpdf(dc, mudc_fit(:,l,g-1), Sigdc_fit(:,:,l,g-1)));
-        glpdf = @(dc) X_tmp'*(Y(i,:)' - lamdc(dc)) - Sigdc_fit(:,:,l,g-1)\(dc - mudc_fit(:,l,g-1));
+        glpdf = @(dc) X_tmp'*(Y_train(i,obsIdx)' - lamdc(dc))...
+            - Sigdc_fit(:,:,l,g-1)\(dc - mudc_fit(:,l,g-1));
         fg=@(dc_r) deal(lpdf(dc_r'), glpdf(dc_r')'); % log density and gradient
         dc0 = [d_fit(i,l, g-1) C_fit(i,latentId,g-1)]';
         
@@ -295,7 +290,6 @@ for g = 2:ng
     for l = unique(Lab)
         latidTmp = id2id(l,p);
         [U,S,V] = svd(X_fit(latidTmp,:,g)' - mean(X_fit(latidTmp,:,g),2)', 'econ');
-%         [U,S,V] = svd(X_fit(latidTmp,:,g)', 'econ');
         Mdiag{l} = V*inv(S)*V';
     end
     M = sparse(blkdiag(Mdiag{:}));
@@ -329,7 +323,6 @@ for g = 2:ng
         Psidc = Psidc0 + dcRes*dcRes';
         nudc = sum(Lab == l) + nudc0;
         Sigdc_fit(:,:,l,g) = iwishrnd(Psidc,nudc);
-        
     end
     
     for k = 1:size(X_fit, 1)
@@ -351,55 +344,22 @@ for g = 2:ng
         A_fit(k,k,g) = BAsamp(2);
     end
     
+%     figure(1)
+%     subplot(3,2,1)
+%     plot(X(1:p,:)')
+%     title('true')
+%     subplot(3,2,2)
+%     plot(X_fit(1:p,:,g)')
+%     title('fit')
+%     subplot(3,2,3)
+%     plot(X(p+1:2*p,:)')
+%     subplot(3,2,4)
+%     plot(X_fit(p+1:2*p,:,g)')
+%     subplot(3,2,5)
+%     plot(X(2*p+1:3*p,:)')
+%     subplot(3,2,6)
+%     plot(X_fit(2*p+1:3*p,:,g)')
     
-    
-%     A_fit(:,:,g) = M*A_fit(:,:,g)/M;
-%     b_fit(:,g) = M*b_fit(:,g) + gtrans - (M*A_fit(:,:,g)/M)*gtrans;
-%     Q_fit(:,:,g) = M*Q_fit(:,:,g)*M';
-    
-%     M2 = zeros(nClus*p);
-%     for l = unique(Lab)
-%         latid = id2id(l,p);
-%         [M2Tmp,~] = eig(Q_fit(latid, latid,g));
-%         if((M2Tmp(1,:)*X_fit(latid,:,g))*X_fit(latid(1),:,g)' < ...
-%                 -(M2Tmp(1,:)*X_fit(latid,:,g))*X_fit(latid(1),:,g)')
-%             M2(latid,latid) = -M2Tmp;
-%         else
-%             M2(latid,latid) = M2Tmp;
-%         end
-%     end
-%     X_fit(:,:,g) = M2*X_fit(:,:,g);
-%     x0_fit(:,g) = M2*x0_fit(:,g);
-%     C_fit(:,:,g) = C_fit(:,:,g)/M2;
-%     A_fit(:,:,g) = M2*A_fit(:,:,g)/M2;
-%     b_fit(:,g) = M2*b_fit(:,g);
-%     Q_fit(:,:,g) = M2*Q_fit(:,:,g)*M2';
-
-    
-    
-    qnorm(g) = norm(Q_fit(:,:,g), 'fro');
-    figure(3)
-    plot(qnorm(1:g))
-    
-    
-    figure(1)
-    subplot(3,2,1)
-    plot(X(1:p,:)')
-    title('true')
-    subplot(3,2,2)
-    plot(X_fit(1:p,:,g)')
-    title('fit')
-    subplot(3,2,3)
-    plot(X(p+1:2*p,:)')
-    subplot(3,2,4)
-    plot(X_fit(p+1:2*p,:,g)')
-    subplot(3,2,5)
-    plot(X(2*p+1:3*p,:)')
-    subplot(3,2,6)
-    plot(X_fit(2*p+1:3*p,:,g)')
-    
-    figure(2)
-    plot(squeeze(X_fit(:,round(T/2),1:g))')
     
     figure(5)
     subplot(1,2,1)
@@ -414,3 +374,36 @@ for g = 2:ng
     title('fit')
     colorbar()
 end
+
+%%
+idx = 500:1000;
+CX_fit_sum = zeros(N, T);
+d_fit_sum = zeros(N,1);
+for k = idx
+    CX_fit_sum = CX_fit_sum + C_fit(:,:,k)*X_fit(:,:,k);
+    d_fit_sum = d_fit_sum + sum(d_fit(:,:,k),2);
+end
+CX_fit_mean = CX_fit_sum/length(idx);
+d_fit_mean = d_fit_sum/length(idx);
+lamAll = exp(CX_fit_mean + d_fit_mean);
+nansum(log(poisspdf(Y_test,lamAll)), 'all')/nansum(Y_test, 'all')
+
+imagesc(lamAll)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
