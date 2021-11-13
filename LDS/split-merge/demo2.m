@@ -229,16 +229,6 @@ for g = 2:ng
         disp(alphaDP)
     end
     
-    
-    % (2) split and merge
-    if(useSplitMerge) % useSplitMerge; g<burnIn;
-        [Z_fit(:,g), actList, numClus_fit(:,g), t_fit(g), THETA{g}] =...
-            splitMerge(Y, Z_fit(:,g), zs, S, THETA{g}, actList, N, T, p,...
-            numClus_fit(:,g), t_fit(g), prior, a, b, log_v, n_split, n_merge, OPTDC);
-        c_next = ordered_next(actList);
-    end
-    
-    
     % (3) resamle Z
     for ii = 1:N
         
@@ -281,6 +271,14 @@ for g = 2:ng
         
         Z_fit(ii,g) = c;
         numClus_fit(c,g) = numClus_fit(c,g) + 1;
+    end
+    
+    % (2) split and merge
+    if(useSplitMerge) % useSplitMerge; g<burnIn;
+        [Z_fit(:,g), actList, numClus_fit(:,g), t_fit(g), THETA{g}] =...
+            splitMerge(Y, Z_fit(:,g), zs, S, THETA{g}, actList, N, T, p,...
+            numClus_fit(:,g), t_fit(g), prior, a, b, log_v, n_split, n_merge, OPTDC);
+        c_next = ordered_next(actList);
     end
     
     
