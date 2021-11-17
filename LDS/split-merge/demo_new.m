@@ -235,7 +235,10 @@ for g = 2:ng
             %             logMar = sum(log(poisspdf(Y(ii,:), lamTmp))) +...
             %                 log(mvnpdf(THETA{g}(cc).muC(ii,:)', prior.muC0, prior.SigC0));
             %             logMar = sum(log(poisspdf(Y(ii,:), exp(THETA{g}(cc).d))));
-            [~,CLS] = evalc("lsqr(THETA{g}(cc).X', log(Y(ii,:))' - THETA{g}(cc).d')");
+%             [~,CLS] = evalc("lsqr(THETA{g}(cc).X', log(Y(ii,:))' - THETA{g}(cc).d')");
+            CLS = glmfit(THETA{g}(cc).X',Y(ii,:)','poisson','constant',...
+                'off', 'offset', THETA{g}(cc).d');
+            
             lamTmp = exp([1 CLS']*[THETA{g}(cc).d ;THETA{g}(cc).X]);
             logMar = sum(log(poisspdf(Y(ii,:), lamTmp))) +...
                 log(mvnpdf(CLS, prior.muC0, prior.SigC0));
@@ -247,7 +250,9 @@ for g = 2:ng
         %         logMar = sum(log(poisspdf(Y(ii,:), lamTmp))) +...
         %             log(mvnpdf(THETA{g}(c_prop).muC(ii,:)', prior.muC0, prior.SigC0));
         %         logMar = sum(log(poisspdf(Y(ii,:), exp(THETA{g}(c_prop).d))));
-        [~,CLS] = evalc("lsqr(THETA{g}(c_prop).X', log(Y(ii,:))' - THETA{g}(c_prop).d')");
+%         [~,CLS] = evalc("lsqr(THETA{g}(c_prop).X', log(Y(ii,:))' - THETA{g}(c_prop).d')");
+        CLS = glmfit(THETA{g}(c_prop).X',Y(ii,:)','poisson','constant',...
+                'off', 'offset', THETA{g}(c_prop).d');
         lamTmp = exp([1 CLS']*[THETA{g}(c_prop).d ;THETA{g}(c_prop).X]);
         logMar = sum(log(poisspdf(Y(ii,:), lamTmp))) +...
             log(mvnpdf(CLS, prior.muC0, prior.SigC0));
