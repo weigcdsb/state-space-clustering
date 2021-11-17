@@ -1,5 +1,5 @@
 function [theta_b, epsilonOut, log_pdf] =...
-    update_cluster_new(Y_tmp,theta_a,theta_b,...
+    update_cluster_new2(Y_tmp,theta_a,theta_b,...
     prior, N, T, p, obsIdx, active, density, OPTDC_tmp, Y)
 
 % for debug
@@ -45,6 +45,11 @@ if active
     
     theta_b.d = dXsamp_trans(1,:);
     theta_b.X = dXsamp_trans(2:end,:);
+    
+    theta_b.X = theta_b.X - mean(theta_b.X, 2);
+    [UX, ~, VX] = svd(theta_b.X', 'econ');
+    theta_b.X = VX*UX';
+    
 end
 
 if density
