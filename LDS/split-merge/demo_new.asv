@@ -80,6 +80,7 @@ clusterPlot(Y, Lab)
 %%
 % Y is the only observation...
 % some functions
+rng(2)
 lAbsGam = @(x) log(abs(gamma(x)));
 
 %% MCMC settings
@@ -87,34 +88,12 @@ rng(1)
 ng = 1000;
 t_max = N;
 
-% this is the DP setting, replace to MFM later...
-% DPMM = true;
-% alpha_random = true;
-% sigma_alpha = 0.1; % scale for MH proposals in alpha move
-% alphaDP = 1;
-% log_v = (1:t_max+1)*log(alphaDP) - lAbsGam(alphaDP+N) + lAbsGam(alphaDP);
-% a = 1;
-% b = 0;
-
 % MFM: 
-DPMM = false;
-alpha_random = false;
 MFMgamma = 1;
 % K ~ Geometric(r)
-% determine r: use CDF cutoff
-% F(k) = 1-(1-r)^k
-% let F(N/3) = 0.95
-% r = 1 - (1-0.95)^(1/15);
 r = 0.2;
 log_pk = @(k) log(r) + (k-1)*log(1-r);
-% K-1 ~ Poisson(lam)
-% lam = 1;
-% log_pk = @(k) log(poisspdf(k-1, lam));
-% pk = zeros(N,1);
-% for gg = 1:N
-%    pk(gg) = exp(log_pk(gg)); 
-% end
-% plot(pk)
+
 a = MFMgamma;
 b = MFMgamma;
 log_v = MFMcoeff(log_pk, MFMgamma, N, t_max + 1);
@@ -122,16 +101,12 @@ log_v = MFMcoeff(log_pk, MFMgamma, N, t_max + 1);
 logNb = log((1:N) + b);
 
 % priors...
-% prior.Q0 = eye(p)*1e-2;
-prior.Q0 = eye(p)*0.5^2;
-prior.mux00 = zeros(p, 1);
-prior.Sigx00 = eye(p);
+% theta = (d x)
+prior.theta0 = zeros(1+p,1);
+prior.Q0 = eye(1+p);
 
-prior.deltadc0 = [0;ones(p,1)];
-prior.Taudc0 = eye(p+1);
-
-prior.Psidc0 = eye(p+1)*1e-2;
-prior.nudc0 = p+1+2;
+prior.muC0 = zeros(p,1);
+prior.SigC0 = eye(p);
 
 prior.BA0 =[0 1]';
 prior.Lamb0 = eye(2);
@@ -149,23 +124,8 @@ numClus_fit(1,1) = N;
 actList = zeros(t_max+3,1); actList(1) = 1;
 c_next = 2;
 
-% t_fit(1) = 30;
-% Z_fit(:,1) = 1:N;
-% numClus_fit(1:N,1) = ones(N,1);
-% actList = zeros(t_max+3,1);
-% actList(1:N) = 1:N;
-% c_next = N+1;
-% 
-% t_fit(1) = 4;
-% Z_fit(:,1) = [ones(1,n) 2*ones(1,n/2) 3*ones(1,n/2) 4*ones(1,n)];
-% numClus_fit(1:4,1) = [n n/2 n/2 n];
-% actList = zeros(t_max+3,1);
-% actList(1:4) = 1:4;
-% c_next = 5;
-
-
-for k = 1:t_max+3
-    THETA{1}(k) = sample_prior2(prior, N, T, p, true);
+for k = 1:nClus
+    THETA{1}(k) = sample_prior_new(prior, N, T, p, false);
 end
 
 %% MCMC
@@ -179,12 +139,6 @@ end
 burnIn = round(ng/10);
 epsilon = 0.01*ones(N,1);
 
-
-n_split = 5;
-n_merge = 5;
-zs = ones(N,1);
-S = zeros(N,1);
-
 for g = 2:ng
     
     if(g < burnIn);disp("iter " + g + ", changing"); % change epsilon
@@ -194,15 +148,14 @@ for g = 2:ng
     else;disp("iter " + g + ", tuned");
     end % fix epsilon
     
-    % (1) update parameters
     THETA{g} = THETA{g-1};
     for j = 1:t_fit(g-1)
         c = actList(j);
         obsIdx = find(Z_fit(:,g-1) == c);
         
         [THETA{g}(c), epsilon(obsIdx), log_pdf] =...
-            update_cluster(Y(obsIdx,:),THETA{g-1}(c),THETA{g}(c),...
-            prior, N, T, p, obsIdx, true, false, OPTDC(obsIdx));
+            update_cluster_new(Y(obsIdx,:),THETA{g-1}(c),THETA{g}(c),...
+            prior, N, T, p, obsIdx, true, false, OPTDC(obsIdx), Y);
     end
     
     if(g == burnIn)
@@ -216,19 +169,6 @@ for g = 2:ng
     t_fit(g) = t_fit(g-1);
     
     
-    if DPMM && alpha_random
-        % MH move for DP concentration parameter (using p_alpha(a) = exp(-a) = Exp(a|1))
-        aprop = alphaDP*exp(rand*sigma_alpha);
-        top = t_fit(g)*log(aprop) - lAbsGam(aprop+N) + lAbsGam(aprop) - aprop + log(aprop);
-        bot = t_fit(g)*log(alphaDP) - lAbsGam(alphaDP+N) +...
-            lAbsGam(alphaDP) - alphaDP + log(alphaDP);
-        if rand < min(1, exp(top-bot))
-            alphaDP = aprop;
-        end
-        log_v = (1:t_max+1)*log(alphaDP) - lAbsGam(alphaDP+N) + lAbsGam(alphaDP);
-        disp(alphaDP)
-    end
-    
     % (3) resamle Z
     for ii = 1:N
         
@@ -237,7 +177,24 @@ for g = 2:ng
         numClus_fit(c,g) = numClus_fit(c,g) - 1;
         if(numClus_fit(c,g) > 0)
             c_prop = c_next;
-            THETA{g}(c_prop) = sample_prior2(prior, N, T, p, true);
+            THETA{g}(c_prop) = sample_prior_new(prior, N, T, p, true);
+            
+%             X_tmpC = THETA{g}(c_prop).X';
+%             lamC = @(c) exp(THETA{g}(c_prop).d' + X_tmpC*c);
+%             
+%             derc = @(c) X_tmpC'*(Y(ii,:)' - lamC(c)) - prior.SigC0\(c - prior.muC0);
+%             hessc = @(c) -X_tmpC'*diag(lamC(c))*X_tmpC - inv(prior.SigC0);
+%             c0 = THETA{g}(c_prop).C(ii,:)';
+%             
+%             [muc,~,niSigc,~] = newton(derc,hessc,c0,1e-8,1000);
+%             if(sum(isnan(muc)) ~= 0)
+%                 disp('use 0')
+%                 [muc,~,niSigc,~] = newton(derc,hessc,zeros(size(c0)),1e-8,1000);
+%             end
+%             if(sum(isnan(muc)) == 0)
+%                 THETA{g}(c_prop).muC(ii,:) = muc;
+%             end
+            
         else
             c_prop = c;
             actList = ordered_remove(c, actList, t_fit(g));
@@ -248,13 +205,19 @@ for g = 2:ng
         log_p = zeros(t_fit(g)+1,1);
         for j = 1:t_fit(g)
             cc = actList(j);
-            lamTmp = exp(THETA{g}(cc).C(ii,:)*THETA{g}(cc).X + THETA{g}(cc).d(ii));
-            log_p(j) = logNb(numClus_fit(cc,g)) + sum(log(poisspdf(Y(ii,:), lamTmp)));
+%             lamTmp = exp([1 THETA{g}(cc).muC(ii,:)]*[THETA{g}(cc).d ;THETA{g}(cc).X]);
+%             logMar = sum(log(poisspdf(Y(ii,:), lamTmp))) +...
+%                 log(mvnpdf(THETA{g}(cc).muC(ii,:)', prior.muC0, prior.SigC0));
+            logMar = sum(log(poisspdf(Y(ii,:), exp(THETA{g}(cc).d))));
+            log_p(j) = logNb(numClus_fit(cc,g)) + logMar;
         end
         
-        lamTmp_prop = exp(THETA{g}(c_prop).C(ii,:)*THETA{g}(c_prop).X + THETA{g}(c_prop).d(ii));
+%         lamTmp = exp([1 THETA{g}(c_prop).muC(ii,:)]*[THETA{g}(c_prop).d ;THETA{g}(c_prop).X]);
+%         logMar = sum(log(poisspdf(Y(ii,:), lamTmp))) +...
+%             log(mvnpdf(THETA{g}(c_prop).muC(ii,:)', prior.muC0, prior.SigC0));
+        logMar = sum(log(poisspdf(Y(ii,:), exp(THETA{g}(c_prop).d))));
         log_p(t_fit(g)+1) = log_v(t_fit(g)+1)-log_v(t_fit(g)) +...
-            log(a) + sum(log(poisspdf(Y(ii,:), lamTmp_prop)));
+            log(a) + logMar;
         
         % (c) sample a new cluster for it
         j = randlogp(log_p, t_fit(g)+1);
@@ -273,37 +236,11 @@ for g = 2:ng
         numClus_fit(c,g) = numClus_fit(c,g) + 1;
     end
     
-    % (2) split and merge
-    if(useSplitMerge) % useSplitMerge; g<burnIn;
-        [Z_fit(:,g), actList, numClus_fit(:,g), t_fit(g), THETA{g}] =...
-            splitMerge(Y, Z_fit(:,g), zs, S, THETA{g}, actList, N, T, p,...
-            numClus_fit(:,g), t_fit(g), prior, a, b, log_v, n_split, n_merge, OPTDC);
-        c_next = ordered_next(actList);
-    end
-    
-    
     figure(2)
     clusterPlot(Y, Z_fit(:,g)')
     
-    figure(3)
-    subplot(1,2,1)
-    imagesc(exp(C_trans*X + d))
-    cLim = caxis;
-    title('true')
-    colorbar()
-    subplot(1,2,2)
-    fitMFR = zeros(N, T);
-    for k  = 1:N
-        fitMFR(k,:) = exp(THETA{g}(Z_fit(k,g)).d(k) +...
-            THETA{g}(Z_fit(k,g)).C(k,:)*THETA{g}(Z_fit(k,g)).X);
-    end
-    imagesc(fitMFR)
-    set(gca,'CLim',cLim)
-    colorbar()
-    title('fit')
     
 end
-
 
 %%
 figure(1)

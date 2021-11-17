@@ -3,6 +3,7 @@ function theta =...
 
 % lodaing: C
 theta.C = randn(N, p);
+theta.muC = theta.C;
 
 % linear dynamics: b, A & Q
 theta.A = eye(p+1);
@@ -28,6 +29,11 @@ while flag
         for t= 2:T
             dX(:, t) = mvnrnd(theta.b + theta.A*dX(:, t-1), theta.Q);
         end
+        
+%         dX = dX - mean(dX, 2);
+%         [UdX, ~, VdX] = svd(dX', 'econ');
+%         dX = VdX*UdX';
+        
         theta.d = dX(1,:);
         theta.X = dX(2:end,:);
         flag = 0;

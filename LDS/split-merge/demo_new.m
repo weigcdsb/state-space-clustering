@@ -149,12 +149,13 @@ for g = 2:ng
     end % fix epsilon
     
     THETA{g} = THETA{g-1};
-    for j = 1:nClus
-        obsIdx = find(Lab == j);
+    for j = 1:t_fit(g-1)
+        c = actList(j);
+        obsIdx = find(Z_fit(:,g-1) == c);
         
-        [THETA{g}(j), epsilon(obsIdx), log_pdf] =...
-            update_cluster_new(Y(obsIdx,:),THETA{g-1}(j),THETA{g}(j),...
-            prior, N, T, p, obsIdx, true, false, OPTDC(obsIdx));
+        [THETA{g}(c), epsilon(obsIdx), log_pdf] =...
+            update_cluster_new(Y(obsIdx,:),THETA{g-1}(c),THETA{g}(c),...
+            prior, N, T, p, obsIdx, true, false, OPTDC(obsIdx), Y);
     end
     
     if(g == burnIn)
@@ -177,6 +178,23 @@ for g = 2:ng
         if(numClus_fit(c,g) > 0)
             c_prop = c_next;
             THETA{g}(c_prop) = sample_prior_new(prior, N, T, p, true);
+            
+%             X_tmpC = THETA{g}(c_prop).X';
+%             lamC = @(c) exp(THETA{g}(c_prop).d' + X_tmpC*c);
+%             
+%             derc = @(c) X_tmpC'*(Y(ii,:)' - lamC(c)) - prior.SigC0\(c - prior.muC0);
+%             hessc = @(c) -X_tmpC'*diag(lamC(c))*X_tmpC - inv(prior.SigC0);
+%             c0 = THETA{g}(c_prop).C(ii,:)';
+%             
+%             [muc,~,niSigc,~] = newton(derc,hessc,c0,1e-8,1000);
+%             if(sum(isnan(muc)) ~= 0)
+%                 disp('use 0')
+%                 [muc,~,niSigc,~] = newton(derc,hessc,zeros(size(c0)),1e-8,1000);
+%             end
+%             if(sum(isnan(muc)) == 0)
+%                 THETA{g}(c_prop).muC(ii,:) = muc;
+%             end
+            
         else
             c_prop = c;
             actList = ordered_remove(c, actList, t_fit(g));
@@ -190,9 +208,13 @@ for g = 2:ng
             lamTmp = exp([1 THETA{g}(cc).C(ii,:)]*[THETA{g}(cc).d ;THETA{g}(cc).X]);
             logMar = sum(log(poisspdf(Y(ii,:), lamTmp))) +...
                 log(mvnpdf(THETA{g}(cc).C(ii,:)', prior.muC0, prior.SigC0));
+%             logMar = sum(log(poisspdf(Y(ii,:), exp(THETA{g}(cc).d))));
             log_p(j) = logNb(numClus_fit(cc,g)) + logMar;
         end
         
+%         lamTmp = exp([1 THETA{g}(c_prop).muC(ii,:)]*[THETA{g}(c_prop).d ;THETA{g}(c_prop).X]);
+%         logMar = sum(log(poisspdf(Y(ii,:), lamTmp))) +...
+%             log(mvnpdf(THETA{g}(c_prop).muC(ii,:)', prior.muC0, prior.SigC0));
         logMar = sum(log(poisspdf(Y(ii,:), exp(THETA{g}(c_prop).d))));
         log_p(t_fit(g)+1) = log_v(t_fit(g)+1)-log_v(t_fit(g)) +...
             log(a) + logMar;
