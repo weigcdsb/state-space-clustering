@@ -83,9 +83,9 @@ clusterPlot(Y, Lab)
 lAbsGam = @(x) log(abs(gamma(x)));
 
 %% MCMC settings
-rng(2)
-p=2;
-ng = 1000;
+rng(1)
+p=1;
+ng = 100;
 t_max = N;
 
 % this is the DP setting, replace to MFM later...
@@ -204,23 +204,6 @@ for g = 2:ng
         if(numClus_fit(c,g) > 0)
             c_prop = c_next;
             THETA{g}(c_prop) = sample_prior_new(prior, N, T, p, true, Inf);
-            
-            %             X_tmpC = THETA{g}(c_prop).X';
-            %             lamC = @(c) exp(THETA{g}(c_prop).d' + X_tmpC*c);
-            %
-            %             derc = @(c) X_tmpC'*(Y(ii,:)' - lamC(c)) - prior.SigC0\(c - prior.muC0);
-            %             hessc = @(c) -X_tmpC'*diag(lamC(c))*X_tmpC - inv(prior.SigC0);
-            %             c0 = THETA{g}(c_prop).C(ii,:)';
-            %
-            %             [muc,~,niSigc,~] = newton(derc,hessc,c0,1e-8,1000);
-            %             if(sum(isnan(muc)) ~= 0)
-            %                 disp('use 0')
-            %                 [muc,~,niSigc,~] = newton(derc,hessc,zeros(size(c0)),1e-8,1000);
-            %             end
-            %             if(sum(isnan(muc)) == 0)
-            %                 THETA{g}(c_prop).muC(ii,:) = muc;
-            %             end
-            
         else
             c_prop = c;
             actList = ordered_remove(c, actList, t_fit(g));
@@ -228,54 +211,14 @@ for g = 2:ng
         end
         
         %(b) compute probabilities for resampling
-        Ytmp = Y(ii,:);
-        Ytmp(Ytmp == 0) = 0.1;
         log_p = zeros(t_fit(g)+1,1);
         for j = 1:t_fit(g)
             cc = actList(j);
-            %             lamTmp = exp([1 THETA{g}(cc).muC(ii,:)]*[THETA{g}(cc).d ;THETA{g}(cc).X]);
-            %             logMar = sum(log(poisspdf(Y(ii,:), lamTmp))) +...
-            %                 log(mvnpdf(THETA{g}(cc).muC(ii,:)', prior.muC0, prior.SigC0));
-            %             logMar = sum(log(poisspdf(Y(ii,:), exp(THETA{g}(cc).d))));
-            %             [~,CLS] = evalc("lsqr(THETA{g}(cc).X', log(Ytmp)' - THETA{g}(cc).d')");
-            
-            X_tmpC = THETA{g}(cc).X';
-            lamC = @(c) exp(THETA{g}(cc).d' + X_tmpC*c);
-            hessc = @(c) -X_tmpC'*diag(lamC(c))*X_tmpC - inv(prior.SigC0);
-            Sigc = @(c) inv(-hessc(c));
-            
-            if(g < Inf)
-                logMar = sum(log(poisspdf(Y(ii,:), exp(THETA{g}(cc).d)))) +...
-                    0.5*log(det(Sigc(prior.muC0)));
-            else
-                [~,CLS,~,stats] = evalc("glmfit(THETA{g}(cc).X',Y(ii,:)','poisson','constant','off', 'offset', THETA{g}(cc).d')");                lamTmp = exp([1 CLS']*[THETA{g}(cc).d ;THETA{g}(cc).X]);
-                logMar = sum(log(poisspdf(Y(ii,:), lamTmp))) +...
-                    log(mvnpdf(CLS, prior.muC0, prior.SigC0)) + 0.5*log(det(Sigc(CLS)));
-            end
+            logMar = poiLogMarg(Y(ii,:)', THETA{g}(cc).X', THETA{g}(cc).d');
             log_p(j) = logNb(numClus_fit(cc,g)) + logMar;
         end
         
-        %         lamTmp = exp([1 THETA{g}(c_prop).muC(ii,:)]*[THETA{g}(c_prop).d ;THETA{g}(c_prop).X]);
-        %         logMar = sum(log(poisspdf(Y(ii,:), lamTmp))) +...
-        %             log(mvnpdf(THETA{g}(c_prop).muC(ii,:)', prior.muC0, prior.SigC0));
-        %         logMar = sum(log(poisspdf(Y(ii,:), exp(THETA{g}(c_prop).d))));
-        
-        %         [~,CLS] = evalc("lsqr(THETA{g}(c_prop).X', log(Ytmp)' - THETA{g}(c_prop).d')");
-        X_tmpC = THETA{g}(c_prop).X';
-        lamC = @(c) exp(THETA{g}(c_prop).d' + X_tmpC*c);
-        hessc = @(c) -X_tmpC'*diag(lamC(c))*X_tmpC - inv(prior.SigC0);
-        Sigc = @(c) inv(-hessc(c));
-        
-        if (g < Inf)
-            logMar = sum(log(poisspdf(Y(ii,:), exp(THETA{g}(c_prop).d))))+...
-                    0.5*log(det(Sigc(prior.muC0)));
-        else
-            [~,CLS,~,stats] = evalc("glmfit(THETA{g}(c_prop).X',Y(ii,:)','poisson','constant','off', 'offset', THETA{g}(c_prop).d)");
-            lamTmp = exp([1 CLS']*[THETA{g}(c_prop).d ;THETA{g}(c_prop).X]);
-            logMar = sum(log(poisspdf(Y(ii,:), lamTmp))) +...
-                log(mvnpdf(CLS, prior.muC0, prior.SigC0)) + 0.5*log(det(Sigc(CLS)));
-        end
-        
+        logMar = poiLogMarg(Y(ii,:)', THETA{g}(c_prop).X', THETA{g}(c_prop).d');
         log_p(t_fit(g)+1) = log_v(t_fit(g)+1)-log_v(t_fit(g)) +...
             log(a) + logMar;
         
