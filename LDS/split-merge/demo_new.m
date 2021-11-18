@@ -84,7 +84,7 @@ lAbsGam = @(x) log(abs(gamma(x)));
 
 %% MCMC settings
 rng(1)
-p=1;
+p=2;
 ng = 100;
 t_max = N;
 
@@ -203,7 +203,7 @@ for g = 2:ng
         numClus_fit(c,g) = numClus_fit(c,g) - 1;
         if(numClus_fit(c,g) > 0)
             c_prop = c_next;
-            THETA{g}(c_prop) = sample_prior_new(prior, N, T, p, true, Inf);
+            THETA{g}(c_prop) = sample_prior_new(prior, N, T, p, false, Inf);
         else
             c_prop = c;
             actList = ordered_remove(c, actList, t_fit(g));
