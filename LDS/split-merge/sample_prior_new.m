@@ -1,21 +1,21 @@
 function theta =...
-    sample_prior_new(prior, N, T, p, sampleDynamics)
-
-% lodaing: C
-theta.C = randn(N, p);
-theta.muC = theta.C;
-
-% linear dynamics: b, A & Q
-theta.A = eye(p+1);
-theta.b = zeros(p+1,1);
-theta.Q = eye(p+1)*prior.Psi0;
-
-% mean & latent: d, X
-dX = ones(1+p,T)*Inf;
-dX(:,1) = mvnrnd(prior.theta0, prior.Q0);
+    sample_prior_new(prior, N, T, p, sampleDynamics, maxCount)
 
 flag = 1;
 while flag
+    % lodaing: C
+    theta.C = randn(N, p);
+    theta.muC = theta.C;
+    
+    % linear dynamics: b, A & Q
+    theta.A = eye(p+1);
+    theta.b = zeros(p+1,1);
+    theta.Q = eye(p+1)*prior.Psi0;
+    
+    % mean & latent: d, X
+    dX = ones(1+p,T)*Inf;
+    dX(:,1) = mvnrnd(prior.theta0, prior.Q0);
+    
     if sampleDynamics
         for k = 1:p+1
             theta.Q(k,k)= iwishrnd(prior.Psi0, prior.nu0);
@@ -25,21 +25,18 @@ while flag
         end
     end
     
-    try
-        for t= 2:T
-            dX(:, t) = mvnrnd(theta.b + theta.A*dX(:, t-1), theta.Q);
-        end
-        
-%         dX = dX - mean(dX, 2);
-%         [UdX, ~, VdX] = svd(dX', 'econ');
-%         dX = VdX*UdX';
-        
-        theta.d = dX(1,:);
-        theta.X = dX(2:end,:);
-        flag = 0;
-    catch
-        flag = 1;
+    for t= 2:T
+        dX(:, t) = mvnrnd(theta.b + theta.A*dX(:, t-1), theta.Q);
     end
+    
+    theta.d = dX(1,:);
+    theta.X = dX(2:end,:);
+    
+    lamTmp = exp([ones(N,1) theta.C]*[theta.d ;theta.X]);
+    if(sum(isinf(lamTmp(:))) ==0 && max(lamTmp(:)) <= maxCount)
+       flag = 0; 
+    end
+    
 end
 
 
