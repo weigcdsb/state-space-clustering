@@ -25,26 +25,26 @@ while flag
         end
     end
     
-%     for t= 2:T
-%         dX(:, t) = mvnrnd(theta.b + theta.A*dX(:, t-1), theta.Q);
-%     end
-%     
-%     theta.d = dX(1,:);
-%     theta.X = dX(2:end,:);
-    
-    dX = zeros(p+1, T);
-    for i=1:(p+1)
-        k = ceil(rand()*20)+10;
-        if i == 1
-            pt = randn(k,1);
-        else
-            pt = randn(k,1)*.25;
-        end
-        dX(i,:) = interp1(linspace(0,1,k),pt,linspace(0,1,T),'spline');
+    for t= 2:T
+        dX(:, t) = mvnrnd(theta.b + theta.A*dX(:, t-1), theta.Q);
     end
-
+    
     theta.d = dX(1,:);
     theta.X = dX(2:end,:);
+    
+%     dX = zeros(p+1, T);
+%     for i=1:(p+1)
+%         k = ceil(rand()*20)+10;
+%         if i == 1
+%             pt = randn(k,1);
+%         else
+%             pt = randn(k,1)*.25;
+%         end
+%         dX(i,:) = interp1(linspace(0,1,k),pt,linspace(0,1,T),'spline');
+%     end
+% 
+%     theta.d = dX(1,:);
+%     theta.X = dX(2:end,:);
     
     
     

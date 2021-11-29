@@ -77,10 +77,53 @@ Q = M*Q*M';
 Q0 = M*Q0*M';
 
 clusterPlot(Y, Lab)
+
+%%
+Y = round(Y/6);
+clusterPlot(Y, Lab)
+
+
 %%
 % Y is the only observation...
 % some functions
 lAbsGam = @(x) log(abs(gamma(x)));
+
+
+% calculate Chebychev parameters
+chebMax = 10*max(Y(:));
+Cheb = zeros(1+chebMax, 2+1);
+for k = 0:chebMax % k = min(Y(:)):max(Y(:))
+    if k ==0
+        cehbTmp = compute_cheb([log(0.1)-2 log(0.1)+2]);
+        %         cehbTmp = compute_cheb([log(0.1) log(1)]);
+    else
+        cehbTmp = compute_cheb([log(k)-2 log(k)+2]);
+        %         cehbTmp = compute_cheb([log(k) log(k+1)]);
+    end
+    Cheb(k+1,:) = cehbTmp;
+end
+
+% cheb_neuron_a = 0*Y;
+% cheb_neuron_b = 0*Y;
+% for nNeuron = 1:N
+%     for t = 1:T
+%         cheb_neuron_a(nNeuron,t) = Cheb(Y(nNeuron,t)+1,3);
+%         cheb_neuron_b(nNeuron,t) = Cheb(Y(nNeuron,t)+1,2);
+%     end
+% end
+
+% % calculate Chebychev parameter for each neurons
+% Cheb = zeros(N, 2 + 1);
+% for k = 1:size(Y,1)
+%     [~,Cheb(k,:)] = evalc("compute_cheb(log(mean(Y(k,:))) + [-2 2])");
+% %     [~,Cheb(k,:)] = evalc("compute_cheb(log([min(Y(k,:)) + 1e-2 max(Y(k,:))]))");
+% end
+
+
+
+
+
+
 
 %% MCMC settings
 rng(1)
@@ -214,11 +257,43 @@ for g = 2:ng
         log_p = zeros(t_fit(g)+1,1);
         for j = 1:t_fit(g)
             cc = actList(j);
-            logMar = poiLogMarg(Y(ii,:)', THETA{g}(cc).X', THETA{g}(cc).d');
+%             logMar = poiLogMarg(Y(ii,:)', THETA{g}(cc).X', THETA{g}(cc).d');
+            cheb_a = zeros(T,1);
+            cheb_b = zeros(T,1);
+            for t = 1:T
+                idx = min(round(exp(THETA{g}(cc).d(t))) + 1, chebMax + 1);
+                cheb_a(t) = Cheb(idx,3);
+                cheb_b(t) = Cheb(idx,2);
+            end
+            
+%             idx = min(round(exp(mean(THETA{g}(cc).d' + THETA{g}(cc).X'*THETA{g}(cc).C(ii,:)))) + 1,...
+%                 1+max(Y(:)));
+%             cheb_a = Cheb(idx,3)*ones(T,1);
+%             cheb_b = Cheb(idx,2)*ones(T,1);
+            
+            logMar = poiLogMarg_PAL(Y(ii,:)', THETA{g}(cc).X', THETA{g}(cc).d', prior,...
+                cheb_a, cheb_b);
             log_p(j) = logNb(numClus_fit(cc,g)) + logMar;
         end
         
-        logMar = poiLogMarg(Y(ii,:)', THETA{g}(c_prop).X', THETA{g}(c_prop).d');
+%         logMar = poiLogMarg(Y(ii,:)', THETA{g}(c_prop).X', THETA{g}(c_prop).d');
+        
+        cheb_a = zeros(T,1);
+        cheb_b = zeros(T,1);
+        for t = 1:T
+            idx = min(round(exp(THETA{g}(c_prop).d(t))) + 1, chebMax + 1);
+            cheb_a(t) = Cheb(idx,3);
+            cheb_b(t) = Cheb(idx,2);
+        end
+        
+%         idx = min(round(exp(mean(THETA{g}(c_prop).d' + THETA{g}(c_prop).X'*THETA{g}(c_prop).C(ii,:)))) + 1,...
+%             1+max(Y(:)));
+%         cheb_a = Cheb(idx,3)*ones(T,1);
+%         cheb_b = Cheb(idx,2)*ones(T,1);
+        
+        logMar = poiLogMarg_PAL(Y(ii,:)', THETA{g}(c_prop).X', THETA{g}(c_prop).d', prior,...
+            cheb_a, cheb_b);
+        
         log_p(t_fit(g)+1) = log_v(t_fit(g)+1)-log_v(t_fit(g)) +...
             log(a) + logMar;
         

@@ -78,6 +78,7 @@ Q0 = M*Q0*M';
 
 clusterPlot(Y, Lab)
 %% MCMC settings
+p=1;
 rng(1)
 ng = 1000;
 
@@ -94,7 +95,7 @@ prior.Psi0 = 1e-2;
 prior.nu0 = 1+2;
 
 for k = 1:nClus
-    THETA{1}(k) = sample_prior_new(prior, N, T, p, false);
+    THETA{1}(k) = sample_prior_new(prior, N, T, p, false, Inf);
 end
 
 %%
@@ -178,13 +179,17 @@ end
 
 %% some plots
 
-dMean1 = zeros(p,T);
-dMean2 = zeros(p,T);
-dMean3 = zeros(p,T);
+dSum1 = zeros(1,T);
+dSum2 = zeros(1,T);
+dSum3 = zeros(1,T);
+xSum1 = zeros(p,T);
+xSum2 = zeros(p,T);
+xSum3 = zeros(p,T);
 
-xMean1 = zeros(p,T);
-xMean2 = zeros(p,T);
-xMean3 = zeros(p,T);
+dxSum1 = zeros(p+1,T);
+dxSum2 = zeros(p+1,T);
+dxSum3 = zeros(p+1,T);
+
 
 x50_1 = zeros(p, ng);
 x50_2 = zeros(p, ng);
@@ -200,40 +205,67 @@ for g= 1:ng
     
     if (g >= 500)
         c= c+1;
-        dMean1 = dMean1 + THETA{g}(1).d;
-        dMean2 = dMean2 + THETA{g}(2).d;
-        dMean3 = dMean3 + THETA{g}(3).d;
+        dSum1 = dSum1 + THETA{g}(1).d;
+        dSum2 = dSum2 + THETA{g}(2).d;
+        dSum3 = dSum3 + THETA{g}(3).d;
         
-        xMean1 = xMean1 + THETA{g}(1).X;
-        xMean2 = xMean2 + THETA{g}(2).X;
-        xMean3 = xMean3 + THETA{g}(3).X;
+        xSum1 = xSum1 + THETA{g}(1).X;
+        xSum2 = xSum2 + THETA{g}(2).X;
+        xSum3 = xSum3 + THETA{g}(3).X;
+        
+        dxSum1 = dxSum1 + [THETA{g}(1).d;THETA{g}(1).X];
+        dxSum2 = dxSum2 + [THETA{g}(2).d;THETA{g}(2).X];
+        dxSum3 = dxSum3 + [THETA{g}(3).d;THETA{g}(3).X];
     end
 end
 
+
+dxMean1 = dxSum1/c;
+dxMean2 = dxSum2/c;
+dxMean3 = dxSum3/c;
+
+dxMean1 = dxMean1 - mean(dxMean1, 2);
+[dxMean1, ~] = mgson(dxMean1');
+
+dxMean2 = dxMean2 - mean(dxMean2, 2);
+[dxMean2, ~] = mgson(dxMean2');
+
+dxMean3 = dxMean3 - mean(dxMean3, 2);
+[dxMean3, ~] = mgson(dxMean3');
+
+
 figure(3)
-subplot(3,3,1)
-plot(X(1:p,:)')
-title('true')
-subplot(3,3,2)
-plot(dMean1'/c)
-title('d')
-subplot(3,3,3)
-plot(xMean1'/c)
-title('X')
+subplot(3,4,1)
+plot(X(id2id(1,2),:)')
+title('dX-trans: true')
+subplot(3,4,2)
+plot(dSum1'/c)
+title('d:fit')
+subplot(3,4,3)
+plot(xSum1'/c)
+title('X-raw:fit')
+subplot(3,4,4)
+plot(dxMean1)
+title('dX-trans:fit')
 
-subplot(3,3,4)
-plot(X(p+1:2*p,:)')
-subplot(3,3,5)
-plot(dMean2'/c)
-subplot(3,3,6)
-plot(xMean2'/c)
+subplot(3,4,5)
+plot(X(id2id(2,2),:)')
+subplot(3,4,6)
+plot(dSum2'/c)
+subplot(3,4,7)
+plot(xSum2'/c)
+subplot(3,4,8)
+plot(dxMean2)
 
-subplot(3,3,7)
-plot(X(2*p+1:3*p,:)')
-subplot(3,3,8)
-plot(dMean3'/c)
-subplot(3,3,9)
-plot(xMean3'/c)
+subplot(3,4,9)
+plot(X(id2id(3,2),:)')
+subplot(3,4,10)
+plot(dSum3'/c)
+subplot(3,4,11)
+plot(xSum3'/c)
+subplot(3,4,12)
+plot(dxMean3)
+
 
 % trace plot
 dtrace = zeros(nClus, ng);
