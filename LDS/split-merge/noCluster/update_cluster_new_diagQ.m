@@ -1,5 +1,5 @@
 function [theta_b, epsilonOut, log_pdf] =...
-    update_cluster_new_chol(Y_tmp,theta_a,theta_b,...
+    update_cluster_new_diagQ(Y_tmp,theta_a,theta_b,...
     prior, N, T, p, obsIdx, active, density, OPTDC_tmp, Y)
 
 % for debug
@@ -78,65 +78,30 @@ if active
     end
 end
 
-
 dX = [theta_b.d;theta_b.X];
 
-% (4)update Q
-Y_BA = dX(:,2:T)';
-X_BA = [ones(T-1,1) dX(:,1:(T-1))'];
 
-BAn = (X_BA'*X_BA + prior.Lamb0)\(X_BA'*Y_BA + prior.Lamb0*prior.BA0);
-PsiQ = prior.Psi0 + (Y_BA - X_BA*BAn)'*(Y_BA - X_BA*BAn) +...
-    (BAn - prior.BA0)'*prior.Lamb0*(BAn - prior.BA0);
-nuQ = T-1 + prior.nu0;
-if active;theta_b.Q = iwishrnd(PsiQ,nuQ);end
-
-
-% (5) update b & A
-Lambn = X_BA'*X_BA + prior.Lamb0;
-BAvec = mvnrnd(BAn(:), kron(theta_b.Q, inv(Lambn)))';
-BAsamp = reshape(BAvec,[], p+1)';
-if active
-    theta_b.b = BAsamp(:,1);
-    theta_b.A = BAsamp(:,2:end);
+for k = 1:(p+1)
+    
+    % (5)update Q
+    Y_BA = dX(k,2:T)';
+    X_BA = [ones(T-1,1) dX(:,1:(T-1))'];
+    
+    BA0 = prior.BA0(:,k);
+    BAn = (X_BA'*X_BA + prior.Lamb0)\(X_BA'*Y_BA + prior.Lamb0*BA0);
+    PsiQ = prior.Psi0 + (Y_BA - X_BA*BAn)'*(Y_BA - X_BA*BAn) +...
+        (BAn - BA0)'*prior.Lamb0*(BAn - BA0);
+    nuQ = T-1 + prior.nu0;
+    if active;theta_b.Q(k,k) = iwishrnd(PsiQ,nuQ);end
+    
+    % (6) update b_fit & A_fit
+    Lambn = X_BA'*X_BA + prior.Lamb0;
+    BAsamp = mvnrnd(BAn(:), kron(theta_b.Q(k,k), inv(Lambn)))';
+    if active
+        theta_b.b(k,:) = BAsamp(1);
+        theta_b.A(k,:) = BAsamp(2:end);
+    end
 end
-
-% logLam = [ones(N_tmp,1) theta_b.C(obsIdx,:)]*[theta_b.d ;theta_b.X];
-
-% (6) transformation
-% a. X'*X = diagonal
-[V,~] = eig(theta_b.X*theta_b.X');
-M = V';
-
-
-
-
-M = diag(sign(diag(M)))*M;
-
-theta_b.X = M*theta_b.X;
-theta_b.C = theta_b.C*M';
-
-
-
-
-
-% [U,~] = schur(theta_b.A(2:end,2:end));
-% U = diag(sign(theta_b.b(2:end)))*U;
-% M = blkdiag(1, U');
-% theta_b.A = M*theta_b.A*M';
-% theta_b.b = M*theta_b.b;
-% theta_b.Q = M*theta_b.Q*M';
-
-% dXNew = M*dX;
-% theta_b.d = dXNew(1,:);
-% theta_b.X = dXNew(2:end,:);
-% theta_b.C = theta_b.C*U;
-
-% logLam2 = [ones(N_tmp,1) theta_b.C(obsIdx,:)]*[theta_b.d ;theta_b.X];
-% 
-% imagesc(logLam2-logLam)
-% colorbar
-
 
 
 end

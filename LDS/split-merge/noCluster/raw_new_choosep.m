@@ -78,30 +78,25 @@ Q0 = M*Q0*M';
 
 clusterPlot(Y, Lab)
 %% MCMC settings
-p=2;
 rng(1)
+pMax = 5;
 ng = 1000;
 
-% theta = (d x)
-prior.theta0 = zeros(1+p,1);
-prior.Q0 = eye(1+p);
-
-prior.muC0 = zeros(p,1);
-prior.SigC0 = eye(p);
-
-% prior.BA0 =[0 1]';
-% prior.Lamb0 = eye(2);
-% prior.Psi0 = 1e-2;
-% prior.nu0 = 1+2;
-
-
-prior.BA0 = [zeros(p+1,1) eye(p+1)]';
-prior.Lamb0 = eye(p + 2);
-prior.Psi0 = eye(p+1)*1e-4;
-prior.nu0 = p+3;
-
-for k = 1:nClus
-    THETA{1}(k) = sample_prior_new_chol(prior, N, T, p, false, Inf);
+for p = 1:pMax
+    
+    prior(p).theta0 = zeros(1+p,1);
+    prior(p).Q0 = eye(1+p);
+    prior(p).muC0 = zeros(p,1);
+    prior(p).SigC0 = eye(p);
+    
+    prior(p).BA0 =[0 1]';
+    prior(p).Lamb0 = eye(2);
+    prior(p).Psi0 = 1e-2;
+    prior(p).nu0 = 1+2;
+    
+    for k = 1:nClus
+        THETA{p,1}(k) = sample_prior_new(prior(p), N, T, p, false, Inf);
+    end
 end
 
 %%
@@ -123,64 +118,59 @@ for g = 2:ng
     else;disp("iter " + g + ", tuned");
     end % fix epsilon
     
-    THETA{g} = THETA{g-1};
-    for j = 1:nClus
-        obsIdx = find(Lab == j);
+    % pre-calculation to get approximate posterior
+    if(g<burnIn)
+        for p = 1:pMax
+            THETA{p,g} = THETA{p,g-1};
+            for j = 1:nClus
+                obsIdx = find(Lab == j);
+                
+                [THETA{p,g}(j), epsilon(obsIdx), log_pdf] =...
+                    update_cluster_new(Y(obsIdx,:),THETA{p,g-1}(j),THETA{p,g}(j),...
+                    prior(p), N, T, p, obsIdx, true, false, OPTDC(obsIdx));
+            end
+        end
+    elseif(g== burnIn)
+        for p=1:pMax
+            for j=1:nClus
+                dtmp = zeros
+                Xtmp = zeros(T, size(THETA, 2)-1, p);
+                Atmp = zeros(p+1,size(THETA, 2)-1);
+                btmp = zeros(p+1,size(THETA, 2)-1);
+                Ctmp = zeros(N,size(THETA, 2)-1, p);
+                
+                for gg = 2:size(THETA, 2)
+                    for k = 1:p
+                        Xtmp(:,gg-1,k) = THETA{p,gg}(j).X(k,:)';
+                    end
+                end
+                
+                MXtmp = zeros(T, p);
+                VXtmp = zeros(T,T,p);
+                for k = 1:p
+                    MXtmp(:,k) = mean(Xtmp(:,:,k), 2);
+                    VXtmp(:,:,k) = cov(Xtmp(:,:,k)');
+                end
+                
+                
+            end
+        end
         
-        [THETA{g}(j), epsilon(obsIdx), log_pdf] =...
-            update_cluster_new_chol(Y(obsIdx,:),THETA{g-1}(j),THETA{g}(j),...
-            prior, N, T, p, obsIdx, true, false, OPTDC(obsIdx), Y);
+    else
+        
     end
+    
+    
+    
+    
+    
+    
     
     if(g == burnIn)
         for k = 1:N
             OPTDC{k}.Madapt=0;OPTDC{k}.epsilon = epsilon(k);
         end
     end
-    
-    figure(1)
-    subplot(3,3,1)
-    plot(X(1:p,:)')
-    title('true')
-    subplot(3,3,2)
-    plot(THETA{g}(1).d)
-    title('d')
-    subplot(3,3,3)
-    plot(THETA{g}(1).X')
-    title('X')
-    
-    subplot(3,3,4)
-    plot(X(p+1:2*p,:)')
-    subplot(3,3,5)
-    plot(THETA{g}(2).d)
-    subplot(3,3,6)
-    plot(THETA{g}(2).X')
-    
-    subplot(3,3,7)
-    plot(X(2*p+1:3*p,:)')
-    subplot(3,3,8)
-    plot(THETA{g}(3).d)
-    subplot(3,3,9)
-    plot(THETA{g}(3).X')
-    
-    
-    figure(2)
-    subplot(1,2,1)
-    imagesc(exp(C_trans*X + d))
-    cLim = caxis;
-    title('true')
-    colorbar()
-    subplot(1,2,2)
-    fitMFR = zeros(N, T);
-    for k  = 1:3
-        N_tmp = sum(Lab == k);
-        fitMFR(Lab == k,:) = exp([ones(N_tmp,1) THETA{g}(k).C(Lab == k,:)]*...
-            [THETA{g}(k).d ;THETA{g}(k).X]);
-    end
-    imagesc(fitMFR)
-    set(gca,'CLim',cLim)
-    colorbar()
-    title('fit')
 end
 
 %% some plots
@@ -225,10 +215,6 @@ for g= 1:ng
     end
 end
 
-%
-plot(x50_1')
-plot(x50_2')
-plot(x50_3')
 
 dxMean1 = dxSum1/c;
 dxMean2 = dxSum2/c;
@@ -298,8 +284,6 @@ end
 
 plot(dtrace_all)
 plot(Xtrace(1,:))
-plot(Xtrace(2,:))
-plot(Xtrace(3,:))
 
 
 

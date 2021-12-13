@@ -89,19 +89,13 @@ prior.Q0 = eye(1+p);
 prior.muC0 = zeros(p,1);
 prior.SigC0 = eye(p);
 
-% prior.BA0 =[0 1]';
-% prior.Lamb0 = eye(2);
-% prior.Psi0 = 1e-2;
-% prior.nu0 = 1+2;
-
-
 prior.BA0 = [zeros(p+1,1) eye(p+1)]';
 prior.Lamb0 = eye(p + 2);
-prior.Psi0 = eye(p+1)*1e-4;
-prior.nu0 = p+3;
+prior.Psi0 = 1e-4;
+prior.nu0 = 1+2;
 
 for k = 1:nClus
-    THETA{1}(k) = sample_prior_new_chol(prior, N, T, p, false, Inf);
+    THETA{1}(k) = sample_prior_new_diagQ(prior, N, T, p, false, Inf);
 end
 
 %%
@@ -128,7 +122,7 @@ for g = 2:ng
         obsIdx = find(Lab == j);
         
         [THETA{g}(j), epsilon(obsIdx), log_pdf] =...
-            update_cluster_new_chol(Y(obsIdx,:),THETA{g-1}(j),THETA{g}(j),...
+            update_cluster_new_diagQ(Y(obsIdx,:),THETA{g-1}(j),THETA{g}(j),...
             prior, N, T, p, obsIdx, true, false, OPTDC(obsIdx), Y);
     end
     
@@ -225,10 +219,6 @@ for g= 1:ng
     end
 end
 
-%
-plot(x50_1')
-plot(x50_2')
-plot(x50_3')
 
 dxMean1 = dxSum1/c;
 dxMean2 = dxSum2/c;
