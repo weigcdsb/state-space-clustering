@@ -95,11 +95,87 @@ for p = 1:pMax
     prior(p).nu0 = 1+2;
     
     for k = 1:nClus
-        THETA{p,1}(k) = sample_prior_new(prior(p), N, T, p, false, Inf);
+        Ntmp = sum(Lab == k);
+        THETApre{p,1}(k) = sample_prior_new2(prior(p), Ntmp, T, p, false, Inf);
     end
 end
 
-%%
+%% preRun
+for k = 1:N
+    optdc.M=1;
+    optdc.Madapt=0;
+    OPTDC{k} = optdc;
+end
+nPre = 40;
+epsilon = 0.01*ones(N,1);
+
+for g = 2:nPre
+    disp("iter " + g)
+    
+    % pre-calculation to get approximate posterior
+    for p = 1:pMax
+        THETApre{p,g} = THETApre{p,g-1};
+        for j = 1:nClus
+            obsIdx = find(Lab == j);
+            
+            [THETApre{p,g}(j), epsilon(obsIdx), ~] =...
+                update_cluster_new2(Y(obsIdx,:),...
+                THETApre{p,g-1}(j),THETApre{p,g}(j),...
+                prior(p), T, p, obsIdx, true, false, OPTDC(obsIdx));
+        end
+    end
+end
+
+%% calculate approximated mean & variance, by pre-samples
+for p=1:pMax
+    for j=1:nClus
+        
+        idxtmp = find(Lab == j);
+        Ntmp = length(idxtmp);
+        
+        dtmp = zeros(T, size(THETApre, 2)-1);
+        Xtmp = zeros(T, size(THETApre, 2)-1, p);
+        Ctmp = zeros(Ntmp,size(THETApre, 2)-1, p);
+        Atmp = zeros(p+1,size(THETApre, 2)-1);
+        btmp = zeros(p+1,size(THETApre, 2)-1);
+        Qtmp = zeros(p+1,size(THETApre, 2)-1);
+        
+        for gg = 2:size(THETApre, 2)
+            dtmp(:,gg-1) = THETApre{p,gg}(j).d;
+            Atmp(:,gg-1) = diag(THETApre{p,gg}(j).A);
+            btmp(:,gg-1) = THETApre{p,gg}(j).b;
+            Qtmp(:,gg-1) = diag(THETApre{p,gg}(j).Q);
+            
+            for k = 1:p
+                Xtmp(:,gg-1,k) = THETApre{p,gg}(j).X(k,:)';
+                Ctmp(:,gg-1,k) = THETApre{p,gg}(j).C(:,k);
+            end
+        end
+        
+        Qtran{p}(j).Md = mean(dtmp, 2);Qtran{p}(j).Vd = cov(dtmp');
+        Qtran{p}(j).MX = zeros(T, p);Qtran{p}(j).VX = zeros(T,T,p);
+        Qtran{p}(j).MC = zeros(Ntmp,p);Qtran{p}(j).VC = zeros(Ntmp,Ntmp,p);
+        Qtran{p}(j).MA = mean(Atmp, 2);Qtran{p}(j).VA = cov(Atmp');
+        Qtran{p}(j).Mb = mean(btmp, 2);Qtran{p}(j).Vb = cov(btmp');
+        Qtran{p}(j).MQ = mean(Qtmp, 2);Qtran{p}(j).VQ = cov(Qtmp');
+        for k = 1:p
+            Qtran{p}(j).MX(:,k) = mean(Xtmp(:,:,k), 2);
+            VXtmp = cov(Xtmp(:,:,k)');
+            Qtran{p}(j).VX(:,:,k) = VXtmp;
+            
+            % perturbation of C
+            Ctmp2 = Ctmp(:,:,k);
+            idx0 = find(var(Ctmp2,0,2) <1e-6);
+            Ctmp2(idx0,:) = Ctmp2(idx0,:) +...
+                1e-4*randn(length(idx0), size(Ctmp2,2));
+            Qtran{p}(j).MC(:,k) = mean(Ctmp2,2);
+            VCtmp = cov(Ctmp2');
+            Qtran{p}(j).VC(:,:,k) = VCtmp;
+        end
+    end
+end
+
+%% RJMCMC
 for k = 1:N
     optdc.M=1;
     optdc.Madapt=0;
@@ -108,6 +184,14 @@ end
 
 burnIn = 10;
 epsilon = 0.01*ones(N,1);
+
+pFit = zeros(nClus,ng, 1);
+pFit(:,1) = ones(3,1);
+
+for j = 1:nClus
+    THETA{1}(j) = THETApre{1,nPre}(j);
+end
+
 
 for g = 2:ng
     
@@ -118,53 +202,91 @@ for g = 2:ng
     else;disp("iter " + g + ", tuned");
     end % fix epsilon
     
-    % pre-calculation to get approximate posterior
-    if(g<burnIn)
-        for p = 1:pMax
-            THETA{p,g} = THETA{p,g-1};
-            for j = 1:nClus
-                obsIdx = find(Lab == j);
-                
-                [THETA{p,g}(j), epsilon(obsIdx), log_pdf] =...
-                    update_cluster_new(Y(obsIdx,:),THETA{p,g-1}(j),THETA{p,g}(j),...
-                    prior(p), N, T, p, obsIdx, true, false, OPTDC(obsIdx));
-            end
-        end
-    elseif(g== burnIn)
-        for p=1:pMax
-            for j=1:nClus
-                dtmp = zeros
-                Xtmp = zeros(T, size(THETA, 2)-1, p);
-                Atmp = zeros(p+1,size(THETA, 2)-1);
-                btmp = zeros(p+1,size(THETA, 2)-1);
-                Ctmp = zeros(N,size(THETA, 2)-1, p);
-                
-                for gg = 2:size(THETA, 2)
-                    for k = 1:p
-                        Xtmp(:,gg-1,k) = THETA{p,gg}(j).X(k,:)';
-                    end
-                end
-                
-                MXtmp = zeros(T, p);
-                VXtmp = zeros(T,T,p);
-                for k = 1:p
-                    MXtmp(:,k) = mean(Xtmp(:,:,k), 2);
-                    VXtmp(:,:,k) = cov(Xtmp(:,:,k)');
-                end
-                
-                
-            end
+    
+    for j = 1:nClus
+        obsIdx = find(Lab == j);
+        Ntmp = length(obsIdx);
+        
+        % propose p
+        if(pFit(j,g-1) == 1)
+            pStar = pFit(j,g-1) + 1;
+            ljStar = log(1);
+            ljRev = log(0.5);
+        elseif(pFit(j,g-1) == pMax)
+            pStar = pFit(j,g-1) - 1;
+            ljStar = log(1);
+            ljRev = log(0.5);
+        else
+            pStar = pFit(j,g-1) + randsample([-1 1],1);
+            ljStar = log(0.5);
+            ljRev = log(0.5);
         end
         
-    else
+        THETAstar.d = mvnrnd(Qtran{pStar}(j).Md, 0.81*Qtran{pStar}(j).Vd)';
+        THETAstar.X = zeros(T, pStar);
+        THETAstar.C = zeros(Ntmp, pStar);
+        THETAstar.A = zeros(pStar+1);
+        THETAstar.b = zeros(pStar+1,1);
+        THETAstar.Q = zeros(pStar+1);
+        
+        THETAstar.A(1,1) = normrnd(Qtran{pStar}(j).MA(1),...
+            0.81*Qtran{pStar}(j).VA(1,1));
+        THETAstar.b(1) = normrnd(Qtran{pStar}(j).Mb(1),...
+            0.81*Qtran{pStar}(j).Vb(1,1));
+        THETAstar.Q(1,1) = 1/gamrnd(1.6, 1/(1.6*Qtran{pStar}(j).MQ(1)));
+        
+        for pp = 1:pStar
+            THETAstar.X(:,pp) = mvnrnd(Qtran{pStar}(j).MX(:,pp),...
+                0.81*Qtran{pStar}(j).VX(:,:,pp))';
+            THETAstar.C(:,pp) = mvnrnd(Qtran{pStar}(j).MC(:,pp),...
+                0.81*Qtran{pStar}(j).VC(:,:,pp))';
+            THETAstar.A(pp+1,pp+1) = normrnd(Qtran{pStar}(j).MA(pp+1),...
+            0.81*Qtran{pStar}(j).VA(pp+1,pp+1));
+            THETAstar.b(pp+1) = normrnd(Qtran{pStar}(j).Mb(pp+1),...
+            0.81*Qtran{pStar}(j).Vb(pp+1,pp+1));
+            THETAstar.Q(pp+1,pp+1) = 1/gamrnd(1.6, 1/(1.6*Qtran{pStar}(j).MQ(pp+1)));
+        end
+        
+        % MH ratio
+        lpdfStar = sum(log(poisspdf(Y(obsIdx,:),...
+            exp([ones(Ntmp,1) THETAstar.C]*...
+            [THETAstar.d' ;THETAstar.X']))),'all');
+        lPriorStar = logPrior(THETAstar.d,THETAstar.X,THETAstar.C,...
+            THETAstar.b,THETAstar.A,THETAstar.Q,prior(pStar));
+        lq = logQ(THETA{g-1}(j).d',THETA{g-1}(j).X',THETA{g-1}(j).C,...
+            THETA{g-1}(j).b,THETA{g-1}(j).A,THETA{g-1}(j).Q,Qtran{pFit(j,g-1)}(j));
+        
+        lpdf = sum(log(poisspdf(Y(obsIdx,:),...
+            exp([ones(Ntmp,1) THETA{g-1}(j).C]*...
+            [THETA{g-1}(j).d ;THETA{g-1}(j).X]))),'all');
+        lPrior = logPrior(THETA{g-1}(j).d',THETA{g-1}(j).X',...
+            THETA{g-1}(j).C,...
+            THETA{g-1}(j).b,THETA{g-1}(j).A,THETA{g-1}(j).Q,prior(pFit(j,g-1)));
+        lqStar = logQ(THETAstar.d,THETAstar.X,THETAstar.C,...
+            THETAstar.b,THETAstar.A,THETAstar.Q,Qtran{pStar}(j));
+        
+        log_alph = lpdfStar + lPriorStar + lq + ljStar-...
+            (lpdf + lPrior + lqStar + ljRev);
+        
+        if rand < min(1, exp(log_alph))
+            pFit(j,g) = pStar;
+            % TODO...
+            THETAstar.d = THETAstar.d';
+            THETAstar.X = THETAstar.X';
+            THETA{g}(j) = THETAstar;
+        else
+            pFit(j,g) = pFit(j,g-1);
+            % TODO...
+            % sample again...
+            
+            [THETA{g}(j), epsilon(obsIdx), ~] =...
+            update_cluster_new2(Y(obsIdx,:),THETA{g-1}(j),THETA{g-1}(j),...
+            prior(pFit(j,g)), T, pFit(j,g), obsIdx, true, false, OPTDC(obsIdx));
+        end
         
     end
     
-    
-    
-    
-    
-    
+    disp(pFit(:,g))
     
     if(g == burnIn)
         for k = 1:N
@@ -172,119 +294,4 @@ for g = 2:ng
         end
     end
 end
-
-%% some plots
-
-dSum1 = zeros(1,T);
-dSum2 = zeros(1,T);
-dSum3 = zeros(1,T);
-xSum1 = zeros(p,T);
-xSum2 = zeros(p,T);
-xSum3 = zeros(p,T);
-
-dxSum1 = zeros(p+1,T);
-dxSum2 = zeros(p+1,T);
-dxSum3 = zeros(p+1,T);
-
-
-x50_1 = zeros(p, ng);
-x50_2 = zeros(p, ng);
-x50_3 = zeros(p, ng);
-
-
-c = 0;
-for g= 1:ng
-    
-    x50_1(:, g) = THETA{g}(1).X(:, T/2);
-    x50_2(:, g) = THETA{g}(2).X(:, T/2);
-    x50_3(:, g) = THETA{g}(3).X(:, T/2);
-    
-    if (g >= 500)
-        c= c+1;
-        dSum1 = dSum1 + THETA{g}(1).d;
-        dSum2 = dSum2 + THETA{g}(2).d;
-        dSum3 = dSum3 + THETA{g}(3).d;
-        
-        xSum1 = xSum1 + THETA{g}(1).X;
-        xSum2 = xSum2 + THETA{g}(2).X;
-        xSum3 = xSum3 + THETA{g}(3).X;
-        
-        dxSum1 = dxSum1 + [THETA{g}(1).d;THETA{g}(1).X];
-        dxSum2 = dxSum2 + [THETA{g}(2).d;THETA{g}(2).X];
-        dxSum3 = dxSum3 + [THETA{g}(3).d;THETA{g}(3).X];
-    end
-end
-
-
-dxMean1 = dxSum1/c;
-dxMean2 = dxSum2/c;
-dxMean3 = dxSum3/c;
-
-dxMean1 = dxMean1 - mean(dxMean1, 2);
-[dxMean1, ~] = mgson(dxMean1');
-
-dxMean2 = dxMean2 - mean(dxMean2, 2);
-[dxMean2, ~] = mgson(dxMean2');
-
-dxMean3 = dxMean3 - mean(dxMean3, 2);
-[dxMean3, ~] = mgson(dxMean3');
-
-
-figure(3)
-subplot(3,4,1)
-plot(X(id2id(1,2),:)')
-title('dX-trans: true')
-subplot(3,4,2)
-plot(dSum1'/c)
-title('d:fit')
-subplot(3,4,3)
-plot(xSum1'/c)
-title('X-raw:fit')
-subplot(3,4,4)
-plot(dxMean1)
-title('dX-trans:fit')
-
-subplot(3,4,5)
-plot(X(id2id(2,2),:)')
-subplot(3,4,6)
-plot(dSum2'/c)
-subplot(3,4,7)
-plot(xSum2'/c)
-subplot(3,4,8)
-plot(dxMean2)
-
-subplot(3,4,9)
-plot(X(id2id(3,2),:)')
-subplot(3,4,10)
-plot(dSum3'/c)
-subplot(3,4,11)
-plot(xSum3'/c)
-subplot(3,4,12)
-plot(dxMean3)
-
-
-% trace plot
-dtrace = zeros(nClus, ng);
-Xtrace = zeros(nClus, ng);
-dtrace_all = zeros(ng,1);
-Xtrace_all = zeros(ng,1);
-for g = 1:ng
-    
-    dTmp = zeros(nClus,T);
-    XTmp = zeros(p*nClus,T);
-    for k = 1:nClus
-        dTmp(k,:) = THETA{g}(k).d;
-        XTmp(id2id(k,p),:) = THETA{g}(k).X;
-        dtrace(k,g) = norm(THETA{g}(k).d);
-        Xtrace(k,g) = norm(THETA{g}(k).X, 'fro');
-    end
-    dtrace_all(g) = norm(dTmp, 'fro');
-    Xtrace_all(g) = norm(XTmp, 'fro');
-end
-
-plot(dtrace_all)
-plot(Xtrace(1,:))
-
-
-
 
