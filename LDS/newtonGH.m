@@ -1,4 +1,4 @@
-function [x,fx,dfdx,xx] = newtonGH(fdf,x0,TolX,MaxIter)
+function [x,fx,dfdx,xx,eoi] = newtonGH(fdf,x0,TolX,MaxIter)
 
 TolFun=eps;
 xx(:,1) = x0;
@@ -27,6 +27,7 @@ for k = 1:MaxIter
 end
 warning('on');
 
+eoi = k;
 x = xx(:,k + 1);
 dfdx = dh{2};
 if(k == MaxIter)

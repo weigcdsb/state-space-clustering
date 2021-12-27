@@ -13,26 +13,26 @@ Lab = repelem(1:nClus, n);
 pLab = repelem(1:nClus, p);
 
 d = randn(n*nClus,1)*0;
-C_trans = zeros(N, p*nClus);
-C = zeros(N, p);
+d(1:10) = d(1:10) + 1;
+C_trans = zeros(n*nClus, p*nClus);
 for k = 1:length(Lab)
-    C(k,:) = 2*repmat(sum(Lab(1:k)==Lab(k))/sum(Lab==Lab(k)),1,2)+[-2 1];
-    C_trans(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = C(k,:);
+    C_trans(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) =...
+        sum(Lab(1:k)==Lab(k))/sum(Lab==Lab(k))+[-1 2];
 end
 
 X = zeros(p*nClus, T);
 x0 = zeros(p*nClus, 1);
-Q0 = eye(nClus*p)*1e-2;
+Q0 = eye(nClus*p);
 X(:,1) = mvnrnd(x0, Q0)';
 
-b1 = ones(p,1)*0;
-b2 = ones(p,1)*0;
-b3 = ones(p,1)*0;
+b1 = randn(p, 1)*1e-3;
+b2 = randn(p, 1)*1e-3;
+b3 = randn(p, 1)*1e-4;
 b = [b1;b2;b3];
 
 Q1 = 1e-3*eye(p);
-Q2 = 1e-3*eye(p);
-Q3 = 1e-3*eye(p);
+Q2 = 1e-4*eye(p);
+Q3 = 1e-5*eye(p);
 Q = blkdiag(Q1, Q2, Q3);
 
 %
@@ -42,7 +42,8 @@ while any(imag(eig(A))==0)
     A = A-diag(diag(A));
     A(squareform(pdist(pLab'))==0)=0;
     A = A./sqrt(sum((A-diag(diag(A))).^2,2))*0.1;
-    A = A+eye(size(Q,1))*0.92;
+    %     A = A+eye(size(Q,1))*0.92;
+    A = A + diag(randn(nClus*p, 1)*1e-1 + 0.92);
 end
 
 % let's generate lambda
@@ -55,10 +56,7 @@ for t=2:T
 end
 
 Y = poissrnd(exp(logLam));
-clusterPlot(Y, Lab)
 
-% X_jX_j' = I
-% X' = X*'R --> inv(R')X = X*
 gtmp = -mean(X, 2);
 Mdiag = {};
 for l = unique(Lab)
@@ -78,25 +76,13 @@ b = M*b + g - (M*A/M)*g;
 Q = M*Q*M';
 Q0 = M*Q0*M';
 
-
-% diagonalize Q within each block
-M2 = zeros(nClus*p);
-for l = unique(Lab)
-    latid = id2id(l,p);
-    [M2(latid,latid),~] = eig(Q(latid, latid));
-end
-
-X = M2*X;
-x0 = M2*x0;
-C_trans = C_trans/M2;
-A = M2*A/M2;
-b = M2*b;
-Q = M2*Q*M2';
-Q0 = M2*Q0*M2';
-
+clusterPlot(Y, Lab)
 %%
-rng(1)
-nTrain = round(T*1/2);
+rng(1) % 2 3 4
+
+propTrain = 1; % 2/4, 3/4, 1
+
+nTrain = round(T*propTrain);
 Y_train = nan*Y;
 Y_test = nan*Y;
 for k = 1:N
@@ -113,11 +99,13 @@ clusterPlot(Y_test, Lab)
 
 %% MCMC settings
 
-nClus = 1;
-p=2*3-1;
-Lab = ones(1,N);
+% nClus = 1;
+% p=2*3-1;
+% Lab = ones(1,N);
 
-% p=1;
+nClus = 3;
+p = 1;
+Lab = repelem(1:nClus, n);
 rng(1)
 ng = 1000;
 
@@ -171,31 +159,6 @@ for g = 2:ng
         end
     end
     
-%     figure(1)
-%     subplot(3,3,1)
-%     plot(X(1:p,:)')
-%     title('true')
-%     subplot(3,3,2)
-%     plot(THETA{g}(1).d)
-%     title('d')
-%     subplot(3,3,3)
-%     plot(THETA{g}(1).X')
-%     title('X')
-%     
-%     subplot(3,3,4)
-%     plot(X(p+1:2*p,:)')
-%     subplot(3,3,5)
-%     plot(THETA{g}(2).d)
-%     subplot(3,3,6)
-%     plot(THETA{g}(2).X')
-%     
-%     subplot(3,3,7)
-%     plot(X(2*p+1:3*p,:)')
-%     subplot(3,3,8)
-%     plot(THETA{g}(3).d)
-%     subplot(3,3,9)
-%     plot(THETA{g}(3).X')
-    
     
     figure(2)
     subplot(1,2,1)
@@ -244,7 +207,7 @@ for k  = 1:nClus
 end
 imagesc(fitMFR)
 
-nansum(log(poisspdf(Y_test,fitMFR)), 'all')/nansum(Y_test, 'all')
+tl3 = nansum(log(poisspdf(Y_test,fitMFR)), 'all')/nansum(Y_test, 'all')
 
 
 

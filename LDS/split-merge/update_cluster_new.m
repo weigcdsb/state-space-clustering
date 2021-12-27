@@ -22,9 +22,9 @@ gradHess = @(vecdX) gradHessX(vecdX, zeros(N_tmp,1),...
     prior.theta0, prior.Q0, theta_a.Q, theta_a.A, theta_a.b, Y_tmp);
 
 dX = [theta_a.d;theta_a.X];
-[mudXvec,~,hess_tmp,~] = newtonGH(gradHess,dX(:),1e-6,1000);
+[mudXvec,~,hess_tmp,~, eoi] = newtonGH(gradHess,dX(:),1e-6,1000);
 
-if(sum(isnan(mudXvec)) ~= 0)
+if((sum(isnan(mudXvec)) ~= 0) || eoi == 1000)
     disp('use adaptive smoother initial')
     try
         dX_tmp = ppasmoo_poissexp_v2(Y_tmp,[ones(N_tmp,1) theta_a.C(obsIdx,:)],...
@@ -38,9 +38,13 @@ end
 
 % use Cholesky decomposition to sample efficiently
 if active
-    RdX = chol(-hess_tmp,'lower'); % sparse
-    zdX = randn(length(mudXvec), 1) + RdX'*mudXvec;
-    dXsamp = RdX'\zdX;
+    try
+        RdX = chol(-hess_tmp,'lower'); % sparse
+        zdX = randn(length(mudXvec), 1) + RdX'*mudXvec;
+        dXsamp = RdX'\zdX;
+    catch
+        dXsamp = mudXvec;
+    end
     dXsamp_trans = reshape(dXsamp,[], T);
     
     theta_b.d = dXsamp_trans(1,:);
@@ -122,6 +126,25 @@ if active
 %             [muc,~,niSigc,~] = newton(derc,hessc,zeros(size(c0)),1e-8,1000);
 %         end
 %         
+%         
+%         R = chol(-niSigc,'lower'); % sparse
+%         z = randn(length(c0), 1) + R'*c0;
+%         cStar = R'\z;
+%         
+%         % lhr
+%         lhr = sum(log(poisspdf(Y_tmp(i,:)', lamC(cStar)))) -...
+%             sum(log(poisspdf(Y_tmp(i,:)', lamC(c0)))) +...
+%             log(mvnpdf(cStar, prior.muC0, prior.SigC0)) -...
+%             log(mvnpdf(c0, prior.muC0, prior.SigC0));
+%         
+%         if(log(rand(1)) < lhr)
+%             theta_b.C(obsIdx(i),:) = cStar;
+%         else
+%             theta_b.C(obsIdx(i),:) = c0;
+%         end
+%         
+        
+        
 %         Rc = chol(-niSigc,'lower'); % sparse
 %         zc = randn(length(muc), 1) + Rc'*muc;
 %         theta_b.C(obsIdx(i),:) = Rc'\zc;

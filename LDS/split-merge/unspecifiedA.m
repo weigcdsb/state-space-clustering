@@ -1,5 +1,5 @@
 rng(123)
-n = 30;
+n = 20;
 nClus = 3;
 N = n*nClus;
 p = 2;
@@ -10,8 +10,9 @@ Lab = repelem(1:nClus, n);
 d = randn(n*nClus,1)/5;
 C_trans = zeros(n*nClus, p*nClus);
 for k = 1:length(Lab)
-    C_trans(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = sum(Lab(1:k)==Lab(k))/sum(Lab==Lab(k));
+    C_trans(k, ((Lab(k)-1)*p+1):(Lab(k)*p)) = (sum(Lab(1:k)==Lab(k))/sum(Lab==Lab(k)) + [-1.5 0])*0.5;
 end
+
 
 X = zeros(p*nClus, T);
 x0 = [1.2 1.2 0.5 0.5 1 1]'*10*0;

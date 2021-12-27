@@ -80,7 +80,7 @@ clusterPlot(Y, Lab)
 %% MCMC settings
 p=1;
 rng(1)
-ng = 1000;
+ng = 10000;
 
 % theta = (d x)
 prior.theta0 = zeros(1+p,1);
@@ -99,6 +99,12 @@ for k = 1:nClus
 end
 
 %%
+Ctrace = zeros(nClus, ng);
+for k = 1:nClus
+   Ctrace(k,1) = norm(THETA{1}(k).C, 'fro'); 
+end
+
+
 for k = 1:N
     optdc.M=1;
     optdc.Madapt=0;
@@ -132,30 +138,38 @@ for g = 2:ng
         end
     end
     
+    for k = 1:nClus
+        Ctrace(k,g) = norm(THETA{g}(k).C, 'fro');
+    end
+    
     figure(1)
-    subplot(3,3,1)
-    plot(X(1:p,:)')
-    title('true')
-    subplot(3,3,2)
-    plot(THETA{g}(1).d)
-    title('d')
-    subplot(3,3,3)
-    plot(THETA{g}(1).X')
-    title('X')
+    plot(Ctrace(:,1:g)')
     
-    subplot(3,3,4)
-    plot(X(p+1:2*p,:)')
-    subplot(3,3,5)
-    plot(THETA{g}(2).d)
-    subplot(3,3,6)
-    plot(THETA{g}(2).X')
     
-    subplot(3,3,7)
-    plot(X(2*p+1:3*p,:)')
-    subplot(3,3,8)
-    plot(THETA{g}(3).d)
-    subplot(3,3,9)
-    plot(THETA{g}(3).X')
+    
+%     subplot(3,3,1)
+%     plot(X(1:p,:)')
+%     title('true')
+%     subplot(3,3,2)
+%     plot(THETA{g}(1).d)
+%     title('d')
+%     subplot(3,3,3)
+%     plot(THETA{g}(1).X')
+%     title('X')
+%     
+%     subplot(3,3,4)
+%     plot(X(p+1:2*p,:)')
+%     subplot(3,3,5)
+%     plot(THETA{g}(2).d)
+%     subplot(3,3,6)
+%     plot(THETA{g}(2).X')
+%     
+%     subplot(3,3,7)
+%     plot(X(2*p+1:3*p,:)')
+%     subplot(3,3,8)
+%     plot(THETA{g}(3).d)
+%     subplot(3,3,9)
+%     plot(THETA{g}(3).X')
     
     
     figure(2)
@@ -270,25 +284,44 @@ plot(dxMean3)
 % trace plot
 dtrace = zeros(nClus, ng);
 Xtrace = zeros(nClus, ng);
+Ctrace = zeros(nClus, ng);
+
 dtrace_all = zeros(ng,1);
 Xtrace_all = zeros(ng,1);
+Ctrace_all = zeros(ng,1);
+
 for g = 1:ng
     
     dTmp = zeros(nClus,T);
     XTmp = zeros(p*nClus,T);
+    
     for k = 1:nClus
         dTmp(k,:) = THETA{g}(k).d;
         XTmp(id2id(k,p),:) = THETA{g}(k).X;
         dtrace(k,g) = norm(THETA{g}(k).d);
         Xtrace(k,g) = norm(THETA{g}(k).X, 'fro');
+        Ctrace(k,g) = norm(THETA{g}(k).C, 'fro');
+        
     end
     dtrace_all(g) = norm(dTmp, 'fro');
     Xtrace_all(g) = norm(XTmp, 'fro');
 end
 
-plot(dtrace_all)
-plot(Xtrace(1,:))
+gSub = [1:4000 6000:ng];
+% gSub = 1:1000;
 
+ngSub = length(gSub);
+subplot(3,1,1)
+plot(dtrace(:,gSub)')
+ylim([0 60])
+xlim([0 ngSub])
+subplot(3,1,2)
+plot(Xtrace(:,gSub)')
+ylim([0 20])
+xlim([0 ngSub])
+subplot(3,1,3)
+plot(Ctrace(:,gSub)')
+xlim([0 ngSub])
 
 
 

@@ -1,13 +1,15 @@
 addpath(genpath('C:\Users\gaw19004\Documents\GitHub\state-space-clustering'));
+addpath(genpath('C:\Users\gaw19004\Documents\GitHub\data'));
 % addpath(genpath('D:\github\state-space-clustering'));
 
 %%
+
 load('719161530_spikes.mat') % spike times for each unit
 tab = readtable('719161530_units.csv'); % meta-data
 % tab.ecephys_structure_acronym % names of anatomical structures for each single-unit
 subset = find(tab.snr>3 & cellfun(@length,Tlist')>1000);
 idx50 = find(ismember(string(tab.ecephys_structure_acronym),...
-    ["VISp" "VPM" "SUB" "VISam"])); % LP
+    ["VISam" "LP" "VPM"]));
 
 % "CA1" "LGd" "POL" "VISp" "VISl"
 % VISam
@@ -39,14 +41,21 @@ N = length(subset2);
 lab_all_str = string(tab.ecephys_structure_acronym);
 [lab_num_sub2, clusIdx] = findgroups(lab_all_str(subset2));
 
-Tbase = 3000;
-T = 4000;
-dt = 0.5;
+% spontaneous
+% Tstart = 29.8301073815904; Tend = 89.89682738;
+% Tstart =  1001.89177167499; Tend = 1290.88309738159;
+
+% drifting_gratings 
+Tstart = 1591.13385738159; Tend = 2190.63454310612;
+
+dt = 0.1;
+T = min(floor((Tend-Tstart)/dt), 1000);
+% T = floor((Tend-Tstart)/dt);
 Yraw = zeros(N, T);
 for n = 1:N
     for k = 1:T
-        Yraw(n,k) = sum((Tlist{subset2(n)} > (dt*(k-1)) + Tbase) &...
-            (Tlist{subset2(n)} < (dt*k + Tbase)));
+        Yraw(n,k) = sum((Tlist{subset2(n)} > (dt*(k-1)) + Tstart) &...
+            (Tlist{subset2(n)} < (dt*k + Tstart)));
     end
 end
 
@@ -60,19 +69,16 @@ figure(2)
 imagesc(Y)
 colorbar()
 
-clear Tlist
+% clear Tlist
 
 %%
-p = 4;
-%%
-% Y is the only observation...
-% some functions
 lAbsGam = @(x) log(abs(gamma(x)));
 
 %% MCMC settings
 rng(1)
-ng = 3000;
-t_max = 30;
+p=1;
+ng = 1000;
+t_max = N;
 
 % this is the DP setting, replace to MFM later...
 % DPMM = true;
@@ -83,25 +89,15 @@ t_max = 30;
 % a = 1;
 % b = 0;
 
-% MFM: 
+
+% MFM:
 DPMM = false;
 alpha_random = false;
 MFMgamma = 1;
 % K ~ Geometric(r)
-% determine r: use CDF cutoff
-% F(k) = 1-(1-r)^k
-% let F(N/3) = 0.95
-r = 1 - (1-0.95)^(1/8);
-% r = 0.6;
+r = 0.2;
 log_pk = @(k) log(r) + (k-1)*log(1-r);
-% K-1 ~ Poisson(lam)
-% lam = 1;
-% log_pk = @(k) log(poisspdf(k-1, lam));
-% pk = zeros(N,1);
-% for gg = 1:N
-%    pk(gg) = exp(log_pk(gg)); 
-% end
-% plot(pk)
+
 a = MFMgamma;
 b = MFMgamma;
 log_v = MFMcoeff(log_pk, MFMgamma, N, t_max + 1);
@@ -109,20 +105,16 @@ log_v = MFMcoeff(log_pk, MFMgamma, N, t_max + 1);
 logNb = log((1:N) + b);
 
 % priors...
-% prior.Q0 = eye(p)*1e-2;
-prior.Q0 = eye(p)*0.5^2;
-prior.mux00 = zeros(p, 1);
-prior.Sigx00 = eye(p);
+% theta = (d x)
+prior.theta0 = zeros(1+p,1);
+prior.Q0 = eye(1+p);
 
-prior.deltadc0 = [0;ones(p,1)];
-prior.Taudc0 = eye(p+1);
-
-prior.Psidc0 = eye(p+1)*1e-2;
-prior.nudc0 = p+1+2;
+prior.muC0 = zeros(p,1);
+prior.SigC0 = eye(p);
 
 prior.BA0 =[0 1]';
 prior.Lamb0 = eye(2);
-prior.Psi0 = 1e-2;
+prior.Psi0 = 1e-3;
 prior.nu0 = 1+2;
 
 % pre-allocation
@@ -136,16 +128,8 @@ numClus_fit(1,1) = N;
 actList = zeros(t_max+3,1); actList(1) = 1;
 c_next = 2;
 
-% t_fit(1) = 4;
-% Z_fit(:,1) = randsample(4, N, true);
-% numClus_fit(1:4,1) = histcounts(Z_fit(:,1));
-% actList = zeros(t_max+3,1);
-% actList(1:4) = 1:4;
-% c_next = 5;
-
-
-for k = 1:t_max+3
-    THETA{1}(k) = sample_prior2(prior, N, T, p, true);
+for k = 1:t_fit(1)
+    THETA{1}(k) = sample_prior_new(prior, N, T, p, true, Inf);
 end
 
 %% MCMC
@@ -156,14 +140,14 @@ for k = 1:N
     OPTDC{k} = optdc;
 end
 
-burnIn = 1000;
+burnIn = round(ng/10);
 epsilon = 0.01*ones(N,1);
 
+simMat = zeros(N,N);
+for k = 1:size(simMat, 1)
+    simMat(k,:) = simMat(k,:) + (Z_fit(k, 1) == Z_fit(:, 1))';
+end
 
-n_split = 6;
-n_merge = 6;
-zs = ones(N,1);
-S = zeros(N,1);
 
 for g = 2:ng
     
@@ -174,15 +158,14 @@ for g = 2:ng
     else;disp("iter " + g + ", tuned");
     end % fix epsilon
     
-    % (1) update parameters
     THETA{g} = THETA{g-1};
     for j = 1:t_fit(g-1)
         c = actList(j);
         obsIdx = find(Z_fit(:,g-1) == c);
         
         [THETA{g}(c), epsilon(obsIdx), log_pdf] =...
-            update_cluster(Y(obsIdx,:),THETA{g-1}(c),THETA{g}(c),...
-            prior, N, T, p, obsIdx, true, false, OPTDC(obsIdx));
+            update_cluster_new(Y(obsIdx,:),THETA{g-1}(c),THETA{g}(c),...
+            prior, N, T, p, obsIdx, true, false, OPTDC(obsIdx), Y);
     end
     
     if(g == burnIn)
@@ -218,7 +201,7 @@ for g = 2:ng
         numClus_fit(c,g) = numClus_fit(c,g) - 1;
         if(numClus_fit(c,g) > 0)
             c_prop = c_next;
-            THETA{g}(c_prop) = sample_prior2(prior, N, T, p, true);
+            THETA{g}(c_prop) = sample_prior_new(prior, N, T, p, true, Inf);
         else
             c_prop = c;
             actList = ordered_remove(c, actList, t_fit(g));
@@ -229,13 +212,13 @@ for g = 2:ng
         log_p = zeros(t_fit(g)+1,1);
         for j = 1:t_fit(g)
             cc = actList(j);
-            lamTmp = exp(THETA{g}(cc).C(ii,:)*THETA{g}(cc).X + THETA{g}(cc).d(ii));
-            log_p(j) = logNb(numClus_fit(cc,g)) + sum(log(poisspdf(Y(ii,:), lamTmp)));
+            logMar = poiLogMarg(Y(ii,:)', THETA{g}(cc).X', THETA{g}(cc).d');
+            log_p(j) = logNb(numClus_fit(cc,g)) + logMar;
         end
         
-        lamTmp_prop = exp(THETA{g}(c_prop).C(ii,:)*THETA{g}(c_prop).X + THETA{g}(c_prop).d(ii));
+        logMar = poiLogMarg(Y(ii,:)', THETA{g}(c_prop).X', THETA{g}(c_prop).d');
         log_p(t_fit(g)+1) = log_v(t_fit(g)+1)-log_v(t_fit(g)) +...
-            log(a) + sum(log(poisspdf(Y(ii,:), lamTmp_prop)));
+            log(a) + logMar;
         
         % (c) sample a new cluster for it
         j = randlogp(log_p, t_fit(g)+1);
@@ -254,91 +237,115 @@ for g = 2:ng
         numClus_fit(c,g) = numClus_fit(c,g) + 1;
     end
     
-    
-    % (2) split and merge
-%     if(g<burnIn) % useSplitMerge; g<burnIn;
-%         [Z_fit(:,g), actList, numClus_fit(:,g), t_fit(g), ~] =...
-%             splitMerge(Y, Z_fit(:,g), zs, S, THETA{g}, actList, N, T, p,...
-%             numClus_fit(:,g), t_fit(g), prior, a, b, log_v, n_split, n_merge, OPTDC);
-%         c_next = ordered_next(actList);
-%     end
-    
-    
     figure(2)
     clusterPlot(Y, Z_fit(:,g)')
     
+    
+    figure(3)
+    for k = 1:size(simMat, 1)
+        simMat(k,:) = simMat(k,:) + (Z_fit(k, g) == Z_fit(:, g))';
+    end
+    
+    imagesc(simMat/g)
+    colormap(flipud(hot))
+    colorbar()
+    
+    figure(4)
+    subplot(1,2,1)
+    imagesc(Y)
+    colorbar()
+    title('true')
+    subplot(1,2,2)
+    fitMFR = zeros(N, T);
+    for k  = 1:N
+        fitMFR(k,:) = exp([1 THETA{g}(Z_fit(k,g)).C(k,:)]*...
+            [THETA{g}(Z_fit(k,g)).d ;THETA{g}(Z_fit(k,g)).X]);
+    end
+    imagesc(fitMFR)
+    colorbar()
+    title('fit')
+    
+    
 end
 
-%% post-analysis
+%%
+figure(1)
 plot(t_fit)
+title('number of cluster')
 
+figure(2)
+zMax = max(Z_fit(:));
+Z_trace = Z_fit;
+Z_trace2 = Z_trace + 0.2*rand(N,1);
+hold on
+for k = 1:N
+    p(k)=plot(Z_trace2(k,:));
+    if Lab(k) == 1
+        set(p(k),'Color', 'r');
+    elseif Lab(k) == 2
+        set(p(k),'Color', 'g');
+    else
+        set(p(k),'Color', 'b');
+    end
+end
+hold off
+ylim([0 zMax+1])
+yticks(1:zMax)
+% xlim([0 10])
+clusLab = [];
+for c = 1:zMax
+    clusLab{c} = 'cluster ' + string(c);
+end
+yticklabels(clusLab)
+title('cluster trace for each neuron')
 
-idxMax = max(Z_fit((burnIn+1):end));
-
-countMat = zeros(length(unique(Lab)), idxMax, ng-burnIn);
-
-for k = 1:size(countMat, 3)
-    for l = 1:idxMax
-        idxTmp = find(Z_fit(:, k+burnIn) == l);
-        countMat(:,l,k) = histcounts(Lab(idxTmp), 1:5);
+% posterior similarity matrix
+figure(3)
+% idx = 500:ng;
+idx = round(g/2):g;
+simMat = zeros(N,N);
+for g = idx
+    for k = 1:size(simMat, 1)
+        simMat(k,:) = simMat(k,:) + (Z_fit(k, g) == Z_fit(:, g))';
     end
 end
 
-% countMat = zeros(idxMax, length(unique(Lab)), ng-burnIn);
-% for k = 1:size(countMat, 3)
-%     for l = Lab(:)'
-%         countMat(:,l,k) = histcounts(Z_fit(Lab == l, k+burnIn), 1:(idxMax+1));
-%     end
-% end
-
-% imagesc(mean(countMat, 3))
-% colorbar()
-
-
-
-
-% figure(1)
-% histogram(t_fit(burnIn:ng))
-
-numEach = histcounts(Lab);
-figure(2)
-meanCount = mean(countMat, 3);
-meanCount2 = meanCount(:, sum(meanCount, 1) > 0);
-[~, sortIdx] = sort(sum(meanCount2, 1), 'descend');
-plotMat = (diag(numEach))\meanCount2(:,sortIdx);
-imagesc(plotMat(:,[3 4 1 2 5 6]))
+imagesc(simMat/length(idx))
 colormap(flipud(hot))
-xlabel('cluster-model')
-ylabel('cluster-true')
-yticks(1:4)
-yticklabels(clusIdx)
 colorbar()
-title('true vs. fitted: proportion')
 
+figure(4)
+histogram(t_fit(idx))
 
-% figure(2)
-% meanCount = mean(countMat(:,:,(burnIn-1):(ng-1)), 3);
-% % imagesc(meanCount([1 2 3 7 6 4 5], :))
-% imagesc(meanCount([3 1 10 7 8 11 2 4 5 6 9], :))
-% colorbar()
-% ylabel('cluster-model')
-% xlabel('cluster-true')
-% title('fitted vs. true: neuron counts')
+figure(5)
+% sorted
+sortId = zeros(N,1);
+unUsed = 1:N;
+usedNum = 0;
 
-figure(3)
+while(sum(sortId > 0) < (N-1))
+    simMatTmp = simMat(unUsed,unUsed);
+    [sorted, idTmp] = sort(simMatTmp(1,:),'descend');
+    usedTmp = idTmp(sorted > min(sorted));
+    sortId((usedNum+1):(usedNum+length(usedTmp))) = unUsed(usedTmp);
+    unUsed = setdiff(unUsed, unUsed(usedTmp));
+    usedNum = usedNum + length(usedTmp);
+end
+sortId(end) = unUsed;
+
+% [~,sortId2] = sort(Z_fit(:,end));
+imagesc(simMat(sortId,sortId)/length(idx))
+colormap(flipud(hot))
+yticks(1:N)
+yticklabels('')
+xticks(1:N)
+xticklabels(Lab(sortId))
+colorbar()
+
+figure(6)
+subplot(1,2,1)
 imagesc(Y)
 colorbar()
-hold on
-numEach = histcounts(Lab);
-ytickPos = zeros(1, 4);
-for k = 1:4
-    yline(sum(numEach(1:k)), 'y--', 'LineWidth', 4);
-    ytickPos(k) = sum(numEach(1:(k-1))) + numEach(k)/2;
-end
-yticks(ytickPos)
-yticklabels(clusIdx)
-hold off
-title('spking counts')
-
-
-
+subplot(1,2,2)
+imagesc(Y(sortId,:))
+colorbar()
