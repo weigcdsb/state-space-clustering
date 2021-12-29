@@ -13,6 +13,6 @@ XX = diag(Xreg*Xreg');
 avec = XX.^(-1);
 bvec = XX.*exp(offset);
 probvec = 1./(1 + bvec);
-logMar =sum(log(nbinpdf(Yreg, avec, probvec)));
+logMar =nansum(log(nbinpdf(Yreg, avec, probvec)));
 
 end
