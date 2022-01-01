@@ -1,5 +1,5 @@
 
-plotFolder = 'C:\Users\gaw19004\Documents\GitHub\state-space-clustering\LDS\split-merge\noCluster\plots';
+plotFolder = 'C:\Users\gaw19004\Documents\GitHub\state-space-clustering\plots';
 cd(plotFolder)
 
 %%
@@ -270,9 +270,9 @@ saveas(clusLast, '5_sim30Last.png')
 
 FR20 = figure;
 % imagesc(exp(C_trans*X + d))
-imagesc(Y)
+imagesc(exp(C_trans*X + d))
 cLim = caxis;
-title('Spikes')
+title('Firing Rate')
 colorbar()
 set(gca,'FontSize',10, 'LineWidth', 1.5,'TickDir','out')
 box off
@@ -309,11 +309,157 @@ saveas(hist20, '8_FR20.svg')
 saveas(hist20, '8_FR20.png')
 
 
+
+numTrace = figure;
+plot(t_fit)
+title('number of cluster')
+
+set(numTrace,'PaperUnits','inches','PaperPosition',[0 0 3 3])
+saveas(numTrace, '9_numTrace.svg')
+saveas(numTrace, '9_numTrace.png')
+
+
 %% application...
 
+pixel_FR = figure;
+imagesc(Y)
+colorbar()
+hold on
+numEach = histcounts(Lab);
+nRegion = length(unique(Lab));
+ytickPos = zeros(1, nRegion);
+for k = 1:nRegion
+    yline(sum(numEach(1:k)), 'y--', 'LineWidth', 4);
+    ytickPos(k) = sum(numEach(1:(k-1))) + numEach(k)/2;
+end
+yticks(ytickPos)
+yticklabels(clusIdx)
+hold off
+title('spking counts')
+xlabel('T')
+set(gca,'FontSize',9, 'LineWidth', 1.5,'TickDir','out')
+box off
+
+set(pixel_FR,'PaperUnits','inches','PaperPosition',[0 0 4 3])
+saveas(pixel_FR, '13_pixel_FR.svg')
+saveas(pixel_FR, '13_pixel_FR.png')
 
 
+numTrace = figure;
+plot(t_fit)
+title('number of cluster')
+
+set(numTrace,'PaperUnits','inches','PaperPosition',[0 0 3 3])
+saveas(numTrace, '14_numTrace.svg')
+saveas(numTrace, '14_numTrace.png')
+
+idx = round(ng/2):ng;
+histPixel = figure;
+histogram(t_fit(idx),'Normalization','probability')
+
+set(histPixel,'PaperUnits','inches','PaperPosition',[0 0 3 3])
+saveas(histPixel, '15_hist.svg')
+saveas(histPixel, '15_hist.png')
 
 
+simPixel = figure;
+idx = round(g/2):g;
+simMat = zeros(N,N);
+for g = idx
+    for k = 1:size(simMat, 1)
+        simMat(k,:) = simMat(k,:) + (Z_fit(k, g) == Z_fit(:, g))';
+    end
+end
+
+imagesc(simMat/length(idx))
+colormap(flipud(hot))
+colorbar()
+xticks(1:N)
+xticklabels(Lab)
+
+
+set(simPixel,'PaperUnits','inches','PaperPosition',[0 0 4 3])
+saveas(simPixel, '16_simPixel.svg')
+saveas(simPixel, '16_simPixel.png')
+
+
+simSort = figure;
+% sorted
+sortId = zeros(N,1);
+unUsed = 1:N;
+usedNum = 0;
+
+while(sum(sortId > 0) < (N-1))
+    simMatTmp = simMat(unUsed,unUsed);
+    [sorted, idTmp] = sort(simMatTmp(1,:),'descend');
+    usedTmp = idTmp(sorted > min(sorted));
+    sortId((usedNum+1):(usedNum+length(usedTmp))) = unUsed(usedTmp);
+    unUsed = setdiff(unUsed, unUsed(usedTmp));
+    usedNum = usedNum + length(usedTmp);
+end
+sortId(end) = unUsed;
+
+% [~,sortId2] = sort(Z_fit(:,end));
+imagesc(simMat(sortId,sortId)/length(idx))
+colormap(flipud(hot))
+yticks(1:N)
+yticklabels('')
+xticks(1:N)
+xticklabels(Lab(sortId))
+colorbar()
+
+set(simSort,'PaperUnits','inches','PaperPosition',[0 0 4 3])
+saveas(simSort, '16_simPixelSort.svg')
+saveas(simSort, '16_simPixelSort.png')
+
+
+fitFR = figure;
+subplot(1,2,1)
+imagesc(Y)
+colorbar()
+title('true')
+subplot(1,2,2)
+idx = 900:1000;
+fitMFR = zeros(N, T);
+for g = idx
+    for k  = 1:N
+        fitMFR(k,:) = fitMFR(k,:) + exp([1 THETA{g}(Z_fit(k,g)).C(k,:)]*...
+            [THETA{g}(Z_fit(k,g)).d ;THETA{g}(Z_fit(k,g)).X]);
+    end
+end
+imagesc(fitMFR/length(idx))
+colorbar()
+title('fit-mean FR')
+
+
+set(fitFR,'PaperUnits','inches','PaperPosition',[0 0 4 3])
+saveas(fitFR, '16_fitFR.svg')
+saveas(fitFR, '16_fitFR.png')
+
+
+%%
+traceLLhd = figure;
+
+hold on
+plot(llhd_spk_test2(1:ng))
+plot(llhd_spk_test_sing2(1:ng))
+hold off
+legend('cluster-on','cluster-off')
+
+set(traceLLhd,'PaperUnits','inches','PaperPosition',[0 0 4 3])
+saveas(traceLLhd, '17_traceLLhd.svg')
+saveas(traceLLhd, '17_traceLLhd.png')
+
+%% speckle...
+
+bp = figure;
+boxplot([llhd_spk_test_3clus - llhd_spk_test_1clus;...
+    llhd_spk_test_3clus_half - llhd_spk_test_1clus_half],...
+    repelem(["3/4-train" "1/2-train"], nRep))
+ylabel('difference of held-out likelihood per spike')
+
+set(bp,'PaperUnits','inches','PaperPosition',[0 0 3 3])
+saveas(bp, '1_bp.svg')
+saveas(bp, '1_bp.png')
 
 

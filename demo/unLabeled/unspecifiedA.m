@@ -66,4 +66,8 @@ C_trans = C_trans/M;
 Q = M*Q*M';
 Q0 = M*Q0*M';
 
+imagesc(exp(C_trans*X + d))
+colorbar()
+
+
 
