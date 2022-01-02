@@ -75,7 +75,7 @@ colorbar()
 lAbsGam = @(x) log(abs(gamma(x)));
 rng(1)
 p=1;
-ng = 10000;
+ng = 20000;
 t_max = N;
 
 % this is the DP setting, replace to MFM later...
@@ -139,6 +139,11 @@ end
 
 burnIn = round(ng/10);
 epsilon = 0.01*ones(N,1);
+
+simMat = zeros(N,N);
+for k = 1:size(simMat, 1)
+    simMat(k,:) = simMat(k,:) + (Z_fit(k, 1) == Z_fit(:, 1))';
+end
 
 for g = 2:ng
     
@@ -229,7 +234,7 @@ for g = 2:ng
     end
     
     figure(2)
-    clusterPlot(Y_train, Z_fit(:,g)')
+    clusterPlot(Y, Z_fit(:,g)')
     
     
     figure(3)
@@ -243,7 +248,7 @@ for g = 2:ng
     
     figure(4)
     subplot(1,2,1)
-    imagesc(Y_train)
+    imagesc(Y)
     colorbar()
     title('true')
     subplot(1,2,2)

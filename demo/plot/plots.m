@@ -412,14 +412,12 @@ set(simSort,'PaperUnits','inches','PaperPosition',[0 0 4 3])
 saveas(simSort, '16_simPixelSort.svg')
 saveas(simSort, '16_simPixelSort.png')
 
-
 fitFR = figure;
 subplot(1,2,1)
 imagesc(Y)
 colorbar()
 title('true')
 subplot(1,2,2)
-idx = 900:1000;
 fitMFR = zeros(N, T);
 for g = idx
     for k  = 1:N
