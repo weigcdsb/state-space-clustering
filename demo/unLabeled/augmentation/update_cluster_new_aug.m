@@ -1,9 +1,9 @@
 function [theta_b, epsilonOut, log_pdf] =...
-    update_cluster_new(Y_tmp,theta_a,theta_b,...
+    update_cluster_new_aug(Y_tmp,theta_a,theta_b,...
     prior, N, T, p, obsIdx, active, density, OPTDC_tmp, Y)
 
 % for debug
-% c=j;
+% c=j; c = actList(j);
 % obsIdx = obsIdx;
 % Y_tmp = Y(obsIdx,:);
 % theta_a = THETA{g-1}(c);
@@ -15,10 +15,71 @@ function [theta_b, epsilonOut, log_pdf] =...
 N_tmp = size(Y_tmp, 1);
 log_pdf = NaN;
 
-% (1) update X_fit
+% (0) update C
+% the transition kernel for NUTS is symmetric --> no need for calculation
+epsilonOut = ones(N_tmp, 1)*0.01;
 
+if active
+    for i = 1:N_tmp
+        X_tmpC = theta_a.X';
+        
+        lamC = @(c) exp(theta_a.d' + X_tmpC*c);
+        
+        % use NUTS
+        lpdf = @(c) sum(log(poisspdf(Y_tmp(i,:)', lamC(c)))) +...
+            log(mvnpdf(c, prior.muC0, prior.SigC0));
+        glpdf = @(c) X_tmpC'*(Y_tmp(i,:)' - lamC(c)) - prior.SigC0\(c - prior.muC0);
+        
+        fg=@(dc_r) deal(lpdf(dc_r'), glpdf(dc_r')'); % log density and gradient
+        c0 = theta_a.C(obsIdx(i),:)';
+        
+        [c_NUTS, ~, diagn]=hmc_nuts(fg, c0',OPTDC_tmp{i});
+        epsilonOut(i) = diagn.opt.epsilonbar;
+        theta_b.C(obsIdx(i),:) = c_NUTS(end,:);
+        
+        % ues MH
+%         derc = @(c) X_tmpC'*(Y_tmp(i,:)' - lamC(c)) - prior.SigC0\(c - prior.muC0);
+%         hessc = @(c) -X_tmpC'*diag(lamC(c))*X_tmpC - inv(prior.SigC0);
+%         c0 = theta_a.C(obsIdx(i),:)';
+%         
+%         [muc,~,niSigc,~] = newton(derc,hessc,c0,1e-6,1000);
+%         if(sum(isnan(muc)) ~= 0)
+%             disp('use 0')
+%             [muc,~,niSigc,~] = newton(derc,hessc,zeros(size(c0)),1e-8,1000);
+%         end
+        
+        
+%         R = chol(-niSigc,'lower'); % sparse
+%         z = randn(length(c0), 1) + R'*c0;
+%         cStar = R'\z;
+        
+        % lhr
+%         lhr = sum(log(poisspdf(Y_tmp(i,:)', lamC(cStar)))) -...
+%             sum(log(poisspdf(Y_tmp(i,:)', lamC(c0)))) +...
+%             log(mvnpdf(cStar, prior.muC0, prior.SigC0)) -...
+%             log(mvnpdf(c0, prior.muC0, prior.SigC0));
+%         
+%         if(log(rand(1)) < lhr)
+%             theta_b.C(obsIdx(i),:) = cStar;
+%         else
+%             theta_b.C(obsIdx(i),:) = c0;
+%         end
+        
+        
+        
+%         Rc = chol(-niSigc,'lower'); % sparse
+%         zc = randn(length(muc), 1) + Rc'*muc;
+%         theta_b.C(obsIdx(i),:) = Rc'\zc;
+        
+        
+    end
+end
+
+
+
+% (1) update X_fit
 gradHess = @(vecdX) gradHessX(vecdX, zeros(N_tmp,1),...
-    [ones(N_tmp,1) theta_a.C(obsIdx,:)],...
+    [ones(N_tmp,1) theta_b.C(obsIdx,:)],...
     prior.theta0, prior.Q0, theta_a.Q, theta_a.A, theta_a.b, Y_tmp);
 
 dX = [theta_a.d;theta_a.X];
@@ -27,7 +88,7 @@ dX = [theta_a.d;theta_a.X];
 if((sum(isnan(mudXvec)) ~= 0) || eoi == 1000)
     disp('use adaptive smoother initial')
     try
-        dX_tmp = ppasmoo_poissexp_v2(Y_tmp,[ones(N_tmp,1) theta_a.C(obsIdx,:)],...
+        dX_tmp = ppasmoo_poissexp_v2(Y_tmp,[ones(N_tmp,1) theta_b.C(obsIdx,:)],...
             zeros(N_tmp,1),prior.theta0,prior.Q0,theta_a.A,theta_a.b,theta_a.Q);
     catch
         dX_tmp = dX*0;
@@ -57,63 +118,6 @@ if density
 end
 
 
-% (2) update loading: C
-% the transition kernel for NUTS is symmetric --> no need for calculation
-epsilonOut = ones(N_tmp, 1)*0.01;
-
-if active
-    for i = 1:N_tmp
-        X_tmpC = theta_b.X';
-        
-        lamC = @(c) exp(theta_b.d' + X_tmpC*c);
-        
-        % use NUTS
-        lpdf = @(c) sum(log(poisspdf(Y_tmp(i,:)', lamC(c)))) +...
-            log(mvnpdf(c, prior.muC0, prior.SigC0));
-        glpdf = @(c) X_tmpC'*(Y_tmp(i,:)' - lamC(c)) - prior.SigC0\(c - prior.muC0);
-        
-        fg=@(dc_r) deal(lpdf(dc_r'), glpdf(dc_r')'); % log density and gradient
-        c0 = theta_a.C(obsIdx(i),:)';
-        
-        [c_NUTS, ~, diagn]=hmc_nuts(fg, c0',OPTDC_tmp{i});
-        epsilonOut(i) = diagn.opt.epsilonbar;
-        theta_b.C(obsIdx(i),:) = c_NUTS(end,:);        
-
-        % ues MH
-%         derc = @(c) X_tmpC'*(Y_tmp(i,:)' - lamC(c)) - prior.SigC0\(c - prior.muC0);
-%         hessc = @(c) -X_tmpC'*diag(lamC(c))*X_tmpC - inv(prior.SigC0);
-%         c0 = theta_a.C(obsIdx(i),:)';
-%         
-%         [muc,~,niSigc,~] = newton(derc,hessc,c0,1e-8,1000);
-%         if(sum(isnan(muc)) ~= 0)
-%             disp('use 0')
-%             [muc,~,niSigc,~] = newton(derc,hessc,zeros(size(c0)),1e-8,1000);
-%         end
-%         
-%         
-%         R = chol(-niSigc,'lower'); % sparse
-%         z = randn(length(c0), 1) + R'*c0;
-%         cStar = R'\z;
-%         
-%         % lhr
-%         lhr = sum(log(poisspdf(Y_tmp(i,:)', lamC(cStar)))) -...
-%             sum(log(poisspdf(Y_tmp(i,:)', lamC(c0)))) +...
-%             log(mvnpdf(cStar, prior.muC0, prior.SigC0)) -...
-%             log(mvnpdf(c0, prior.muC0, prior.SigC0));
-%         
-%         if(log(rand(1)) < lhr)
-%             theta_b.C(obsIdx(i),:) = cStar;
-%         else
-%             theta_b.C(obsIdx(i),:) = c0;
-%         end
-%         
-%         
-%         
-%         Rc = chol(-niSigc,'lower'); % sparse
-%         zc = randn(length(muc), 1) + Rc'*muc;
-%         theta_b.C(obsIdx(i),:) = Rc'\zc;
-    end
-end
 
 dX = [theta_b.d;theta_b.X];
 for k = 1:(p+1)

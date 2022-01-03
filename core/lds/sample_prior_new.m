@@ -32,6 +32,10 @@ while flag
     theta.d = dX(1,:);
     theta.X = dX(2:end,:);
     
+    % test
+%     theta.X(abs(theta.X) > 1) = sign(theta.X(abs(theta.X) > 1));
+    
+    
 %     dX = zeros(p+1, T);
 %     for i=1:(p+1)
 %         k = ceil(rand()*20)+10;

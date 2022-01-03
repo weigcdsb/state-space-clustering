@@ -85,7 +85,7 @@ lAbsGam = @(x) log(abs(gamma(x)));
 %% MCMC settings
 rng(1)
 p=1;
-ng = 1000;
+ng = 100;
 t_max = N;
 
 % this is the DP setting, replace to MFM later...
@@ -159,29 +159,10 @@ for g = 2:ng
     else;disp("iter " + g + ", tuned");
     end % fix epsilon
     
-    THETA{g} = THETA{g-1};
-    for j = 1:t_fit(g-1)
-        c = actList(j);
-        obsIdx = find(Z_fit(:,g-1) == c);
-        
-        [THETA{g}(c), epsilon(obsIdx), log_pdf] =...
-            update_cluster_new(Y(obsIdx,:),THETA{g-1}(c),THETA{g}(c),...
-            prior, N, T, p, obsIdx, true, false, OPTDC(obsIdx), Y);
-%         [THETA{g}(c), epsilon(obsIdx), log_pdf] =...
-%             update_cluster_new_aug(Y(obsIdx,:),THETA{g-1}(c),THETA{g}(c),...
-%             prior, N, T, p, obsIdx, true, false, OPTDC(obsIdx), Y);
-    end
-    
-    if(g == burnIn)
-        for k = 1:N
-            OPTDC{k}.Madapt=0;OPTDC{k}.epsilon = epsilon(k);
-        end
-    end
-    
+    % (1) impute Z_fit...
     Z_fit(:,g) = Z_fit(:,g-1);
     numClus_fit(:,g) = numClus_fit(:,g-1);
     t_fit(g) = t_fit(g-1);
-    
     
     if DPMM && alpha_random
         % MH move for DP concentration parameter (using p_alpha(a) = exp(-a) = Exp(a|1))
@@ -197,7 +178,6 @@ for g = 2:ng
     end
     
     
-    % (3) resamle Z
     for ii = 1:N
         
         % (a) remove point i from its cluster
@@ -205,7 +185,7 @@ for g = 2:ng
         numClus_fit(c,g) = numClus_fit(c,g) - 1;
         if(numClus_fit(c,g) > 0)
             c_prop = c_next;
-            THETA{g}(c_prop) = sample_prior_new(prior, N, T, p, true, Inf);
+            THETA{g-1}(c_prop) = sample_prior_new(prior, N, T, p, true, Inf);
         else
             c_prop = c;
             actList = ordered_remove(c, actList, t_fit(g));
@@ -216,13 +196,17 @@ for g = 2:ng
         log_p = zeros(t_fit(g)+1,1);
         for j = 1:t_fit(g)
             cc = actList(j);
-            logMar = poiLogMarg(Y(ii,:)', THETA{g}(cc).X', THETA{g}(cc).d');
-            log_p(j) = logNb(numClus_fit(cc,g)) + logMar;
+            logLike = nansum(log(poisspdf(Y(ii,:)',...
+                exp(THETA{g-1}(cc).d' + THETA{g-1}(cc).X'* THETA{g-1}(cc).C(ii,:)))));
+%             logMar = poiLogMarg(Y(ii,:)', THETA{g}(cc).X', THETA{g}(cc).d');
+            log_p(j) = logNb(numClus_fit(cc,g)) + logLike;
         end
         
-        logMar = poiLogMarg(Y(ii,:)', THETA{g}(c_prop).X', THETA{g}(c_prop).d');
+        logLike = nansum(log(poisspdf(Y(ii,:)',...
+                exp(THETA{g-1}(c_prop).d' + THETA{g-1}(c_prop).X'* THETA{g-1}(c_prop).C(ii,:)))));
+%         logMar = poiLogMarg(Y(ii,:)', THETA{g}(c_prop).X', THETA{g}(c_prop).d');
         log_p(t_fit(g)+1) = log_v(t_fit(g)+1)-log_v(t_fit(g)) +...
-            log(a) + logMar;
+            log(a) + logLike;
         
         % (c) sample a new cluster for it
         j = randlogp(log_p, t_fit(g)+1);
@@ -240,6 +224,29 @@ for g = 2:ng
         Z_fit(ii,g) = c;
         numClus_fit(c,g) = numClus_fit(c,g) + 1;
     end
+    
+    
+    
+    % (2) impute c_i...
+    
+    
+    % (3) sample others...
+    THETA{g} = THETA{g-1};
+    for j = 1:t_fit(g)
+        c = actList(j);
+        obsIdx = find(Z_fit(:,g) == c);
+        
+        [THETA{g}(c), epsilon(obsIdx), log_pdf] =...
+            update_cluster_new_aug(Y(obsIdx,:),THETA{g}(c),THETA{g}(c),...
+            prior, N, T, p, obsIdx, true, false, OPTDC(obsIdx), Y);
+    end
+    
+    if(g == burnIn)
+        for k = 1:N
+            OPTDC{k}.Madapt=0;OPTDC{k}.epsilon = epsilon(k);
+        end
+    end
+    
     
     figure(2)
     clusterPlot(Y, Z_fit(:,g)')

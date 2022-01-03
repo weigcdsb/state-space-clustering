@@ -418,7 +418,7 @@ imagesc(Y)
 colorbar()
 title('true')
 subplot(1,2,2)
-imagesc(mean(fitMFRTrace,3))
+
 colorbar()
 title('fit-mean FR')
 

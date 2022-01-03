@@ -77,7 +77,7 @@ lAbsGam = @(x) log(abs(gamma(x)));
 %% pre-MCMC
 rng(1)
 p_set = 1:3;
-ng = 100;
+ng = 1000;
 t_max = N;
 
 % this is the DP setting, replace to MFM later...
@@ -95,7 +95,7 @@ DPMM = false;
 alpha_random = false;
 MFMgamma = 1;
 % K ~ Geometric(r)
-r = 0.2;
+r = 0.3;
 log_pk = @(k) log(r) + (k-1)*log(1-r);
 
 a = MFMgamma;
@@ -275,7 +275,7 @@ end
 %% MCMC settings
 rng(2)
 p=p_set(pid);
-ng = 1000;
+ng = 3000;
 t_max = N;
 
 
@@ -324,6 +324,7 @@ for k = 1:size(simMat, 1)
 end
 
 llhd_spk_test2 = zeros(ng,1);
+fitMFRTrace = zeros(N, T, ng);
 
 for g = 2:ng
     
@@ -348,6 +349,11 @@ for g = 2:ng
         for k = 1:N
             OPTDC{k}.Madapt=0;OPTDC{k}.epsilon = epsilon(k);
         end
+    end
+    
+    for k  = 1:N
+        fitMFRTrace(k,:, g) = exp([1 THETA{g}(Z_fit(k,g-1)).C(k,:)]*...
+            [THETA{g}(Z_fit(k,g-1)).d ;THETA{g}(Z_fit(k,g-1)).X]);
     end
     
     % test-llhd-spk
@@ -447,12 +453,7 @@ for g = 2:ng
     colorbar()
     title('true')
     subplot(1,2,2)
-    fitMFR = zeros(N, T);
-    for k  = 1:N
-        fitMFR(k,:) = exp([1 THETA{g}(Z_fit(k,g)).C(k,:)]*...
-            [THETA{g}(Z_fit(k,g)).d ;THETA{g}(Z_fit(k,g)).X]);
-    end
-    imagesc(fitMFR)
+    imagesc(fitMFRTrace(:,:, g))
     colorbar()
     title('fit')
     

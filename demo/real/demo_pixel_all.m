@@ -75,7 +75,7 @@ colorbar()
 lAbsGam = @(x) log(abs(gamma(x)));
 rng(1)
 p=1;
-ng = 20000;
+ng = 5000;
 t_max = N;
 
 % this is the DP setting, replace to MFM later...
@@ -93,7 +93,7 @@ DPMM = false;
 alpha_random = false;
 MFMgamma = 1;
 % K ~ Geometric(r)
-r = 0.2;
+r = 0.3;
 log_pk = @(k) log(r) + (k-1)*log(1-r);
 
 a = MFMgamma;
@@ -112,7 +112,7 @@ prior.SigC0 = eye(p);
 
 prior.BA0 =[0 1]';
 prior.Lamb0 = eye(2);
-prior.Psi0 = 1e-3;
+prior.Psi0 = 1e-4;
 prior.nu0 = 1+2;
 
 % pre-allocation
@@ -137,13 +137,16 @@ for k = 1:N
     OPTDC{k} = optdc;
 end
 
-burnIn = round(ng/10);
+burnIn = round(ng/20);
 epsilon = 0.01*ones(N,1);
 
 simMat = zeros(N,N);
 for k = 1:size(simMat, 1)
     simMat(k,:) = simMat(k,:) + (Z_fit(k, 1) == Z_fit(:, 1))';
 end
+
+fitMFRTrace = zeros(N, T, ng);
+
 
 for g = 2:ng
     
@@ -162,7 +165,17 @@ for g = 2:ng
         [THETA{g}(c), epsilon(obsIdx), log_pdf] =...
             update_cluster_new(Y(obsIdx,:),THETA{g-1}(c),THETA{g}(c),...
             prior, N, T, p, obsIdx, true, false, OPTDC(obsIdx), Y);
+%         [THETA{g}(c), epsilon(obsIdx), log_pdf] =...
+%             update_cluster_new_aug(Y(obsIdx,:),THETA{g-1}(c),THETA{g}(c),...
+%             prior, N, T, p, obsIdx, true, false, OPTDC(obsIdx), Y);
     end
+    
+    for k  = 1:N
+        fitMFRTrace(k,:, g) = exp([1 THETA{g}(Z_fit(k,g-1)).C(k,:)]*...
+            [THETA{g}(Z_fit(k,g-1)).d ;THETA{g}(Z_fit(k,g-1)).X]);
+    end
+    
+    
     
     if(g == burnIn)
         for k = 1:N
@@ -252,12 +265,7 @@ for g = 2:ng
     colorbar()
     title('true')
     subplot(1,2,2)
-    fitMFR = zeros(N, T);
-    for k  = 1:N
-        fitMFR(k,:) = exp([1 THETA{g}(Z_fit(k,g)).C(k,:)]*...
-            [THETA{g}(Z_fit(k,g)).d ;THETA{g}(Z_fit(k,g)).X]);
-    end
-    imagesc(fitMFR)
+    imagesc(fitMFRTrace(:,:, g))
     colorbar()
     title('fit')
     
