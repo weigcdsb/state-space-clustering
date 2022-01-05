@@ -1,0 +1,13 @@
+\BOOKMARK [1][-]{section.1}{Introduction}{}% 1
+\BOOKMARK [1][-]{section.2}{Method}{}% 2
+\BOOKMARK [2][-]{subsection.2.1}{Poisson Dynmic Factor Model}{section.2}% 3
+\BOOKMARK [2][-]{subsection.2.2}{Cluster by Mixture of Finite Mixtures Model}{section.2}% 4
+\BOOKMARK [2][-]{subsection.2.3}{Inference}{section.2}% 5
+\BOOKMARK [1][-]{section.3}{Simulations}{}% 6
+\BOOKMARK [2][-]{subsection.3.1}{Model Global Non-linearity by Clustering}{section.3}% 7
+\BOOKMARK [3][-]{subsubsection.3.1.1}{Clustering}{subsection.3.1}% 8
+\BOOKMARK [1][-]{section.4}{Application}{}% 9
+\BOOKMARK [2][-]{subsection.4.1}{Neuropixels data}{section.4}% 10
+\BOOKMARK [2][-]{subsection.4.2}{Hippocampus data}{section.4}% 11
+\BOOKMARK [1][-]{section.5}{Discussion}{}% 12
+\BOOKMARK [1][-]{appendix.A}{Appendix}{}% 13
