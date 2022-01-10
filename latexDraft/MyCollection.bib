@@ -1,0 +1,183 @@
+@article{Macke2011,
+abstract = {Neurons in the neocortex code and compute as part of a locally interconnected population. Large-scale multi-electrode recording makes it possible to access these population processes empirically by fitting statistical models to unaveraged data. What statistical structure best describes the concurrent spiking of cells within a local network? We argue that in the cortex, where firing exhibits extensive correlations in both time and space and where a typical sample of neurons still reflects only a very small fraction of the local population, the most appropriate model captures shared variability by a low-dimensional latent process evolving with smooth dynamics, rather than by putative direct coupling. We test this claim by comparing a latent dynamical model with realistic spiking observations to coupled gen-eralised linear spike-response models (GLMs) using cortical recordings. We find that the latent dynamical approach outperforms the GLM in terms of goodness-of-fit, and reproduces the temporal correlations in the data more accurately. We also compare models whose observations models are either derived from a Gaussian or point-process models, finding that the non-Gaussian model provides slightly better goodness-of-fit and more realistic population spike counts.},
+author = {Macke, Jakob H. and Buesing, Lars and Cunningham, John P. and Yu, Byron M. and Shenoy, Krishna V. and Sahani, Maneesh},
+journal = {Advances in Neural Information Processing Systems},
+title = {{Empirical models of spiking in neural populations}},
+volume = {24},
+year = {2011}
+}
+@article{Miller2018,
+abstract = {A natural Bayesian approach for mixture models with an unknown number of components is to take the usual finite mixture model with symmetric Dirichlet weights, and put a prior on the number of components—that is, to use a mixture of finite mixtures (MFM). The most commonly used method of inference for MFMs is reversible jump Markov chain Monte Carlo, but it can be nontrivial to design good reversible jump moves, especially in high-dimensional spaces. Meanwhile, there are samplers for Dirichlet process mixture (DPM) models that are relatively simple and are easily adapted to new applications. It turns out that, in fact, many of the essential properties of DPMs are also exhibited by MFMs—an exchangeable partition distribution, restaurant process, random measure representation, and stick-breaking representation—and crucially, the MFM analogues are simple enough that they can be used much like the corresponding DPM properties. Consequently, many of the powerful methods developed for inference in DPMs can be directly applied to MFMs as well; this simplifies the implementation of MFMs and can substantially improve mixing. We illustrate with real and simulated data, including high-dimensional gene expression data used to discriminate cancer subtypes. Supplementary materials for this article are available online.},
+author = {Miller, Jeffrey W. and Harrison, Matthew T.},
+doi = {10.1080/01621459.2016.1255636},
+journal = {Journal of the American Statistical Association},
+keywords = {Bayesian,Clustering,Density estimation,Model selection,Nonparametric},
+month = {jan},
+number = {521},
+pages = {340},
+pmid = {29983475},
+publisher = {NIH Public Access},
+title = {{Mixture models with a prior on the number of components}},
+volume = {113},
+year = {2018}
+}
+@article{El-Sayyad1973,
+abstract = {This paper is concerned with the problem of testing the existence of a trend in the means $\theta$<sub>i</sub> of Poisson distributions. It is assumed that these means are changing exponentially, that is, log $\theta$<sub>i</sub> = $\alpha$ + $\beta$ x<sub>i</sub>. A classical method is reviewed which is used for testing the hypothesis $\beta$ = 0. The exact Bayesian distribution for $\beta$ is derived and a Bayesian approximation suggested which proved to be very useful. Finally, a comparison of these three methods by means of numerical examples is made.},
+author = {El-Sayyad, G. M.},
+doi = {10.1111/J.2517-6161.1973.TB00972.X},
+issn = {2517-6161},
+journal = {Journal of the Royal Statistical Society: Series B (Methodological)},
+keywords = {bayesian analysis,classical approach,comparison between different methods,poisson regression,tests of trend},
+month = {jul},
+number = {3},
+pages = {445--451},
+publisher = {John Wiley & Sons, Ltd},
+title = {{Bayesian and Classical Analysis of Poisson Regression}},
+volume = {35},
+year = {1973}
+}
+@article{Chan2009,
+abstract = {Poisson regression models the noisy output of a counting function as a Poisson random variable, with a log-mean parameter that is a linear function of the input vector. In this work, we analyze Poisson regression in a Bayesian setting, by introducing a prior distribution on the weights of the linear function. Since exact inference is analytically unobtainable, we derive a closed-form approximation to the predictive distribution of the model. We show that the predictive distribution can be kernelized, enabling the representation of non-linear log-mean functions. We also derive an approximate marginal likelihood that can be optimized to learn the hyperparameters of the kernel. We then relate the proposed approximate Bayesian Poisson regression to Gaussian processes. Finally, we present experimental results using Bayesian Poisson regression for crowd counting from low-level features. {\textcopyright}2009 IEEE.},
+author = {Chan, Antoni B. and Vasconcelos, Nuno},
+doi = {10.1109/ICCV.2009.5459191},
+isbn = {9781424444205},
+journal = {Proceedings of the IEEE International Conference on Computer Vision},
+pages = {545--551},
+title = {{Bayesian poisson regression for crowd counting}},
+year = {2009}
+}
+@article{Keeley2019,
+archivePrefix = {arXiv},
+arxivId = {1906.03318},
+author = {Keeley, Stephen L. and Zoltowski, David M. and Yu, Yiyi and Yates, Jacob L. and Smith, Spencer L. and Pillow, Jonathan W.},
+eprint = {1906.03318},
+isbn = {9781713821120},
+journal = {37th International Conference on Machine Learning, ICML 2020},
+month = {jun},
+pages = {5133--5142},
+publisher = {International Machine Learning Society (IMLS)},
+title = {{Efficient non-conjugate Gaussian process factor models for spike count data using polynomial approximations}},
+volume = {PartF16814},
+year = {2019}
+}
+@article{Lopes2004,
+abstract = {Factor analysis has been one of the most powerful and flexible tools for assessment of multivariate dependence and codependence. Loosely speaking, it could be argued that the origin of its success rests in its very exploratory nature, where various kinds of data-relationships amongst the variables at study can be iteratively verified and/or refuted. Bayesian inference in factor analytic models has received renewed attention in recent years, partly due to computational advances but also partly to applied focuses generating factor structures as exemplified by recent work in financial time series modeling. The focus of our current work is on exploring questions of uncertainty about the number of latent factors in a multi-variate factor model, combined with methodological and computational issues of model specification and model fitting. We explore reversible jump MCMC methods that build on sets of parallel Gibbs sampling-based analyses to generate suitable empirical proposal distributions and that address the challenging problem of finding efficient proposals in high-dimensional models. Alternative MCMC methods based on bridge sampling are discussed, and these fully Bayesian MCMC approaches are compared with a collection of popular model selection methods in empirical studies. Various additional computational issues are discussed, including situations where prior information is scarce, and the methods are explored in studies of some simulated data sets and an econometric time series example.},
+author = {Lopes, Hedibert Freitas and West, Mike},
+journal = {Statistica Sinica},
+keywords = {Bayesian inference,and phrases: Bayes factors,bridge sampling,ex-pected posterior prior,latent factor models,model selection criteria,model uncer-tainty,reversible jump MCMC},
+pages = {41--67},
+title = {{Bayesian Model Assessment in Factor Analysis}},
+volume = {14},
+year = {2004}
+}
+@article{Bhattacharya2011,
+abstract = {We focus on sparse modelling of high-dimensional covariance matrices using Bayesian latent factor models. We propose a multiplicative gamma process shrinkage prior on the factor loadings which allows introduction of infinitely many factors, with the loadings increasingly shrunk towards zero as the column index increases. We use our prior on a parameter-expanded loading matrix to avoid the order dependence typical in factor analysis models and develop an efficient Gibbs sampler that scales well as data dimensionality increases. The gain in efficiency is achieved by the joint conjugacy property of the proposed prior, which allows block updating of the loadings matrix. We propose an adaptive Gibbs sampler for automatically truncating the infinite loading matrix through selection of the number of important factors. Theoretical results are provided on the support of the prior and truncation approximation bounds. A fast algorithm is proposed to produce approximate Bayes estimates. Latent factor regression methods are developed for prediction and variable selection in applications with high-dimensional correlated predictors. Operating characteristics are assessed through simulation studies, and the approach is applied to predict survival times from gene expression data. {\textcopyright} 2011 Biometrika Trust.},
+author = {Bhattacharya, A. and Dunson, D. B.},
+doi = {10.1093/BIOMET/ASR013},
+issn = {00063444},
+journal = {Biometrika},
+keywords = {Adaptive Gibbs sampling,Factor analysis,High-dimensional data,Multiplicative gamma process,Parameter expansion,Regularization,Shrinkage},
+month = {jun},
+number = {2},
+pages = {291},
+pmid = {23049129},
+publisher = {Oxford University Press},
+title = {{Sparse Bayesian infinite factor models}},
+volume = {98},
+year = {2011}
+}
+@article{Williams2020,
+abstract = {Sparse sequences of neural spikes are posited to underlie aspects of working
+memory, motor production, and learning. Discovering these sequences in an
+unsupervised manner is a longstanding problem in statistical neuroscience.
+Promising recent work utilized a convolutive nonnegative matrix factorization
+model to tackle this challenge. However, this model requires spike times to be
+discretized, utilizes a sub-optimal least-squares criterion, and does not
+provide uncertainty estimates for model predictions or estimated parameters. We
+address each of these shortcomings by developing a point process model that
+characterizes fine-scale sequences at the level of individual spikes and
+represents sequence occurrences as a small number of marked events in
+continuous time. This ultra-sparse representation of sequence events opens new
+possibilities for spike train modeling. For example, we introduce learnable
+time warping parameters to model sequences of varying duration, which have been
+experimentally observed in neural circuits. We demonstrate these advantages on
+experimental recordings from songbird higher vocal center and rodent
+hippocampus.},
+archivePrefix = {arXiv},
+arxivId = {2010.04875},
+author = {Williams, Alex H. and Degleris, Anthony and Wang, Yixin and Linderman, Scott W.},
+eprint = {2010.04875},
+issn = {10495258},
+journal = {Advances in Neural Information Processing Systems},
+month = {oct},
+publisher = {Neural information processing systems foundation},
+title = {{Point process models for sequence detection in high-dimensional neural spike trains}},
+volume = {2020-Decem},
+year = {2020}
+}
+@article{Fokoue2003,
+author = {Fokou{\'{e}}, Ernest and Titterington, D. M.},
+doi = {10.1023/A:1020297828025},
+issn = {08856125},
+journal = {Machine Learning},
+month = {jan},
+number = {1-2},
+pages = {73--94},
+title = {{Mixtures of factor analysers. Bayesian estimation and inference by stochastic simulation}},
+volume = {50},
+year = {2003}
+}
+@article{Johnstone2009,
+abstract = {Principal components analysis (PCA) is a classic method for the reduction of dimensionality of data in the form of n observations (or cases) of a vector with p variables. Contemporary datasets often have p comparable with or even much larger than n. Our main assertions, in such settings, are (a) that some initial reduction in dimensionality is desirable before applying any PCA-type search for principal modes, and (b) the initial reduction in dimensionality is best achieved by working in a basis in which the signals have a sparse representation. We describe a simple asymptotic model in which the estimate of the leading principal component vector via standard PCA is consistent if and only if p(n)ln→0.We provide a simple algorithm for selecting a subset of coordinates with largest sample variances, and show that if PCA is done on the selected subset, then consistency is recovered, even if p(n) » n. {\textcopyright} 2009 American Statistical Association.},
+author = {Johnstone, Iain M. and Lu, Arthur Yu},
+doi = {10.1198/JASA.2009.0121},
+issn = {01621459},
+journal = {Journal of the American Statistical Association},
+keywords = {Eigenvector estimation,Reduction of dimension,Regularization,Thresholding,Variable selection},
+month = {jun},
+number = {486},
+pages = {682},
+pmid = {20617121},
+publisher = {NIH Public Access},
+title = {{On Consistency and Sparsity for Principal Components Analysis in High Dimensions}},
+volume = {104},
+year = {2009}
+}
+@article{Neal2000,
+author = {Neal, Radford M},
+journal = {Journal of Computational and Graphical Statistics},
+number = {2},
+pages = {249--265},
+title = {{Markov Chain Sampling Methods for Dirichlet Process Mixture Models}},
+volume = {9},
+year = {2000}
+}
+@misc{Paninski2010,
+abstract = {State space methods have proven indispensable in neural data analysis. However, common methods for performing inference in state-space models with non-Gaussian observations rely on certain approximations which are not always accurate. Here we review direct optimization methods that avoid these approximations, but that nonetheless retain the computational efficiency of the approximate methods. We discuss a variety of examples, applying these direct optimization techniques to problems in spike train smoothing, stimulus decoding, parameter estimation, and inference of synaptic properties. Along the way, we point out connections to some related standard statistical methods, including spline smoothing and isotonic regression. Finally, we note that the computational methods reviewed here do not in fact depend on the state-space setting at all; instead, the key property we are exploiting involves the bandedness of certain matrices. We close by discussing some applications of this more general point of view, including Markov chain Monte Carlo methods for neural decoding and efficient estimation of spatially-varying firing rates. {\textcopyright} 2009 Springer Science+Business Media, LLC.},
+author = {Paninski, Liam and Ahmadian, Yashar and Ferreira, Daniel Gil and Koyama, Shinsuke and {Rahnama Rad}, Kamiar and Vidne, Michael and Vogelstein, Joshua and Wu, Wei},
+booktitle = {Journal of Computational Neuroscience},
+doi = {10.1007/s10827-009-0179-x},
+issn = {09295313},
+keywords = {Hidden Markov model,Neural coding,State-space models,Tridiagonal matrix},
+month = {aug},
+number = {1-2},
+pages = {107--126},
+pmid = {19649698},
+publisher = {Springer},
+title = {{A new look at state-space models for neural data}},
+url = {https://link.springer.com/article/10.1007/s10827-009-0179-x},
+volume = {29},
+year = {2010}
+}
+@article{Blei2006,
+abstract = {Dirichlet process (DP) mixture models are the cornerstone of non-parametric Bayesian statistics, and the development of Monte-Carlo Markov chain (MCMC) sampling methods for DP mixtures has enabled the application of non-parametric Bayesian methods to a variety of practical data analysis problems. However, MCMC sampling can be prohibitively slow, and it is important to explore alternatives. One class of alternatives is provided by variational methods, a class of deterministic algorithms that convert inference problems into optimization problems (Opper and Saad 2001; Wainwright and Jordan 2003). Thus far, varia-tional methods have mainly been explored in the parametric setting, in particular within the formalism of the exponential family (Attias 2000; Ghahramani and Beal 2001; Blei et al. 2003). In this paper, we present a variational inference algorithm for DP mixtures. We present experiments that compare the algorithm to Gibbs sampling algorithms for DP mixtures of Gaussians and present an application to a large-scale image analysis problem.},
+author = {Blei, David M and Jordan, Michael I},
+journal = {Bayesian Analysis},
+keywords = {Bayesian computation,Dirichlet processes,hierarchical models,image processing,variational inference},
+number = {1},
+pages = {121--144},
+title = {{Variational Inference for Dirichlet Process Mixtures}},
+url = {http://www.cs.berkeley.edu/$\sim$blei/},
+volume = {1},
+year = {2006}
+}

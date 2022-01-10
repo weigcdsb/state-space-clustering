@@ -1,0 +1,81 @@
+\begin{thebibliography}{10}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[El-Sayyad(1973)]{El-Sayyad1973}
+G.~M. El-Sayyad.
+\newblock {Bayesian and Classical Analysis of Poisson Regression}.
+\newblock \emph{Journal of the Royal Statistical Society: Series B
+  (Methodological)}, 35\penalty0 (3):\penalty0 445--451, jul 1973.
+\newblock ISSN 2517-6161.
+\newblock \doi{10.1111/J.2517-6161.1973.TB00972.X}.
+
+\bibitem[Chan and Vasconcelos(2009)]{Chan2009}
+Antoni~B. Chan and Nuno Vasconcelos.
+\newblock {Bayesian poisson regression for crowd counting}.
+\newblock \emph{Proceedings of the IEEE International Conference on Computer
+  Vision}, pages 545--551, 2009.
+\newblock \doi{10.1109/ICCV.2009.5459191}.
+
+\bibitem[Keeley et~al.(2019)Keeley, Zoltowski, Yu, Yates, Smith, and
+  Pillow]{Keeley2019}
+Stephen~L. Keeley, David~M. Zoltowski, Yiyi Yu, Jacob~L. Yates, Spencer~L.
+  Smith, and Jonathan~W. Pillow.
+\newblock {Efficient non-conjugate Gaussian process factor models for spike
+  count data using polynomial approximations}.
+\newblock \emph{37th International Conference on Machine Learning, ICML 2020},
+  PartF16814:\penalty0 5133--5142, jun 2019.
+
+\bibitem[Miller and Harrison(2018)]{Miller2018}
+Jeffrey~W. Miller and Matthew~T. Harrison.
+\newblock {Mixture models with a prior on the number of components}.
+\newblock \emph{Journal of the American Statistical Association}, 113\penalty0
+  (521):\penalty0 340, jan 2018.
+\newblock \doi{10.1080/01621459.2016.1255636}.
+
+\bibitem[Paninski et~al.(2010)Paninski, Ahmadian, Ferreira, Koyama, {Rahnama
+  Rad}, Vidne, Vogelstein, and Wu]{Paninski2010}
+Liam Paninski, Yashar Ahmadian, Daniel~Gil Ferreira, Shinsuke Koyama, Kamiar
+  {Rahnama Rad}, Michael Vidne, Joshua Vogelstein, and Wei Wu.
+\newblock {A new look at state-space models for neural data}, aug 2010.
+\newblock ISSN 09295313.
+\newblock URL
+  \url{https://link.springer.com/article/10.1007/s10827-009-0179-x}.
+
+\bibitem[Neal(2000)]{Neal2000}
+Radford~M Neal.
+\newblock {Markov Chain Sampling Methods for Dirichlet Process Mixture Models}.
+\newblock \emph{Journal of Computational and Graphical Statistics}, 9\penalty0
+  (2):\penalty0 249--265, 2000.
+
+\bibitem[Blei and Jordan(2006)]{Blei2006}
+David~M Blei and Michael~I Jordan.
+\newblock {Variational Inference for Dirichlet Process Mixtures}.
+\newblock \emph{Bayesian Analysis}, 1\penalty0 (1):\penalty0 121--144, 2006.
+\newblock URL \url{http://www.cs.berkeley.edu/$\sim$blei/}.
+
+\bibitem[Lopes and West(2004)]{Lopes2004}
+Hedibert~Freitas Lopes and Mike West.
+\newblock {Bayesian Model Assessment in Factor Analysis}.
+\newblock \emph{Statistica Sinica}, 14:\penalty0 41--67, 2004.
+
+\bibitem[Bhattacharya and Dunson(2011)]{Bhattacharya2011}
+A.~Bhattacharya and D.~B. Dunson.
+\newblock {Sparse Bayesian infinite factor models}.
+\newblock \emph{Biometrika}, 98\penalty0 (2):\penalty0 291, jun 2011.
+\newblock ISSN 00063444.
+\newblock \doi{10.1093/BIOMET/ASR013}.
+
+\bibitem[Fokou{\'{e}} and Titterington(2003)]{Fokoue2003}
+Ernest Fokou{\'{e}} and D.~M. Titterington.
+\newblock {Mixtures of factor analysers. Bayesian estimation and inference by
+  stochastic simulation}.
+\newblock \emph{Machine Learning}, 50\penalty0 (1-2):\penalty0 73--94, jan
+  2003.
+\newblock ISSN 08856125.
+\newblock \doi{10.1023/A:1020297828025}.
+
+\end{thebibliography}
