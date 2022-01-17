@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.12.6)  9 JAN 2022 13:44
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.12.6)  17 JAN 2022 08:10
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -430,6 +430,18 @@ LaTeX Warning: Label `fig:3d' multiply defined.
 
 LaTeX Warning: Label `sub@fig:3d' multiply defined.
 
+
+LaTeX Warning: Label `fig:3d' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:3d' multiply defined.
+
+
+LaTeX Warning: Label `fig:3d' multiply defined.
+
+
+LaTeX Warning: Label `sub@fig:3d' multiply defined.
+
 )
 \openout1 = `draft.aux'.
 
@@ -629,37 +641,37 @@ Package natbib Warning: Citation `bibid' on page 2 undefined on input line 116.
 <image001.jpg, id=113, 205.5178pt x 162.6075pt>
 File: image001.jpg Graphic file (type jpg)
 <use image001.jpg>
-Package pdftex.def Info: image001.jpg  used on input line 164.
+Package pdftex.def Info: image001.jpg  used on input line 168.
 (pdftex.def)             Requested size: 198.7425pt x 157.24773pt.
 <image002.jpg, id=114, 205.5178pt x 162.6075pt>
 File: image002.jpg Graphic file (type jpg)
 <use image002.jpg>
-Package pdftex.def Info: image002.jpg  used on input line 165.
+Package pdftex.def Info: image002.jpg  used on input line 169.
 (pdftex.def)             Requested size: 198.7425pt x 157.24773pt.
 <image003.jpg, id=115, 205.1414pt x 162.6075pt>
 File: image003.jpg Graphic file (type jpg)
 <use image003.jpg>
-Package pdftex.def Info: image003.jpg  used on input line 167.
+Package pdftex.def Info: image003.jpg  used on input line 171.
 (pdftex.def)             Requested size: 198.7425pt x 157.53307pt.
 <image004.jpg, id=116, 205.1414pt x 162.6075pt>
 File: image004.jpg Graphic file (type jpg)
 <use image004.jpg>
-Package pdftex.def Info: image004.jpg  used on input line 179.
+Package pdftex.def Info: image004.jpg  used on input line 183.
 (pdftex.def)             Requested size: 198.7425pt x 157.53307pt.
 <image005.jpg, id=117, 205.1414pt x 153.95015pt>
 File: image005.jpg Graphic file (type jpg)
 <use image005.jpg>
-Package pdftex.def Info: image005.jpg  used on input line 180.
+Package pdftex.def Info: image005.jpg  used on input line 184.
 (pdftex.def)             Requested size: 198.7425pt x 149.14587pt.
 <image006.jpg, id=118, 205.1414pt x 205.1414pt>
 File: image006.jpg Graphic file (type jpg)
 <use image006.jpg>
-Package pdftex.def Info: image006.jpg  used on input line 182.
+Package pdftex.def Info: image006.jpg  used on input line 186.
 (pdftex.def)             Requested size: 158.99156pt x 158.9892pt.
 <image007.jpg, id=119, 205.1414pt x 153.95015pt>
 File: image007.jpg Graphic file (type jpg)
 <use image007.jpg>
-Package pdftex.def Info: image007.jpg  used on input line 183.
+Package pdftex.def Info: image007.jpg  used on input line 187.
 (pdftex.def)             Requested size: 198.7425pt x 149.14587pt.
 
 
@@ -670,39 +682,53 @@ mage005.jpg> <./image006.jpg> <./image007.jpg>]
 <image008.jpg, id=137, 205.1414pt x 153.95015pt>
 File: image008.jpg Graphic file (type jpg)
 <use image008.jpg>
-Package pdftex.def Info: image008.jpg  used on input line 204.
-(pdftex.def)             Requested size: 198.7425pt x 149.14587pt.
+Package pdftex.def Info: image008.jpg  used on input line 208.
+(pdftex.def)             Requested size: 158.99156pt x 119.31482pt.
 <image009.jpg, id=138, 205.1414pt x 205.1414pt>
 File: image009.jpg Graphic file (type jpg)
 <use image009.jpg>
-Package pdftex.def Info: image009.jpg  used on input line 205.
-(pdftex.def)             Requested size: 158.99156pt x 158.9892pt.
+Package pdftex.def Info: image009.jpg  used on input line 209.
+(pdftex.def)             Requested size: 119.2467pt x 119.24503pt.
 <image010.jpg, id=139, 205.1414pt x 205.1414pt>
 File: image010.jpg Graphic file (type jpg)
 <use image010.jpg>
-Package pdftex.def Info: image010.jpg  used on input line 207.
-(pdftex.def)             Requested size: 158.99156pt x 158.9892pt.
+Package pdftex.def Info: image010.jpg  used on input line 211.
+(pdftex.def)             Requested size: 119.2467pt x 119.24503pt.
 <image011.jpg, id=140, 205.1414pt x 153.95015pt>
 File: image011.jpg Graphic file (type jpg)
 <use image011.jpg>
-Package pdftex.def Info: image011.jpg  used on input line 208.
-(pdftex.def)             Requested size: 198.7425pt x 149.14587pt.
+Package pdftex.def Info: image011.jpg  used on input line 212.
+(pdftex.def)             Requested size: 158.99156pt x 119.31482pt.
 <image012.jpg, id=141, 205.1414pt x 153.95015pt>
 File: image012.jpg Graphic file (type jpg)
 <use image012.jpg>
-Package pdftex.def Info: image012.jpg  used on input line 210.
-(pdftex.def)             Requested size: 198.7425pt x 149.14587pt.
+Package pdftex.def Info: image012.jpg  used on input line 214.
+(pdftex.def)             Requested size: 158.99156pt x 119.31482pt.
 <image013.jpg, id=142, 205.1414pt x 153.95015pt>
 File: image013.jpg Graphic file (type jpg)
 <use image013.jpg>
-Package pdftex.def Info: image013.jpg  used on input line 211.
-(pdftex.def)             Requested size: 198.7425pt x 149.14587pt.
+Package pdftex.def Info: image013.jpg  used on input line 215.
+(pdftex.def)             Requested size: 158.99156pt x 119.31482pt.
+<image001.png, id=143, 421.1986pt x 315.42844pt>
+File: image001.png Graphic file (type png)
+<use image001.png>
+Package pdftex.def Info: image001.png  used on input line 217.
+(pdftex.def)             Requested size: 158.99156pt x 119.06508pt.
+<image002.png, id=145, 421.1986pt x 315.42844pt>
+File: image002.png Graphic file (type png)
+<use image002.png>
+Package pdftex.def Info: image002.png  used on input line 218.
+(pdftex.def)             Requested size: 158.99156pt x 119.06508pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[6] (./draft.bbl [7 <./image008.jpg> <./image009.jpg> <./image010.jpg> <./image
-011.jpg> <./image012.jpg> <./image013.jpg>])
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [6]
+[7 <./image008.jpg> <./image009.jpg> <./image010.jpg> <./image011.jpg> <./image
+012.jpg> <./image013.jpg> <./image001.png> <./image002.png>] (./draft.bbl)
 
 Package natbib Warning: There were undefined citations.
 
@@ -715,13 +741,13 @@ LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 10479 strings out of 479383
- 157328 string characters out of 5868871
- 516746 words of memory out of 5000000
- 27142 multiletter control sequences out of 15000+600000
- 448895 words of font info for 187 fonts, out of 8000000 for 9000
+ 10486 strings out of 479383
+ 157470 string characters out of 5868871
+ 517983 words of memory out of 5000000
+ 27152 multiletter control sequences out of 15000+600000
+ 448635 words of font info for 183 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 80i,10n,85p,1282b,507s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 80i,10n,85p,1282b,404s stack positions out of 5000i,500n,10000p,200000b,80000s
 {e:/software/texlive/2020/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc
 }{e:/software/texlive/2020/texmf-dist/fonts/enc/dvips/base/8r.enc}<e:/software/
 texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><e:/software/
@@ -743,10 +769,10 @@ e/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb><e:/software
 ve/2020/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><e:/software/texlive/2020/t
 exmf-dist/fonts/type1/urw/times/utmr8a.pfb><e:/software/texlive/2020/texmf-dist
 /fonts/type1/urw/times/utmri8a.pfb>
-Output written on draft.pdf (8 pages, 549326 bytes).
+Output written on draft.pdf (8 pages, 619851 bytes).
 PDF statistics:
- 251 PDF objects out of 1000 (max. 8388607)
- 206 compressed objects within 3 object streams
- 51 named destinations out of 1000 (max. 500000)
- 24746 words of extra memory for PDF output out of 24883 (max. 10000000)
+ 258 PDF objects out of 1000 (max. 8388607)
+ 209 compressed objects within 3 object streams
+ 53 named destinations out of 1000 (max. 500000)
+ 24756 words of extra memory for PDF output out of 24883 (max. 10000000)
 
