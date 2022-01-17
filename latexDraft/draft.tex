@@ -157,7 +157,11 @@
 	\subsection{Model Global Non-linearity by Clustering}
 	There were a rich research results for single PLDS model, but it provides only a global linear model to represent the data in a lower dimensional subspace, which makes the application scope limited. When the input space is nonhomogeneous, a large dimension of latent state is needed and this may lead to the overfitting and poor performance. Mixture of PLDS/ PDFM models allow us to partition the input space into clusters and can therefore capture global nonlinearity by combining local linear models.
 	
-	We first simulated three neural populations, with 10 neurons in each. We set p=1 for each cluster and the recording length is T=1000. After checking the trace plots up to 10,000 iterations, the convergence achieved after several steps. The panel A and B in figure 1 show the posterior mean firing rate and fitted latent state, averaging from iteration 500 to 1000. The latent state is transformed into the commonly used PLDS model: $\log \lambda_i = \delta_i\bm{1}_T + \bm{G}^{(j)}\bm{d}_i$, where $d_i\in \mathbb{R}^q$. In PLDS parametrization, the latent state has one more dimension, i.e. $p=q+1$. The PLDS parametrization also doesn't have the unique solution. For comparison, we let $\bm{G}^{(j)}$ has mean zeros columns and is orthogonal.
+	To show the connection between the proposed model and PLDS parametrization, we simulate the data using the PLDS model, although these two are equivalent after some algebra. Denote the common PLDS model as $\log \lambda_i = \delta_i\bm{1}_T + \bm{G}^{(j)}\bm{d}_i$, where $d_i\in \mathbb{R}^q$. In PLDS parametrization, the latent state has one more dimension, i.e. $p=q+1$.
+	
+	
+	We first simulated three neural populations, with 10 neurons in each. We set $q=2$ for each cluster and the recording length is T=1000. After checking the trace plots up to 10,000 iterations, the convergence achieved after several steps. The panel A and B in figure 1 show the posterior mean firing rate and fitted latent state, averaging from iteration 500 to 1000. The results are transformed to PLDS parametrization for comparison. Notice that the PLDS parametrization also doesn't have the unique solution, we let $\bm{G}^{(j)}$ has mean zeros columns and is orthogonal.\\
+	\textbf{Still has the sign flipping issue. Fix later.}
 	
 	\begin{figure}[h!]
 		\centering
@@ -201,14 +205,17 @@
 	
 	\begin{figure}[h!]
 		\centering
-		\subfigure[a]{\label{fig:3a}\includegraphics[width=0.5\textwidth]{image008.jpg}}%
-		\subfigure[b]{\label{fig:3b}\includegraphics[width=0.4\textwidth]{image009.jpg}}%
+		\subfigure[a]{\label{fig:3a}\includegraphics[width=0.4\textwidth]{image008.jpg}}%
+		\subfigure[b]{\label{fig:3b}\includegraphics[width=0.3\textwidth]{image009.jpg}}%
 		
-		\subfigure[c]{\label{fig:3c}\includegraphics[width=0.4\textwidth]{image010.jpg}}%
-		\subfigure[c]{\label{fig:3d}\includegraphics[width=0.5\textwidth]{image011.jpg}}%
+		\subfigure[c]{\label{fig:3c}\includegraphics[width=0.3\textwidth]{image010.jpg}}%
+		\subfigure[c]{\label{fig:3d}\includegraphics[width=0.4\textwidth]{image011.jpg}}%
 		
-		\subfigure[c]{\label{fig:3d}\includegraphics[width=0.5\textwidth]{image012.jpg}}%
-		\subfigure[c]{\label{fig:3d}\includegraphics[width=0.5\textwidth]{image013.jpg}}%
+		\subfigure[c]{\label{fig:3d}\includegraphics[width=0.4\textwidth]{image012.jpg}}%
+		\subfigure[c]{\label{fig:3d}\includegraphics[width=0.4\textwidth]{image013.jpg}}%
+		
+		\subfigure[c]{\label{fig:3d}\includegraphics[width=0.4\textwidth]{image001.png}}%
+		\subfigure[c]{\label{fig:3d}\includegraphics[width=0.4\textwidth]{image002.png}}%
 		\caption{Neuropixel}
 	\end{figure}
 	
