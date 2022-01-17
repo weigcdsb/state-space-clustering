@@ -427,6 +427,20 @@ set(fitFR,'PaperUnits','inches','PaperPosition',[0 0 4 3])
 saveas(fitFR, '16_fitFR.svg')
 saveas(fitFR, '16_fitFR.png')
 
+traceLLhd_all = figure;
+tracellhd = zeros(ng,1);
+for g = 1:ng
+    tracellhd(g) =...
+        nansum(log(poisspdf(Y,fitMFRTrace(:,:,g))), 'all')/nansum(Y, 'all');
+end
+
+traceLLhd_all = figure;
+plot(tracellhd)
+ylabel('llhd/spk')
+
+traceLLhd_part = figure;
+plot(tracellhd(1:100))
+ylabel('llhd/spk')
 
 %%
 traceLLhd = figure;
