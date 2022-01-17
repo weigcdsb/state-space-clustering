@@ -90,13 +90,12 @@ prior.muC0 = zeros(p,1);
 prior.SigC0 = eye(p);
 
 prior.A0 = 1;
-prior.Lamb0 = 1;
-prior.Psi0 = 1e-2;
-prior.nu0 = 1+2;
-
+prior.sig2A0 = 1e-2;
 prior.b0 = 0;
 prior.sig2b0 = 1e-2;
 
+prior.nu0 = 1;
+prior.sig20 = 1e-3;
 
 for k = 1:nClus
     THETA{1}(k) = sample_prior_bt(prior, N, T, p, false, Inf);

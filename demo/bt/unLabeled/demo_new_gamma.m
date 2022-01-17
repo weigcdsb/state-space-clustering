@@ -121,12 +121,12 @@ prior.muC0 = zeros(p,1);
 prior.SigC0 = eye(p);
 
 prior.A0 = 1;
-prior.Lamb0 = 1;
-prior.Psi0 = 1e-3;
-prior.nu0 = 1+2;
-
+prior.sig2A0 = 1e-2;
 prior.b0 = 0;
 prior.sig2b0 = 1e-2;
+
+prior.nu0 = 1;
+prior.sig20 = 1e-3;
 
 
 % pre-allocation
@@ -209,7 +209,7 @@ for g = 2:ng
         numClus_fit(c,g) = numClus_fit(c,g) - 1;
         if(numClus_fit(c,g) > 0)
             c_prop = c_next;
-            THETA{g}(c_prop) = sample_prior_bt(prior, N, T, p, true, Inf);
+            THETA{g}(c_prop) = sample_prior_bt(prior, N, T, p, false, Inf);
         else
             c_prop = c;
             actList = ordered_remove(c, actList, t_fit(g));

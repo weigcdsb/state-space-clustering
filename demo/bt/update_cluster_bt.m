@@ -77,83 +77,36 @@ if active
         
         [c_NUTS, ~, diagn]=hmc_nuts(fg, c0',OPTDC_tmp{i});
         epsilonOut(i) = diagn.opt.epsilonbar;
-        theta_b.C(obsIdx(i),:) = c_NUTS(end,:);        
-
-        % ues MH
-%         derc = @(c) X_tmpC'*(Y_tmp(i,:)' - lamC(c)) - prior.SigC0\(c - prior.muC0);
-%         hessc = @(c) -X_tmpC'*diag(lamC(c))*X_tmpC - inv(prior.SigC0);
-%         c0 = theta_a.C(obsIdx(i),:)';
-%         
-%         [muc,~,niSigc,~] = newton(derc,hessc,c0,1e-8,1000);
-%         if(sum(isnan(muc)) ~= 0)
-%             disp('use 0')
-%             [muc,~,niSigc,~] = newton(derc,hessc,zeros(size(c0)),1e-8,1000);
-%         end
-%         
-%         
-%         R = chol(-niSigc,'lower'); % sparse
-%         z = randn(length(c0), 1) + R'*c0;
-%         cStar = R'\z;
-%         
-%         % lhr
-%         lhr = sum(log(poisspdf(Y_tmp(i,:)', lamC(cStar)))) -...
-%             sum(log(poisspdf(Y_tmp(i,:)', lamC(c0)))) +...
-%             log(mvnpdf(cStar, prior.muC0, prior.SigC0)) -...
-%             log(mvnpdf(c0, prior.muC0, prior.SigC0));
-%         
-%         if(log(rand(1)) < lhr)
-%             theta_b.C(obsIdx(i),:) = cStar;
-%         else
-%             theta_b.C(obsIdx(i),:) = c0;
-%         end
-%         
-%         
-%         
-%         Rc = chol(-niSigc,'lower'); % sparse
-%         zc = randn(length(muc), 1) + Rc'*muc;
-%         theta_b.C(obsIdx(i),:) = Rc'\zc;
+        theta_b.C(obsIdx(i),:) = c_NUTS(end,:);
     end
 end
 
 dX = [theta_b.d;theta_b.X];
+
+% (3) update A
 for k = 1:(p+1)
-    
     Y_A = dX(k,2:T)' - theta_a.b(k, 1:(T-1))';
     X_A = dX(k,1:(T-1))';
     
-    An = (X_A'*X_A + prior.Lamb0)\(X_A'*Y_A + prior.Lamb0*prior.A0);
-    PsiQ = prior.Psi0 + (Y_A - X_A*An)'*(Y_A - X_A*An) +...
-        (An - prior.A0)'*prior.Lamb0*(An - prior.A0);
-    nuQ = T-1 + prior.nu0;
-    if active;theta_b.Q(k,k) = iwishrnd(PsiQ,nuQ);end
-    if density
-        log_pdf = log_pdf + iwishlpdf(theta_b.Q(k,k), PsiQ,nuQ);
+    sig2An = inv(inv(prior.sig2A0) + X_A'*X_A/theta_a.Q(k,k));
+    muAn = sig2An*(inv(prior.sig2A0)*prior.A0 + X_A'*Y_A/theta_a.Q(k,k));
+    theta_b.A(k,k) = mvnrnd(muAn, sig2An);
+    
+    % (4) update b
+    for t = 1:(T-1)
+        xbt =  dX(k,t+1) - theta_b.A(k,k)*dX(k,t);
+        
+        sig2bn = inv(1/prior.sig2b0 + 1/theta_a.Q(k,k));
+        mubn = sig2bn*(prior.b0/prior.sig2b0 + xbt/theta_a.Q(k,k));
+        theta_b.b(k,t) = normrnd(mubn,sig2bn);
     end
     
-    % (3) update A_fit
-    Lambn = X_A'*X_A + prior.Lamb0;
-    if active
-        theta_b.A(k,k) = mvnrnd(An(:), kron(theta_b.Q(k,k), inv(Lambn)))';
-    end
-    if density
-        baTmp = [theta_b.b(k) theta_b.A(k,k)]';
-        log_pdf = log_pdf + mvnlpdf(baTmp, An(:), kron(inv(theta_b.Q(k,k)), Lambn));
-    end
-    
+    % (5) update Q
+    alphq = (prior.nu0 + T-1)/2;
+    betaq = (prior.nu0*prior.sig20 +...
+         sum((Y_A - X_A*theta_b.A(k,k) - theta_b.b(k,:)').^2))/2;
+    theta_b.Q(k,k) = 1/gamrnd(alphq, 1/betaq);
 end
-
-% (3) update b_fit
-for t = 1:(T-1)
-    for k = 1:(p+1)
-       xbt =  dX(k,t+1) - theta_b.A(k,k)*dX(k,t);
-       sig2bt = theta_b.Q(k,k);
-       
-       Sigbt = inv(1/prior.sig2b0 + 1/sig2bt);
-       mubt = Sigbt*(prior.b0/prior.sig2b0 + xbt/sig2bt);
-       theta_b.b(k,t) = normrnd(mubt,Sigbt);
-    end
-end
-
 
 
 

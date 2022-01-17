@@ -1,5 +1,5 @@
 function theta =...
-    sample_prior_new(prior, N, T, p, sampleDynamics, maxCount)
+    sample_prior_bt(prior, N, T, p, sampleDynamics, maxCount)
 
 flag = 1;
 while flag
@@ -10,7 +10,7 @@ while flag
     % linear dynamics: b, A & Q
     theta.A = eye(p+1);
     theta.b = zeros(p+1,T-1);
-    theta.Q = eye(p+1)*prior.Psi0;
+    theta.Q = eye(p+1)*prior.sig20;
     
     % mean & latent: d, X
     dX = ones(1+p,T)*Inf;
@@ -19,8 +19,9 @@ while flag
     if sampleDynamics
         
         for k = 1:(p+1)
-            theta.Q(k,k)= iwishrnd(prior.Psi0, prior.nu0);
-            theta.A(k,k) = mvnrnd(prior.A0, kron(theta.Q(k,k), inv(prior.Lamb0)))';
+            
+            theta.A(k,k) = normrnd(prior.A0, prior.sig2A0);
+            theta.Q(k,k) = 1/gamrnd(prior.nu0/2, 2/(prior.nu0*prior.sig20));
             for t = 1:(T-1)
                 theta.b(k, t) = normrnd(prior.b0,prior.sig2b0);
             end
