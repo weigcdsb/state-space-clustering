@@ -181,3 +181,70 @@ url = {http://www.cs.berkeley.edu/$\sim$blei/},
 volume = {1},
 year = {2006}
 }
+@article{Eden2004,
+abstract = {Neural receptive fields are dynamic in that with experience, neurons change their spiking responses to relevant stimuli. To understand how neural systems adapt the irrepresentations of biological information, analyses of receptive field plasticity from experimental measurements are crucial. Adaptive signal processing, the well-established engineering discipline for characterizing the temporal evolution of system parameters, suggests a framework for studying the plasticity of receptive fields. We use the Bayes' rule Chapman-Kolmogorov paradigm with a linear state equation and point process observation models to derive adaptive filters appropriate for estimation from neural spike trains. We derive point process filter analogues of the Kalman filter, recursive least squares, and steepest-descent algorithms and describe the properties of these new fil-ters. We illustrate our algorithms in two simulated data examples. The first is a study of slow and rapid evolution of spatial receptive fields in hippocampal neurons. The second is an adaptive decoding study in which a signal is decoded from ensemble neural spiking activity as the recep-tive fields of the neurons in the ensemble evolve. Our results provide a paradigm for adaptive estimation for point process observations and suggest a practical approach for constructing filtering algorithms to track neural receptive field dynamics on a millisecond timescale.},
+annote = {doi: 10.1162/089976604773135069},
+author = {Eden, Uri T and Frank, Loren M. and Barbieri, Riccardo and Solo, Victor and Brown, Emery N.},
+doi = {10.1162/089976604773135069},
+issn = {0899-7667},
+journal = {Neural Computation},
+month = {may},
+number = {5},
+pages = {971--998},
+publisher = {MIT Press},
+title = {{Dynamic Analysis of Neural Encoding by Point Process Adaptive Filtering}},
+url = {https://doi.org/10.1162/089976604773135069},
+volume = {16},
+year = {2004}
+}
+@article{RAUCH1965,
+annote = {doi: 10.2514/3.3166},
+author = {Rauch, H E and Tung, F and Striebel, C T},
+doi = {10.2514/3.3166},
+issn = {0001-1452},
+journal = {AIAA Journal},
+month = {aug},
+number = {8},
+pages = {1445--1450},
+publisher = {American Institute of Aeronautics and Astronautics},
+title = {{Maximum likelihood estimates of linear dynamic systems}},
+url = {https://doi.org/10.2514/3.3166},
+volume = {3},
+year = {1965}
+}
+@article{Hoffman2011,
+abstract = {Hamiltonian Monte Carlo (HMC) is a Markov chain Monte Carlo (MCMC) algorithm
+that avoids the random walk behavior and sensitivity to correlated parameters
+that plague many MCMC methods by taking a series of steps informed by
+first-order gradient information. These features allow it to converge to
+high-dimensional target distributions much more quickly than simpler methods
+such as random walk Metropolis or Gibbs sampling. However, HMC's performance is
+highly sensitive to two user-specified parameters: a step size {\epsilon} and a
+desired number of steps L. In particular, if L is too small then the algorithm
+exhibits undesirable random walk behavior, while if L is too large the
+algorithm wastes computation. We introduce the No-U-Turn Sampler (NUTS), an
+extension to HMC that eliminates the need to set a number of steps L. NUTS uses
+a recursive algorithm to build a set of likely candidate points that spans a
+wide swath of the target distribution, stopping automatically when it starts to
+double back and retrace its steps. Empirically, NUTS perform at least as
+efficiently as and sometimes more efficiently than a well tuned standard HMC
+method, without requiring user intervention or costly tuning runs. We also
+derive a method for adapting the step size parameter {\epsilon} on the fly
+based on primal-dual averaging. NUTS can thus be used with no hand-tuning at
+all. NUTS is also suitable for applications such as BUGS-style automatic
+inference engines that require efficient "turnkey" sampling algorithms.},
+archivePrefix = {arXiv},
+arxivId = {1111.4246},
+author = {Hoffman, Matthew D. and Gelman, Andrew},
+eprint = {1111.4246},
+issn = {15337928},
+journal = {Journal of Machine Learning Research},
+keywords = {Adaptive Monte Carlo,Bayesian inference,Dual averaging,Hamiltonian Monte Carlo,Markov chain Monte Carlo},
+month = {nov},
+pages = {1593--1623},
+publisher = {Microtome Publishing},
+title = {{The No-U-Turn Sampler: Adaptively Setting Path Lengths in Hamiltonian Monte Carlo}},
+url = {https://arxiv.org/abs/1111.4246v1},
+volume = {15},
+year = {2011}
+}

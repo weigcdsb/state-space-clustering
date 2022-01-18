@@ -1,9 +1,25 @@
-\begin{thebibliography}{10}
+\begin{thebibliography}{15}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Macke et~al.(2011)Macke, Buesing, Cunningham, Yu, Shenoy, and
+  Sahani]{Macke2011}
+Jakob~H. Macke, Lars Buesing, John~P. Cunningham, Byron~M. Yu, Krishna~V.
+  Shenoy, and Maneesh Sahani.
+\newblock {Empirical models of spiking in neural populations}.
+\newblock \emph{Advances in Neural Information Processing Systems}, 24, 2011.
+
+\bibitem[Johnstone and Lu(2009)]{Johnstone2009}
+Iain~M. Johnstone and Arthur~Yu Lu.
+\newblock {On Consistency and Sparsity for Principal Components Analysis in
+  High Dimensions}.
+\newblock \emph{Journal of the American Statistical Association}, 104\penalty0
+  (486):\penalty0 682, jun 2009.
+\newblock ISSN 01621459.
+\newblock \doi{10.1198/JASA.2009.0121}.
 
 \bibitem[El-Sayyad(1973)]{El-Sayyad1973}
 G.~M. El-Sayyad.
@@ -77,5 +93,32 @@ Ernest Fokou{\'{e}} and D.~M. Titterington.
   2003.
 \newblock ISSN 08856125.
 \newblock \doi{10.1023/A:1020297828025}.
+
+\bibitem[Eden et~al.(2004)Eden, Frank, Barbieri, Solo, and Brown]{Eden2004}
+Uri~T Eden, Loren~M. Frank, Riccardo Barbieri, Victor Solo, and Emery~N. Brown.
+\newblock {Dynamic Analysis of Neural Encoding by Point Process Adaptive
+  Filtering}.
+\newblock \emph{Neural Computation}, 16\penalty0 (5):\penalty0 971--998, may
+  2004.
+\newblock ISSN 0899-7667.
+\newblock \doi{10.1162/089976604773135069}.
+\newblock URL \url{https://doi.org/10.1162/089976604773135069}.
+
+\bibitem[Rauch et~al.(1965)Rauch, Tung, and Striebel]{RAUCH1965}
+H~E Rauch, F~Tung, and C~T Striebel.
+\newblock {Maximum likelihood estimates of linear dynamic systems}.
+\newblock \emph{AIAA Journal}, 3\penalty0 (8):\penalty0 1445--1450, aug 1965.
+\newblock ISSN 0001-1452.
+\newblock \doi{10.2514/3.3166}.
+\newblock URL \url{https://doi.org/10.2514/3.3166}.
+
+\bibitem[Hoffman and Gelman(2011)]{Hoffman2011}
+Matthew~D. Hoffman and Andrew Gelman.
+\newblock {The No-U-Turn Sampler: Adaptively Setting Path Lengths in
+  Hamiltonian Monte Carlo}.
+\newblock \emph{Journal of Machine Learning Research}, 15:\penalty0 1593--1623,
+  nov 2011.
+\newblock ISSN 15337928.
+\newblock URL \url{https://arxiv.org/abs/1111.4246v1}.
 
 \end{thebibliography}

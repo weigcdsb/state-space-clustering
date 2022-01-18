@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.12.6)  17 JAN 2022 08:10
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.12.6)  18 JAN 2022 10:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -445,22 +445,22 @@ LaTeX Warning: Label `sub@fig:3d' multiply defined.
 )
 \openout1 = `draft.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 77.
-LaTeX Font Info:    ... okay on input line 77.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 79.
+LaTeX Font Info:    ... okay on input line 79.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 79.
+LaTeX Font Info:    ... okay on input line 79.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 79.
+LaTeX Font Info:    ... okay on input line 79.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 79.
+LaTeX Font Info:    ... okay on input line 79.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 79.
+LaTeX Font Info:    ... okay on input line 79.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 79.
+LaTeX Font Info:    ... okay on input line 79.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 79.
+LaTeX Font Info:    ... okay on input line 79.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 79.
+LaTeX Font Info:    ... okay on input line 79.
 
 *geometry* verbose mode - [ newgeometry ] result:
 * driver: 
@@ -528,7 +528,7 @@ LaTeX Font Info:    ... okay on input line 77.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring OFF on input line 77.
+Package hyperref Info: Link coloring OFF on input line 79.
 (e:/software/texlive/2020/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2019/09/16 v2.46 Cross-referencing by name of section
 
@@ -541,21 +541,21 @@ Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
 \c@section@level=\count295
 )
-LaTeX Info: Redefining \ref on input line 77.
-LaTeX Info: Redefining \pageref on input line 77.
-LaTeX Info: Redefining \nameref on input line 77.
+LaTeX Info: Redefining \ref on input line 79.
+LaTeX Info: Redefining \pageref on input line 79.
+LaTeX Info: Redefining \nameref on input line 79.
  (./draft.out) (./draft.out)
 \@outlinefile=\write3
 \openout3 = `draft.out'.
 
-LaTeX Info: Redefining \microtypecontext on input line 77.
+LaTeX Info: Redefining \microtypecontext on input line 79.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
 Package microtype Info: Automatic font expansion enabled (level 2),
 (microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
 Package microtype Info: Using default expansion set `basictext'.
-LaTeX Info: Redefining \showhyphens on input line 77.
+LaTeX Info: Redefining \showhyphens on input line 79.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
@@ -588,7 +588,7 @@ e
 File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman 
 (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msa on input line 80.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 82.
 
 
 (e:/software/texlive/2020/texmf-dist/tex/latex/amsfonts/umsa.fd
@@ -597,7 +597,7 @@ File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 (e:/software/texlive/2020/texmf-dist/tex/latex/microtype/mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 80.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 82.
 
 
 (e:/software/texlive/2020/texmf-dist/tex/latex/amsfonts/umsb.fd
@@ -607,7 +607,7 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
 LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 8
-0.
+2.
 
 (e:/software/texlive/2020/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
@@ -616,7 +616,7 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `cmtt' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
-LaTeX Font Info:    Trying to load font information for T1+phv on input line 83
+LaTeX Font Info:    Trying to load font information for T1+phv on input line 85
 .
 
 (e:/software/texlive/2020/texmf-dist/tex/latex/psnfss/t1phv.fd
@@ -632,147 +632,154 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
  [1
 
 
-{e:/software/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
-
-Package natbib Warning: Citation `bibid' on page 2 undefined on input line 116.
-
-
-[2] [3]
-<image001.jpg, id=113, 205.5178pt x 162.6075pt>
+{e:/software/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] [3
+]
+<image001.jpg, id=125, 205.5178pt x 162.6075pt>
 File: image001.jpg Graphic file (type jpg)
 <use image001.jpg>
-Package pdftex.def Info: image001.jpg  used on input line 168.
+Package pdftex.def Info: image001.jpg  used on input line 173.
 (pdftex.def)             Requested size: 198.7425pt x 157.24773pt.
-<image002.jpg, id=114, 205.5178pt x 162.6075pt>
+<image002.jpg, id=126, 205.5178pt x 162.6075pt>
 File: image002.jpg Graphic file (type jpg)
 <use image002.jpg>
-Package pdftex.def Info: image002.jpg  used on input line 169.
+Package pdftex.def Info: image002.jpg  used on input line 174.
 (pdftex.def)             Requested size: 198.7425pt x 157.24773pt.
-<image003.jpg, id=115, 205.1414pt x 162.6075pt>
+<image003.jpg, id=127, 205.1414pt x 162.6075pt>
 File: image003.jpg Graphic file (type jpg)
 <use image003.jpg>
-Package pdftex.def Info: image003.jpg  used on input line 171.
+Package pdftex.def Info: image003.jpg  used on input line 176.
 (pdftex.def)             Requested size: 198.7425pt x 157.53307pt.
-<image004.jpg, id=116, 205.1414pt x 162.6075pt>
+
+Underfull \vbox (badness 7777) has occurred while \output is active []
+
+ [4 <./image001.jpg> <./image002.jpg> <./image003.jpg>]
+<image004.jpg, id=136, 205.1414pt x 162.6075pt>
 File: image004.jpg Graphic file (type jpg)
 <use image004.jpg>
-Package pdftex.def Info: image004.jpg  used on input line 183.
+Package pdftex.def Info: image004.jpg  used on input line 188.
 (pdftex.def)             Requested size: 198.7425pt x 157.53307pt.
-<image005.jpg, id=117, 205.1414pt x 153.95015pt>
+<image005.jpg, id=137, 205.1414pt x 153.95015pt>
 File: image005.jpg Graphic file (type jpg)
 <use image005.jpg>
-Package pdftex.def Info: image005.jpg  used on input line 184.
+Package pdftex.def Info: image005.jpg  used on input line 189.
 (pdftex.def)             Requested size: 198.7425pt x 149.14587pt.
-<image006.jpg, id=118, 205.1414pt x 205.1414pt>
+<image006.jpg, id=138, 205.1414pt x 205.1414pt>
 File: image006.jpg Graphic file (type jpg)
 <use image006.jpg>
-Package pdftex.def Info: image006.jpg  used on input line 186.
+Package pdftex.def Info: image006.jpg  used on input line 191.
 (pdftex.def)             Requested size: 158.99156pt x 158.9892pt.
-<image007.jpg, id=119, 205.1414pt x 153.95015pt>
+<image007.jpg, id=139, 205.1414pt x 153.95015pt>
 File: image007.jpg Graphic file (type jpg)
 <use image007.jpg>
-Package pdftex.def Info: image007.jpg  used on input line 187.
+Package pdftex.def Info: image007.jpg  used on input line 192.
 (pdftex.def)             Requested size: 198.7425pt x 149.14587pt.
-
-
-LaTeX Warning: `!h' float specifier changed to `!ht'.
-
-[4 <./image001.jpg> <./image002.jpg> <./image003.jpg>] [5 <./image004.jpg> <./i
-mage005.jpg> <./image006.jpg> <./image007.jpg>]
-<image008.jpg, id=137, 205.1414pt x 153.95015pt>
+ [5 <./image004.jpg> <./image005.jpg> <./image006.jpg> <./image007.jpg>]
+<image008.jpg, id=149, 205.1414pt x 153.95015pt>
 File: image008.jpg Graphic file (type jpg)
 <use image008.jpg>
-Package pdftex.def Info: image008.jpg  used on input line 208.
+Package pdftex.def Info: image008.jpg  used on input line 213.
 (pdftex.def)             Requested size: 158.99156pt x 119.31482pt.
-<image009.jpg, id=138, 205.1414pt x 205.1414pt>
+<image009.jpg, id=150, 205.1414pt x 205.1414pt>
 File: image009.jpg Graphic file (type jpg)
 <use image009.jpg>
-Package pdftex.def Info: image009.jpg  used on input line 209.
+Package pdftex.def Info: image009.jpg  used on input line 214.
 (pdftex.def)             Requested size: 119.2467pt x 119.24503pt.
-<image010.jpg, id=139, 205.1414pt x 205.1414pt>
+<image010.jpg, id=151, 205.1414pt x 205.1414pt>
 File: image010.jpg Graphic file (type jpg)
 <use image010.jpg>
-Package pdftex.def Info: image010.jpg  used on input line 211.
+Package pdftex.def Info: image010.jpg  used on input line 216.
 (pdftex.def)             Requested size: 119.2467pt x 119.24503pt.
-<image011.jpg, id=140, 205.1414pt x 153.95015pt>
+<image011.jpg, id=152, 205.1414pt x 153.95015pt>
 File: image011.jpg Graphic file (type jpg)
 <use image011.jpg>
-Package pdftex.def Info: image011.jpg  used on input line 212.
+Package pdftex.def Info: image011.jpg  used on input line 217.
 (pdftex.def)             Requested size: 158.99156pt x 119.31482pt.
-<image012.jpg, id=141, 205.1414pt x 153.95015pt>
+<image012.jpg, id=153, 205.1414pt x 153.95015pt>
 File: image012.jpg Graphic file (type jpg)
 <use image012.jpg>
-Package pdftex.def Info: image012.jpg  used on input line 214.
+Package pdftex.def Info: image012.jpg  used on input line 219.
 (pdftex.def)             Requested size: 158.99156pt x 119.31482pt.
-<image013.jpg, id=142, 205.1414pt x 153.95015pt>
+<image013.jpg, id=154, 205.1414pt x 153.95015pt>
 File: image013.jpg Graphic file (type jpg)
 <use image013.jpg>
-Package pdftex.def Info: image013.jpg  used on input line 215.
+Package pdftex.def Info: image013.jpg  used on input line 220.
 (pdftex.def)             Requested size: 158.99156pt x 119.31482pt.
-<image001.png, id=143, 421.1986pt x 315.42844pt>
+<image001.png, id=155, 421.1986pt x 315.42844pt>
 File: image001.png Graphic file (type png)
 <use image001.png>
-Package pdftex.def Info: image001.png  used on input line 217.
+Package pdftex.def Info: image001.png  used on input line 222.
 (pdftex.def)             Requested size: 158.99156pt x 119.06508pt.
-<image002.png, id=145, 421.1986pt x 315.42844pt>
+<image002.png, id=157, 421.1986pt x 315.42844pt>
 File: image002.png Graphic file (type png)
 <use image002.png>
-Package pdftex.def Info: image002.png  used on input line 218.
+Package pdftex.def Info: image002.png  used on input line 223.
 (pdftex.def)             Requested size: 158.99156pt x 119.06508pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
+[6] [7 <./image008.jpg> <./image009.jpg> <./image010.jpg> <./image011.jpg> <./i
+mage012.jpg> <./image013.jpg> <./image001.png> <./image002.png>] (./draft.bbl)
+Underfull \hbox (badness 1221) in paragraph at lines 257--259
+\OML/cmm/m/it/10 P\OT1/cmr/m/n/10 ([]\OMS/cmsy/m/n/10 jf[]g[]\OML/cmm/m/it/10 ;
+ []; []; []; []\OT1/cmr/m/n/10 )$ \T1/ptm/m/n/10 (+20) is ap-prox-i-mated by a 
+global Laplace ap-prox-i-ma-tion,
+ []
 
-Underfull \vbox (badness 10000) has occurred while \output is active []
+[8]
+Underfull \hbox (badness 1521) in paragraph at lines 273--274
+\T1/ptm/m/n/10 (+20) and $[][] \OMS/cmsy/m/n/10 j [] ^^X \OML/cmm/m/it/10 N\OT1
+/cmr/m/n/10 (\OML/cmm/b/it/10 ^^V[]\OML/cmm/m/it/10 ; ^^[[]\OT1/cmr/bx/n/10 ^^C
+[]\OT1/cmr/m/n/10 )$\T1/ptm/m/n/10 (+20) , with $\OT1/cmr/bx/n/10 ^^C[] \OT1/cm
+r/m/n/10 = \OML/cmm/b/it/10 X[]X[] \OT1/cmr/m/n/10 + \OT1/cmr/bx/n/10 ^^C[]$ \T
+1/ptm/m/n/10 (+20) and $\OML/cmm/b/it/10 ^^V[] \OT1/cmr/m/n/10 =
+ []
 
- [6]
-[7 <./image008.jpg> <./image009.jpg> <./image010.jpg> <./image011.jpg> <./image
-012.jpg> <./image013.jpg> <./image001.png> <./image002.png>] (./draft.bbl)
-
-Package natbib Warning: There were undefined citations.
-
-[8] (./draft.aux)
+[9] (./draft.aux)
 Package rerunfilecheck Info: File `draft.out' has not changed.
-(rerunfilecheck)             Checksum: 72DF17CDC4136AC83D12796AD99721B6;787.
+(rerunfilecheck)             Checksum: 526E5EDE30266616630BDFCED5EB0302;868.
 
 
 LaTeX Warning: There were multiply-defined labels.
 
  ) 
 Here is how much of TeX's memory you used:
- 10486 strings out of 479383
- 157470 string characters out of 5868871
- 517983 words of memory out of 5000000
- 27152 multiletter control sequences out of 15000+600000
- 448635 words of font info for 183 fonts, out of 8000000 for 9000
+ 10552 strings out of 479383
+ 158238 string characters out of 5868871
+ 526095 words of memory out of 5000000
+ 27174 multiletter control sequences out of 15000+600000
+ 454466 words of font info for 208 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 80i,10n,85p,1282b,404s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 80i,11n,85p,1983b,421s stack positions out of 5000i,500n,10000p,200000b,80000s
 {e:/software/texlive/2020/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc
 }{e:/software/texlive/2020/texmf-dist/fonts/enc/dvips/base/8r.enc}<e:/software/
 texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><e:/software/
-texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><e:/software/
-texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><e:/software/
-texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb><e:/software/t
-exlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><e:/software/te
-xlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb><e:/software/t
-exlive/2020/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib7.pfb><e:/softw
-are/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><e:/softwa
-re/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><e:/software
-/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><e:/software/t
-exlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><e:/software/t
-exlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><e:/software/te
-xlive/2020/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb><e:/softwa
-re/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sftt0900.pfb><e:/softwar
-e/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb><e:/software
-/texlive/2020/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb><e:/software/texli
-ve/2020/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><e:/software/texlive/2020/t
-exmf-dist/fonts/type1/urw/times/utmr8a.pfb><e:/software/texlive/2020/texmf-dist
-/fonts/type1/urw/times/utmri8a.pfb>
-Output written on draft.pdf (8 pages, 619851 bytes).
+texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx7.pfb><e:/software/t
+exlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmex10.pfb><e:/software/t
+exlive/2020/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmex7.pfb><e:/softwa
+re/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi10.pfb><e:/softwa
+re/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi5.pfb><e:/softwar
+e/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmi7.pfb><e:/software
+/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmmib10.pfb><e:/softwar
+e/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib5.pfb><e:/so
+ftware/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cmextra/cmmib7.pfb><
+e:/software/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmr10.pfb><e
+:/software/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmr5.pfb><e:/
+software/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmr7.pfb><e:/so
+ftware/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy10.pfb><e:/so
+ftware/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy5.pfb><e:/sof
+tware/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><e:/soft
+ware/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb><e:
+/software/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sftt0900.pfb><e:/
+software/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb><e:/s
+oftware/texlive/2020/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb><e:/softwar
+e/texlive/2020/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><e:/software/texlive
+/2020/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><e:/software/texlive/2020/tex
+mf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on draft.pdf (9 pages, 669992 bytes).
 PDF statistics:
- 258 PDF objects out of 1000 (max. 8388607)
- 209 compressed objects within 3 object streams
- 53 named destinations out of 1000 (max. 500000)
- 24756 words of extra memory for PDF output out of 24883 (max. 10000000)
+ 307 PDF objects out of 1000 (max. 8388607)
+ 253 compressed objects within 3 object streams
+ 60 named destinations out of 1000 (max. 500000)
+ 28860 words of extra memory for PDF output out of 29859 (max. 10000000)
 
