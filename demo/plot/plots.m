@@ -78,12 +78,12 @@ subplot(3,4,9)
 plot(X(id2id(3,2),:)')
 y3 = ylim;
 subplot(3,4,10)
-plot(dSum3'/c)
+plot(-dSum3'/c)
 subplot(3,4,11)
-plot(xSum3'/c)
+plot(-xSum3'/c)
 subplot(3,4,12)
-plot(dxMean3)
-ylim(sort(-y3));
+plot(-dxMean3)
+ylim(sort(y3));
 
 
 set(LF,'PaperUnits','inches','PaperPosition',[0 0 6 3])
@@ -93,82 +93,86 @@ saveas(LF, '1_LF.png')
 
 
 %% trace plot
-dtrace = zeros(nClus, ng);
-Xtrace = zeros(nClus, ng);
-Ctrace = zeros(nClus, ng);
-
-btrace = zeros(nClus, ng);
-Atrace = zeros(nClus, ng);
-Qtrace = zeros(nClus, ng);
-
-
-for g = 1:ng
-    for k = 1:nClus
-        dtrace(k,g) = norm(THETA{g}(k).d);
-        Xtrace(k,g) = norm(THETA{g}(k).X, 'fro');
-        Ctrace(k,g) = norm(THETA{g}(k).C(Lab ==k,:), 'fro');
-        btrace(k,g) = norm(THETA{g}(k).b(2:end), 'fro');
-        Atrace(k,g) = norm(THETA{g}(k).A(2:end,2:end), 'fro');
-        Qtrace(k,g) = norm(THETA{g}(k).Q(2:end,2:end), 'fro');
-    end
-end
-
-gSub = [1:4000 6000:ng];
-ngSub = length(gSub);
-
-
-trace = figure;
-subplot(3,1,1)
-plot(dtrace(:,gSub)')
-title('Frobenius norm of \mu')
-ylim([0 60])
-xlim([0 ngSub])
-subplot(3,1,2)
-plot(Xtrace(:,gSub)')
-title('Frobenius norm of X')
-ylim([0 20])
-xlim([0 ngSub])
-subplot(3,1,3)
-plot(Ctrace(:,gSub)')
-title('Frobenius norm of c')
-xlim([0 ngSub])
-
-
-set(trace,'PaperUnits','inches','PaperPosition',[0 0 5 3])
-saveas(trace, '2_trace.svg')
-saveas(trace, '2_trace.png')
-
-
-
+% dtrace = zeros(nClus, ng);
+% Xtrace = zeros(nClus, ng);
+% Ctrace = zeros(nClus, ng);
+% 
+% btrace = zeros(nClus, ng);
+% Atrace = zeros(nClus, ng);
+% Qtrace = zeros(nClus, ng);
+% 
+% 
+% for g = 1:ng
+%     for k = 1:nClus
+%         dtrace(k,g) = norm(THETA{g}(k).d);
+%         Xtrace(k,g) = norm(THETA{g}(k).X, 'fro');
+%         Ctrace(k,g) = norm(THETA{g}(k).C(Lab ==k,:), 'fro');
+%         btrace(k,g) = norm(THETA{g}(k).b(2:end), 'fro');
+%         Atrace(k,g) = norm(THETA{g}(k).A(2:end,2:end), 'fro');
+%         Qtrace(k,g) = norm(THETA{g}(k).Q(2:end,2:end), 'fro');
+%     end
+% end
+% 
+% gSub = [1:4000 6000:ng];
+% ngSub = length(gSub);
+% 
+% 
+% trace = figure;
+% subplot(3,1,1)
+% plot(dtrace(:,gSub)')
+% title('Frobenius norm of \mu')
+% ylim([0 60])
+% xlim([0 ngSub])
+% subplot(3,1,2)
+% plot(Xtrace(:,gSub)')
+% title('Frobenius norm of X')
+% ylim([0 20])
+% xlim([0 ngSub])
+% subplot(3,1,3)
+% plot(Ctrace(:,gSub)')
+% title('Frobenius norm of c')
+% xlim([0 ngSub])
 
 %% fitted FR
-idx = 500:1000;
-dSum = zeros(nClus, T);
-XSum = zeros(nClus*p, T);
-CSum = zeros(N, p);
 
-for g = idx
-    for ii = 1:nClus
-        dSum(ii,:) = dSum(ii,:) + THETA{g}(ii).d;
-        XSum(id2id(ii,p),:) = XSum(id2id(ii,p),:) + THETA{g}(ii).X;
-        CSum(Lab == ii, :) = CSum(Lab == ii, :) +...
-            THETA{g}(ii).C(Lab == ii, :);
+fitMFRTrace = zeros(N,T,ng);
+tracellhd = zeros(ng,1);
+
+for g = 1:ng
+    for k  = 1:N
+        fitMFRTrace(k,:, g) = exp([1 THETA{g}(Lab(k)).C(k,:)]*...
+            [THETA{g}(Lab(k)).d ;THETA{g}(Lab(k)).X]);
     end
+    tracellhd(g) =...
+        nansum(log(poisspdf(Y,fitMFRTrace(:,:,g))), 'all')/nansum(Y, 'all');
 end
 
-dMean = dSum/length(idx);
-XMean = XSum/length(idx);
-CMean = CSum/length(idx);
 
-fitMFR = zeros(N, T);
-for k  = 1:nClus
-    N_tmp = sum(Lab == k);
-    fitMFR(Lab == k,:) = exp([ones(N_tmp,1) CMean(Lab == k,:)]*...
-        [dMean(k,:) ;XMean(id2id(k,p),:)]);
-end
+llhdspk1 = figure;
+plot(tracellhd)
+set(gca,'FontSize',10, 'LineWidth', 1.5,'TickDir','out')
+xlabel('iteration')
+ylabel('llhd/spk')
+box off
 
-subplot
+set(llhdspk1,'PaperUnits','inches','PaperPosition',[0 0 6 3])
+saveas(llhdspk1, '2_llhd1.svg')
+saveas(llhdspk1, '2_llhd1.png')
 
+
+llhdspk2 = figure;
+plot(tracellhd(1:1000))
+set(gca,'FontSize',10, 'LineWidth', 1.5,'TickDir','out')
+xlabel('iteration')
+ylabel('llhd/spk')
+box off
+
+set(llhdspk2,'PaperUnits','inches','PaperPosition',[0 0 6 3])
+saveas(llhdspk2, '3_llhd2.svg')
+saveas(llhdspk2, '3_llhd2.png')
+
+
+idx = 500:1000;
 FR = figure;
 subplot(1,2,1)
 imagesc(exp(C_trans*X + d))
@@ -179,7 +183,7 @@ colorbar()
 set(gca,'FontSize',10, 'LineWidth', 1.5,'TickDir','out')
 box off
 subplot(1,2,2)
-imagesc(fitMFR)
+imagesc(mean(fitMFRTrace, 3))
 set(gca,'CLim',cLim)
 colorbar()
 title('fit')
@@ -188,8 +192,8 @@ set(gca,'FontSize',10, 'LineWidth', 1.5,'TickDir','out')
 box off
 
 set(FR,'PaperUnits','inches','PaperPosition',[0 0 6 3])
-saveas(FR, '2_FR.svg')
-saveas(FR, '2_FR.png')
+saveas(FR, '4_FR.svg')
+saveas(FR, '4_FR.png')
 
 %%
 %% cluster plot...
