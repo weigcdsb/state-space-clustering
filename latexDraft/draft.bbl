@@ -1,4 +1,4 @@
-\begin{thebibliography}{15}
+\begin{thebibliography}{16}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
@@ -84,6 +84,15 @@ A.~Bhattacharya and D.~B. Dunson.
 \newblock \emph{Biometrika}, 98\penalty0 (2):\penalty0 291, jun 2011.
 \newblock ISSN 00063444.
 \newblock \doi{10.1093/BIOMET/ASR013}.
+
+\bibitem[Williams et~al.(2020)Williams, Degleris, Wang, and
+  Linderman]{Williams2020}
+Alex~H. Williams, Anthony Degleris, Yixin Wang, and Scott~W. Linderman.
+\newblock {Point process models for sequence detection in high-dimensional
+  neural spike trains}.
+\newblock \emph{Advances in Neural Information Processing Systems}, 2020-Decem,
+  oct 2020.
+\newblock ISSN 10495258.
 
 \bibitem[Fokou{\'{e}} and Titterington(2003)]{Fokoue2003}
 Ernest Fokou{\'{e}} and D.~M. Titterington.

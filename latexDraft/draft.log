@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.12.6)  18 JAN 2022 10:57
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.12.6)  20 JAN 2022 10:15
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -417,32 +417,7 @@ File: l3backend-pdftex.def 2020-09-24 L3 backend support: PDF output (pdfTeX)
 \l__kernel_color_stack_int=\count294
 \l__pdf_internal_box=\box50
 )
-(./draft.aux
-
-LaTeX Warning: Label `fig:3d' multiply defined.
-
-
-LaTeX Warning: Label `sub@fig:3d' multiply defined.
-
-
-LaTeX Warning: Label `fig:3d' multiply defined.
-
-
-LaTeX Warning: Label `sub@fig:3d' multiply defined.
-
-
-LaTeX Warning: Label `fig:3d' multiply defined.
-
-
-LaTeX Warning: Label `sub@fig:3d' multiply defined.
-
-
-LaTeX Warning: Label `fig:3d' multiply defined.
-
-
-LaTeX Warning: Label `sub@fig:3d' multiply defined.
-
-)
+(./draft.aux)
 \openout1 = `draft.aux'.
 
 LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 79.
@@ -634,100 +609,154 @@ Underfull \vbox (badness 10000) has occurred while \output is active []
 
 {e:/software/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] [3
 ]
-<image001.jpg, id=125, 205.5178pt x 162.6075pt>
+<2_llhd1.png, id=134, 433.62pt x 216.81pt>
+File: 2_llhd1.png Graphic file (type png)
+<use 2_llhd1.png>
+Package pdftex.def Info: 2_llhd1.png  used on input line 175.
+(pdftex.def)             Requested size: 198.7425pt x 99.3732pt.
+<3_llhd2.png, id=135, 433.62pt x 216.81pt>
+File: 3_llhd2.png Graphic file (type png)
+<use 3_llhd2.png>
+Package pdftex.def Info: 3_llhd2.png  used on input line 176.
+(pdftex.def)             Requested size: 198.7425pt x 99.3732pt.
+<image001.jpg, id=136, 205.5178pt x 162.6075pt>
 File: image001.jpg Graphic file (type jpg)
 <use image001.jpg>
-Package pdftex.def Info: image001.jpg  used on input line 173.
+Package pdftex.def Info: image001.jpg  used on input line 178.
 (pdftex.def)             Requested size: 198.7425pt x 157.24773pt.
-<image002.jpg, id=126, 205.5178pt x 162.6075pt>
-File: image002.jpg Graphic file (type jpg)
-<use image002.jpg>
-Package pdftex.def Info: image002.jpg  used on input line 174.
-(pdftex.def)             Requested size: 198.7425pt x 157.24773pt.
-<image003.jpg, id=127, 205.1414pt x 162.6075pt>
+<LF.png, id=137, 236.5638pt x 239.2137pt>
+File: LF.png Graphic file (type png)
+<use LF.png>
+Package pdftex.def Info: LF.png  used on input line 179.
+(pdftex.def)             Requested size: 198.7425pt x 200.96733pt.
+<image003.jpg, id=138, 205.1414pt x 162.6075pt>
 File: image003.jpg Graphic file (type jpg)
 <use image003.jpg>
-Package pdftex.def Info: image003.jpg  used on input line 176.
+Package pdftex.def Info: image003.jpg  used on input line 181.
 (pdftex.def)             Requested size: 198.7425pt x 157.53307pt.
-
-Underfull \vbox (badness 7777) has occurred while \output is active []
-
- [4 <./image001.jpg> <./image002.jpg> <./image003.jpg>]
-<image004.jpg, id=136, 205.1414pt x 162.6075pt>
+<image004.jpg, id=139, 205.1414pt x 162.6075pt>
 File: image004.jpg Graphic file (type jpg)
 <use image004.jpg>
-Package pdftex.def Info: image004.jpg  used on input line 188.
+Package pdftex.def Info: image004.jpg  used on input line 182.
 (pdftex.def)             Requested size: 198.7425pt x 157.53307pt.
-<image005.jpg, id=137, 205.1414pt x 153.95015pt>
-File: image005.jpg Graphic file (type jpg)
-<use image005.jpg>
-Package pdftex.def Info: image005.jpg  used on input line 189.
-(pdftex.def)             Requested size: 198.7425pt x 149.14587pt.
-<image006.jpg, id=138, 205.1414pt x 205.1414pt>
-File: image006.jpg Graphic file (type jpg)
-<use image006.jpg>
-Package pdftex.def Info: image006.jpg  used on input line 191.
-(pdftex.def)             Requested size: 158.99156pt x 158.9892pt.
-<image007.jpg, id=139, 205.1414pt x 153.95015pt>
-File: image007.jpg Graphic file (type jpg)
-<use image007.jpg>
-Package pdftex.def Info: image007.jpg  used on input line 192.
-(pdftex.def)             Requested size: 198.7425pt x 149.14587pt.
- [5 <./image004.jpg> <./image005.jpg> <./image006.jpg> <./image007.jpg>]
-<image008.jpg, id=149, 205.1414pt x 153.95015pt>
-File: image008.jpg Graphic file (type jpg)
-<use image008.jpg>
-Package pdftex.def Info: image008.jpg  used on input line 213.
-(pdftex.def)             Requested size: 158.99156pt x 119.31482pt.
-<image009.jpg, id=150, 205.1414pt x 205.1414pt>
-File: image009.jpg Graphic file (type jpg)
-<use image009.jpg>
-Package pdftex.def Info: image009.jpg  used on input line 214.
-(pdftex.def)             Requested size: 119.2467pt x 119.24503pt.
-<image010.jpg, id=151, 205.1414pt x 205.1414pt>
-File: image010.jpg Graphic file (type jpg)
-<use image010.jpg>
-Package pdftex.def Info: image010.jpg  used on input line 216.
-(pdftex.def)             Requested size: 119.2467pt x 119.24503pt.
-<image011.jpg, id=152, 205.1414pt x 153.95015pt>
-File: image011.jpg Graphic file (type jpg)
-<use image011.jpg>
-Package pdftex.def Info: image011.jpg  used on input line 217.
-(pdftex.def)             Requested size: 158.99156pt x 119.31482pt.
-<image012.jpg, id=153, 205.1414pt x 153.95015pt>
-File: image012.jpg Graphic file (type jpg)
-<use image012.jpg>
-Package pdftex.def Info: image012.jpg  used on input line 219.
-(pdftex.def)             Requested size: 158.99156pt x 119.31482pt.
-<image013.jpg, id=154, 205.1414pt x 153.95015pt>
-File: image013.jpg Graphic file (type jpg)
-<use image013.jpg>
-Package pdftex.def Info: image013.jpg  used on input line 220.
-(pdftex.def)             Requested size: 158.99156pt x 119.31482pt.
-<image001.png, id=155, 421.1986pt x 315.42844pt>
-File: image001.png Graphic file (type png)
-<use image001.png>
-Package pdftex.def Info: image001.png  used on input line 222.
-(pdftex.def)             Requested size: 158.99156pt x 119.06508pt.
-<image002.png, id=157, 421.1986pt x 315.42844pt>
-File: image002.png Graphic file (type png)
-<use image002.png>
-Package pdftex.def Info: image002.png  used on input line 223.
-(pdftex.def)             Requested size: 158.99156pt x 119.06508pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-[6] [7 <./image008.jpg> <./image009.jpg> <./image010.jpg> <./image011.jpg> <./i
-mage012.jpg> <./image013.jpg> <./image001.png> <./image002.png>] (./draft.bbl)
-Underfull \hbox (badness 1221) in paragraph at lines 257--259
+<image005.jpg, id=141, 205.1414pt x 153.95015pt>
+File: image005.jpg Graphic file (type jpg)
+<use image005.jpg>
+Package pdftex.def Info: image005.jpg  used on input line 191.
+(pdftex.def)             Requested size: 158.99156pt x 119.31482pt.
+<image006.jpg, id=142, 205.1414pt x 205.1414pt>
+File: image006.jpg Graphic file (type jpg)
+<use image006.jpg>
+Package pdftex.def Info: image006.jpg  used on input line 192.
+(pdftex.def)             Requested size: 158.99156pt x 158.9892pt.
+<image007.jpg, id=143, 205.1414pt x 153.95015pt>
+File: image007.jpg Graphic file (type jpg)
+<use image007.jpg>
+Package pdftex.def Info: image007.jpg  used on input line 193.
+(pdftex.def)             Requested size: 158.99156pt x 119.31482pt.
+
+Overfull \hbox (79.4897pt too wide) in paragraph at lines 191--194
+ [][][][][][] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [4]
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [5 <./2_llhd1.png (PNG copy)> <./3_llhd2.png (PNG copy)> <./image001.jpg> <./L
+F.png> <./image003.jpg> <./image004.jpg>]
+<image008.jpg, id=176, 205.1414pt x 153.95015pt>
+File: image008.jpg Graphic file (type jpg)
+<use image008.jpg>
+Package pdftex.def Info: image008.jpg  used on input line 219.
+(pdftex.def)             Requested size: 198.7425pt x 149.14587pt.
+<image009.jpg, id=177, 205.1414pt x 205.1414pt>
+File: image009.jpg Graphic file (type jpg)
+<use image009.jpg>
+Package pdftex.def Info: image009.jpg  used on input line 220.
+(pdftex.def)             Requested size: 139.12216pt x 139.12181pt.
+<image010.jpg, id=178, 205.1414pt x 205.1414pt>
+File: image010.jpg Graphic file (type jpg)
+<use image010.jpg>
+Package pdftex.def Info: image010.jpg  used on input line 221.
+(pdftex.def)             Requested size: 139.12216pt x 139.12181pt.
+
+Overfull \hbox (79.50183pt too wide) in paragraph at lines 219--222
+ [][][][][][] 
+ []
+
+<image001.png, id=179, 421.1986pt x 315.42844pt>
+File: image001.png Graphic file (type png)
+<use image001.png>
+Package pdftex.def Info: image001.png  used on input line 223.
+(pdftex.def)             Requested size: 119.2467pt x 89.30121pt.
+<image002.png, id=181, 421.1986pt x 315.42844pt>
+File: image002.png Graphic file (type png)
+<use image002.png>
+Package pdftex.def Info: image002.png  used on input line 224.
+(pdftex.def)             Requested size: 119.2467pt x 89.30121pt.
+<image011.jpg, id=182, 205.1414pt x 153.95015pt>
+File: image011.jpg Graphic file (type jpg)
+<use image011.jpg>
+Package pdftex.def Info: image011.jpg  used on input line 225.
+(pdftex.def)             Requested size: 119.2467pt x 89.48846pt.
+<image012.jpg, id=183, 205.1414pt x 153.95015pt>
+File: image012.jpg Graphic file (type jpg)
+<use image012.jpg>
+Package pdftex.def Info: image012.jpg  used on input line 226.
+(pdftex.def)             Requested size: 119.2467pt x 89.48846pt.
+
+Overfull \hbox (79.50183pt too wide) in paragraph at lines 223--227
+ [][][][][][][][] 
+ []
+
+<12_numTrace.png, id=184, 216.81pt x 216.81pt>
+File: 12_numTrace.png Graphic file (type png)
+<use 12_numTrace.png>
+Package pdftex.def Info: 12_numTrace.png  used on input line 228.
+(pdftex.def)             Requested size: 158.99156pt x 158.99779pt.
+<16_fitFR.png, id=185, 289.08pt x 216.81pt>
+File: 16_fitFR.png Graphic file (type png)
+<use 16_fitFR.png>
+Package pdftex.def Info: 16_fitFR.png  used on input line 229.
+(pdftex.def)             Requested size: 158.99156pt x 119.24255pt.
+<14_simPixel.png, id=186, 289.08pt x 216.81pt>
+File: 14_simPixel.png Graphic file (type png)
+<use 14_simPixel.png>
+Package pdftex.def Info: 14_simPixel.png  used on input line 230.
+(pdftex.def)             Requested size: 158.99156pt x 119.24255pt.
+
+Overfull \hbox (79.4897pt too wide) in paragraph at lines 228--231
+ [][][][][][] 
+ []
+
+
+LaTeX Warning: `!h' float specifier changed to `!ht'.
+
+
+Underfull \vbox (badness 10000) has occurred while \output is active []
+
+ [6 <./image005.jpg> <./image006.jpg> <./image007.jpg>] [7 <./image008.jpg> <./
+image009.jpg> <./image010.jpg> <./image001.png> <./image002.png> <./image011.jp
+g> <./image012.jpg> <./12_numTrace.png (PNG copy)> <./16_fitFR.png (PNG copy)> 
+<./14_simPixel.png (PNG copy)>] [8] (./draft.bbl)
+Underfull \hbox (badness 1221) in paragraph at lines 265--267
 \OML/cmm/m/it/10 P\OT1/cmr/m/n/10 ([]\OMS/cmsy/m/n/10 jf[]g[]\OML/cmm/m/it/10 ;
  []; []; []; []\OT1/cmr/m/n/10 )$ \T1/ptm/m/n/10 (+20) is ap-prox-i-mated by a 
 global Laplace ap-prox-i-ma-tion,
  []
 
-[8]
-Underfull \hbox (badness 1521) in paragraph at lines 273--274
+[9]
+Underfull \hbox (badness 1521) in paragraph at lines 280--281
 \T1/ptm/m/n/10 (+20) and $[][] \OMS/cmsy/m/n/10 j [] ^^X \OML/cmm/m/it/10 N\OT1
 /cmr/m/n/10 (\OML/cmm/b/it/10 ^^V[]\OML/cmm/m/it/10 ; ^^[[]\OT1/cmr/bx/n/10 ^^C
 []\OT1/cmr/m/n/10 )$\T1/ptm/m/n/10 (+20) , with $\OT1/cmr/bx/n/10 ^^C[] \OT1/cm
@@ -735,22 +764,18 @@ r/m/n/10 = \OML/cmm/b/it/10 X[]X[] \OT1/cmr/m/n/10 + \OT1/cmr/bx/n/10 ^^C[]$ \T
 1/ptm/m/n/10 (+20) and $\OML/cmm/b/it/10 ^^V[] \OT1/cmr/m/n/10 =
  []
 
-[9] (./draft.aux)
+[10] [11] (./draft.aux)
 Package rerunfilecheck Info: File `draft.out' has not changed.
-(rerunfilecheck)             Checksum: 526E5EDE30266616630BDFCED5EB0302;868.
-
-
-LaTeX Warning: There were multiply-defined labels.
-
+(rerunfilecheck)             Checksum: E3BCA27B08CA3CF2F38E5AF522AA7AC6;850.
  ) 
 Here is how much of TeX's memory you used:
- 10552 strings out of 479383
- 158238 string characters out of 5868871
- 526095 words of memory out of 5000000
- 27174 multiletter control sequences out of 15000+600000
- 454466 words of font info for 208 fonts, out of 8000000 for 9000
+ 10612 strings out of 479383
+ 158980 string characters out of 5868871
+ 531265 words of memory out of 5000000
+ 27213 multiletter control sequences out of 15000+600000
+ 454856 words of font info for 214 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 80i,11n,85p,1983b,421s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 80i,12n,85p,1983b,427s stack positions out of 5000i,500n,10000p,200000b,80000s
 {e:/software/texlive/2020/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc
 }{e:/software/texlive/2020/texmf-dist/fonts/enc/dvips/base/8r.enc}<e:/software/
 texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><e:/software/
@@ -776,10 +801,10 @@ oftware/texlive/2020/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb><e:/softwar
 e/texlive/2020/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><e:/software/texlive
 /2020/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><e:/software/texlive/2020/tex
 mf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on draft.pdf (9 pages, 669992 bytes).
+Output written on draft.pdf (11 pages, 899275 bytes).
 PDF statistics:
- 307 PDF objects out of 1000 (max. 8388607)
- 253 compressed objects within 3 object streams
- 60 named destinations out of 1000 (max. 500000)
- 28860 words of extra memory for PDF output out of 29859 (max. 10000000)
+ 355 PDF objects out of 1000 (max. 8388607)
+ 295 compressed objects within 3 object streams
+ 67 named destinations out of 1000 (max. 500000)
+ 28880 words of extra memory for PDF output out of 29859 (max. 10000000)
 
