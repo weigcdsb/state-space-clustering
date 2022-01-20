@@ -195,7 +195,6 @@ set(FR,'PaperUnits','inches','PaperPosition',[0 0 6 3])
 saveas(FR, '4_FR.svg')
 saveas(FR, '4_FR.png')
 
-%%
 %% cluster plot...
 
 sim10 = figure;
@@ -227,8 +226,8 @@ set(gca,'FontSize',10, 'LineWidth', 1.5,'TickDir','out')
 box off
 
 set(sim10,'PaperUnits','inches','PaperPosition',[0 0 5 3])
-saveas(sim10, '3_sim10.svg')
-saveas(sim10, '3_sim10.png')
+saveas(sim10, '5_sim10.svg')
+saveas(sim10, '5_sim10.png')
 
 
 sim30 = figure;
@@ -260,14 +259,14 @@ set(gca,'FontSize',10, 'LineWidth', 1.5,'TickDir','out')
 box off
 
 set(sim30,'PaperUnits','inches','PaperPosition',[0 0 5 3])
-saveas(sim30, '4_sim30.svg')
-saveas(sim30, '4_sim30.png')
+saveas(sim30, '6_sim30.svg')
+saveas(sim30, '6_sim30.png')
 
 clusLast = figure;
 clusterPlot(Y, Z_fit(:,ng)')
 set(clusLast,'PaperUnits','inches','PaperPosition',[0 0 5 3])
-saveas(clusLast, '5_sim30Last.svg')
-saveas(clusLast, '5_sim30Last.png')
+saveas(clusLast, '7_sim30Last.svg')
+saveas(clusLast, '7_sim30Last.png')
 
 
 
@@ -284,8 +283,8 @@ ylabel('neuron')
 xlabel('T')
 
 set(FR20,'PaperUnits','inches','PaperPosition',[0 0 4 3])
-saveas(FR20, '6_FR20.svg')
-saveas(FR20, '6_FR20.png')
+saveas(FR20, '8_FR20.svg')
+saveas(FR20, '8_FR20.png')
 
 
 sim20 = figure;
@@ -302,8 +301,8 @@ colormap(flipud(hot))
 colorbar()
 
 set(sim20,'PaperUnits','inches','PaperPosition',[0 0 4 3])
-saveas(sim20, '7_sim20.svg')
-saveas(sim20, '7_sim20.png')
+saveas(sim20, '9_sim20.svg')
+saveas(sim20, '9_sim20.png')
 
 hist20 = figure;
 histogram(t_fit(idx),'Normalization','probability')
@@ -319,8 +318,8 @@ plot(t_fit)
 title('number of cluster')
 
 set(numTrace,'PaperUnits','inches','PaperPosition',[0 0 3 3])
-saveas(numTrace, '9_numTrace.svg')
-saveas(numTrace, '9_numTrace.png')
+saveas(numTrace, '10_numTrace.svg')
+saveas(numTrace, '10_numTrace.png')
 
 
 %% application...
@@ -345,25 +344,29 @@ set(gca,'FontSize',9, 'LineWidth', 1.5,'TickDir','out')
 box off
 
 set(pixel_FR,'PaperUnits','inches','PaperPosition',[0 0 4 3])
-saveas(pixel_FR, '13_pixel_FR.svg')
-saveas(pixel_FR, '13_pixel_FR.png')
+saveas(pixel_FR, '11_pixel_FR.svg')
+saveas(pixel_FR, '11_pixel_FR.png')
 
 
 numTrace = figure;
 plot(t_fit)
 title('number of cluster')
+set(gca,'FontSize',9, 'LineWidth', 1.5,'TickDir','out')
+box off
 
 set(numTrace,'PaperUnits','inches','PaperPosition',[0 0 3 3])
-saveas(numTrace, '14_numTrace.svg')
-saveas(numTrace, '14_numTrace.png')
+saveas(numTrace, '12_numTrace.svg')
+saveas(numTrace, '12_numTrace.png')
 
 idx = round(ng/2):ng;
 histPixel = figure;
 histogram(t_fit(idx),'Normalization','probability')
+set(gca,'FontSize',9, 'LineWidth', 1.5,'TickDir','out')
+box off
 
 set(histPixel,'PaperUnits','inches','PaperPosition',[0 0 3 3])
-saveas(histPixel, '15_hist.svg')
-saveas(histPixel, '15_hist.png')
+saveas(histPixel, '13_hist.svg')
+saveas(histPixel, '13_hist.png')
 
 
 simPixel = figure;
@@ -383,8 +386,8 @@ xticklabels(Lab)
 
 
 set(simPixel,'PaperUnits','inches','PaperPosition',[0 0 4 3])
-saveas(simPixel, '16_simPixel.svg')
-saveas(simPixel, '16_simPixel.png')
+saveas(simPixel, '14_simPixel.svg')
+saveas(simPixel, '14_simPixel.png')
 
 
 simSort = figure;
@@ -413,8 +416,8 @@ xticklabels(Lab(sortId))
 colorbar()
 
 set(simSort,'PaperUnits','inches','PaperPosition',[0 0 4 3])
-saveas(simSort, '16_simPixelSort.svg')
-saveas(simSort, '16_simPixelSort.png')
+saveas(simSort, '15_simPixelSort.svg')
+saveas(simSort, '15_simPixelSort.png')
 
 fitFR = figure;
 subplot(1,2,1)

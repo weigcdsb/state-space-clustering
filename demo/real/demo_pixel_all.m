@@ -43,10 +43,10 @@ lab_all_str = string(tab.ecephys_structure_acronym);
 
 % spontaneous
 % Tstart = 29.8301073815904; Tend = 89.89682738;
-Tstart =  1001.89177167499; Tend = 1290.88309738159;
+% Tstart =  1001.89177167499; Tend = 1290.88309738159;
 
 % drifting_gratings 
-% Tstart = 1591.13385738159; Tend = 2190.63454310612;
+Tstart = 1591.13385738159; Tend = 2190.63454310612;
 
 dt = 0.1;
 T = min(floor((Tend-Tstart)/dt), 1000);
