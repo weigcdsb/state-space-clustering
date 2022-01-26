@@ -137,7 +137,7 @@ actList = zeros(t_max+3,1); actList(1) = 1;
 c_next = 2;
 
 for k = 1:t_fit(1)
-    THETA{1}(k) = sample_prior_new(prior, N, T, p, true, Inf);
+    THETA{1}(k) = sample_prior_new(prior, N, T, p, false, Inf);
 end
 
 %% MCMC
@@ -150,6 +150,11 @@ end
 burnIn = round(ng/10);
 epsilon = 0.01*ones(N,1);
 
+simMat = zeros(N,N);
+for k = 1:size(simMat, 1)
+    simMat(k,:) = simMat(k,:) + (Z_fit(k, 1) == Z_fit(:, 1))';
+end
+fitMFRTrace = zeros(N, T, ng);
 for g = 2:ng
     
     if(g < burnIn);disp("iter " + g + ", changing"); % change epsilon
@@ -166,10 +171,7 @@ for g = 2:ng
         
         [THETA{g}(c), epsilon(obsIdx), log_pdf] =...
             update_cluster_new(Y(obsIdx,:),THETA{g-1}(c),THETA{g}(c),...
-            prior, N, T, p, obsIdx, true, false, OPTDC(obsIdx), Y);
-%         [THETA{g}(c), epsilon(obsIdx), log_pdf] =...
-%             update_cluster_new_aug(Y(obsIdx,:),THETA{g-1}(c),THETA{g}(c),...
-%             prior, N, T, p, obsIdx, true, false, OPTDC(obsIdx), Y);
+            prior, N, T, p, obsIdx, true, false, OPTDC(obsIdx));
     end
     
     if(g == burnIn)
@@ -205,7 +207,7 @@ for g = 2:ng
         numClus_fit(c,g) = numClus_fit(c,g) - 1;
         if(numClus_fit(c,g) > 0)
             c_prop = c_next;
-            THETA{g}(c_prop) = sample_prior_new(prior, N, T, p, true, Inf);
+            THETA{g}(c_prop) = sample_prior_new(prior, N, T, p, false, Inf);
         else
             c_prop = c;
             actList = ordered_remove(c, actList, t_fit(g));
@@ -241,13 +243,22 @@ for g = 2:ng
         numClus_fit(c,g) = numClus_fit(c,g) + 1;
     end
     
-    figure(2)
+    figure(1)
     clusterPlot(Y, Z_fit(:,g)')
+    
+    figure(2)
+    for k = 1:size(simMat, 1)
+        simMat(k,:) = simMat(k,:) + (Z_fit(k, g) == Z_fit(:, g))';
+    end
+    
+    imagesc(simMat/g)
+    colormap(flipud(hot))
+    colorbar()
     
     
     figure(3)
     subplot(1,2,1)
-    imagesc(exp(C_trans*X + d))
+    imagesc(Y)
     cLim = caxis;
     title('true')
     colorbar()
@@ -257,10 +268,14 @@ for g = 2:ng
         fitMFR(k,:) = exp([1 THETA{g}(Z_fit(k,g)).C(k,:)]*...
             [THETA{g}(Z_fit(k,g)).d ;THETA{g}(Z_fit(k,g)).X]);
     end
+    fitMFRTrace(:,:,g) = fitMFR;
     imagesc(fitMFR)
     set(gca,'CLim',cLim)
     colorbar()
     title('fit')
+    
+    figure(4)
+    plot(t_fit(1:g))
     
 end
 

@@ -9,7 +9,7 @@ tab = readtable('719161530_units.csv'); % meta-data
 % tab.ecephys_structure_acronym % names of anatomical structures for each single-unit
 subset = find(tab.snr>3 & cellfun(@length,Tlist')>1000);
 idx50 = find(ismember(string(tab.ecephys_structure_acronym),...
-    ["VISam" "LP" "VPM"]));
+    ["LGd" "VISp" "CA1" "LP"]));
 
 % "CA1" "LGd" "POL" "VISp" "VISl"
 % VISam
@@ -42,15 +42,39 @@ lab_all_str = string(tab.ecephys_structure_acronym);
 [lab_num_sub2, clusIdx] = findgroups(lab_all_str(subset2));
 
 % spontaneous
-% Tstart = 29.8301073815904; Tend = 89.89682738;
-Tstart =  1001.89177167499; Tend = 1290.88309738159;
+% Tstart = 29.83010738; Tend = 89.89682738; % 1
+Tstart = 1001.891772; Tend = 1290.883097; % 2
+% Tstart = 1589.382401; Tend = 1591.133857; % 3
+% Tstart = 2190.634543; Tend = 2221.660447; % 4
+% Tstart = 2822.161967; Tend = 2852.187037; % 5
+% Tstart = 3152.437777; Tend = 3182.462857; % 6
+% Tstart = 3781.963503; Tend = 4083.215117; % 7
+% Tstart = 4683.716567; Tend = 4713.741627; % 8
+% Tstart = 5397.312443; Tend = 5398.313257; % 9
+% Tstart = 5878.714467; Tend = 5908.739537; % 10
+% Tstart = 6389.157337; Tend = 6689.408117; % 11
+% Tstart = 7169.809297; Tend = 7199.834317; % 12
+% Tstart = 7680.268867; Tend = 7710.293937; % 13
+% Tstart = 8010.544677; Tend = 8040.569727; % 14
+% Tstart = 8568.51062;  Tend = 8611.046137; % 15
 
-% drifting_gratings 
-% Tstart = 1591.13385738159; Tend = 2190.63454310612;
+% natural scences
+% Tstart = 5908.739537; Tend = 6389.157337;
+% Tstart = 6689.408117; Tend = 7169.809297;
+% Tstart = 8040.569727; Tend = 8568.51062;
+
+% drifting gratings
+% Tstart = 1591.133857; Tend = 2190.634543;
+% Tstart = 3182.462857; Tend = 3781.963503;
+% Tstart = 4713.741627; Tend = 5397.312443;
+
+% start from mid epoch
+% Tstart = (Tstart + Tend)/2;
 
 dt = 0.1;
-T = min(floor((Tend-Tstart)/dt), 1000);
-% T = floor((Tend-Tstart)/dt);
+T_trunc = 600;
+T = min(floor((Tend-Tstart)/dt), T_trunc);
+
 Yraw = zeros(N, T);
 for n = 1:N
     for k = 1:T
@@ -77,7 +101,7 @@ lAbsGam = @(x) log(abs(gamma(x)));
 %% pre-MCMC
 rng(1)
 p_set = 1:3;
-ng = 1000;
+ng = 100;
 t_max = N;
 
 % this is the DP setting, replace to MFM later...
@@ -142,7 +166,7 @@ for kk = 1:length(p_set)
     c_next = 2;
     
     for k = 1:t_fit(1)
-        THETA{1}(k) = sample_prior_new(prior, N, T, p, true, Inf);
+        THETA{1}(k) = sample_prior_new(prior, N, T, p, false, Inf);
     end
     
     for k = 1:N
@@ -228,7 +252,7 @@ for kk = 1:length(p_set)
             numClus_fit(c,g) = numClus_fit(c,g) - 1;
             if(numClus_fit(c,g) > 0)
                 c_prop = c_next;
-                THETA{g}(c_prop) = sample_prior_new(prior, N, T, p, true, Inf);
+                THETA{g}(c_prop) = sample_prior_new(prior, N, T, p, false, Inf);
             else
                 c_prop = c;
                 actList = ordered_remove(c, actList, t_fit(g));
@@ -271,11 +295,11 @@ end
 
 
 [~,pid] = max(mean(llhd_spk_test(:,round(ng/2):ng),2));
-
+% pid = 1;
 %% MCMC settings
 rng(2)
 p=p_set(pid);
-ng = 3000;
+ng = 100;
 t_max = N;
 
 
@@ -304,10 +328,10 @@ actList = zeros(t_max+3,1); actList(1) = 1;
 c_next = 2;
 
 for k = 1:t_fit(1)
-    THETA{1}(k) = sample_prior_new(prior, N, T, p, true, Inf);
+    THETA{1}(k) = sample_prior_new(prior, N, T, p, false, Inf);
 end
 
-%% MCMC
+% MCMC
 useSplitMerge = false;
 for k = 1:N
     optdc.M=1;
@@ -398,7 +422,7 @@ for g = 2:ng
         numClus_fit(c,g) = numClus_fit(c,g) - 1;
         if(numClus_fit(c,g) > 0)
             c_prop = c_next;
-            THETA{g}(c_prop) = sample_prior_new(prior, N, T, p, true, Inf);
+            THETA{g}(c_prop) = sample_prior_new(prior, N, T, p, false, Inf);
         else
             c_prop = c;
             actList = ordered_remove(c, actList, t_fit(g));
@@ -544,7 +568,7 @@ colorbar()
 
 %% no cluster
 rng(3)
-p_set = 1:4;
+p_set = 1:8;
 ng = 100;
 nClus = 1;
 Lab_sing = ones(1,N);
@@ -619,7 +643,7 @@ end
 
 %%
 rng(4)
-ng = 1000;
+ng = 100;
 nClus = 1;
 Lab_sing = ones(1,N);
 llhd_spk_test_sing2 = zeros(ng,1);
@@ -684,10 +708,173 @@ for g = 2:ng
     plot(llhd_spk_test_sing2(2:g)')
 end
 
+%%
+rng(5)
+p_set = 1:5;
+ng = 100;
+nClus = 1;
+llhd_spk_test_sing_sep = zeros(length(p_set), ng, length(unique(Lab)));
+
+
+for l = 1:length(unique(Lab))
+    Ntmp = sum(Lab == l);
+    Lab_sing = ones(1,Ntmp);
+    Y_train_tmp = Y_train(Lab == l,:);
+    Y_test_tmp = Y_test(Lab == l,:);
+    
+    for kk = 1:length(p_set)
+        p = p_set(kk);
+        
+        prior.theta0 = zeros(1+p,1);
+        prior.Q0 = eye(1+p);
+        prior.muC0 = zeros(p,1);
+        prior.SigC0 = eye(p);
+        prior.BA0 =[0 1]';
+        prior.Lamb0 = eye(2);
+        prior.Psi0 = 1e-2;
+        prior.nu0 = 1+2;
+        
+        for k = 1:nClus
+            THETA{1}(k) = sample_prior_new(prior, Ntmp, T, p, false, Inf);
+        end
+        
+        
+        for k = 1:Ntmp
+            optdc.M=1;
+            optdc.Madapt=0;
+            OPTDC{k} = optdc;
+        end
+        
+        burnIn = round(ng/10);
+        epsilon = 0.01*ones(Ntmp,1);
+        
+        for g = 2:ng
+            
+            if(g == burnIn)
+                for(k = 1:Ntmp);OPTDC{k}.Madapt=50;end
+            end
+            
+            THETA{g} = THETA{g-1};
+            for j = 1:nClus
+                obsIdx = find(Lab_sing == j);
+                
+                [THETA{g}(j), epsilon(obsIdx), log_pdf] =...
+                    update_cluster_new_na(Y_train_tmp(obsIdx,:),THETA{g-1}(j),THETA{g}(j),...
+                    prior, Ntmp, T, p, obsIdx, true, false, OPTDC(obsIdx), Y_train_tmp);
+            end
+            
+            if(g == burnIn)
+                for k = 1:Ntmp
+                    OPTDC{k}.Madapt=0;OPTDC{k}.epsilon = epsilon(k);
+                end
+            end
+            
+            % test-llhd-spk
+            fitMFR = zeros(Ntmp, T);
+            for k  = 1:nClus
+                N_tmp = sum(Lab_sing == k);
+                fitMFR(Lab_sing == k,:) = exp([ones(N_tmp,1) THETA{g}(k).C(Lab_sing == k,:)]*...
+                    [THETA{g}(k).d ;THETA{g}(k).X]);
+            end
+            
+            
+            llhd_spk_test_sing_sep(kk,g, l) =...
+                nansum(log(poisspdf(Y_test_tmp,fitMFR)), 'all')/nansum(Y_test_tmp, 'all');
+            figure(98)
+            plot(llhd_spk_test_sing_sep(1:kk, 2:g, l)')
+        end
+        
+    end
+end
+
+
+[~,pid_sing_sep] = max(mean(llhd_spk_test_sing_sep(:,(round(ng/2):ng),:), 2));
+pid_sing_sep = pid_sing_sep(:);
+
+%%
+rng(6)
+ng = 100;
+nClus = 1;
+llhd_spk_test_sing_sep = zeros(length(unique(Lab)),ng);
+
+for l = 1:length(unique(Lab))
+    Ntmp = sum(Lab == l);
+    Lab_sing = ones(1,Ntmp);
+    Y_train_tmp = Y_train(Lab == l,:);
+    Y_test_tmp = Y_test(Lab == l,:);
+    Lab_sing = ones(1,Ntmp);
+    
+    p = p_set(pid_sing_sep(l));
+    prior.theta0 = zeros(1+p,1);
+    prior.Q0 = eye(1+p);
+    prior.muC0 = zeros(p,1);
+    prior.SigC0 = eye(p);
+    prior.BA0 =[0 1]';
+    prior.Lamb0 = eye(2);
+    prior.Psi0 = 1e-2;
+    prior.nu0 = 1+2;
+    
+    for k = 1:nClus
+        THETA{1}(k) = sample_prior_new(prior, Ntmp, T, p, false, Inf);
+    end
+    
+    for k = 1:Ntmp
+        optdc.M=1;
+        optdc.Madapt=0;
+        OPTDC{k} = optdc;
+    end
+    
+    burnIn = round(ng/10);
+    epsilon = 0.01*ones(Ntmp,1);
+    
+    for g = 2:ng
+        if(g == burnIn)
+            for(k = 1:Ntmp);OPTDC{k}.Madapt=50;end
+        end
+        
+        THETA{g} = THETA{g-1};
+        for j = 1:nClus
+            obsIdx = find(Lab_sing == j);
+            
+            [THETA{g}(j), epsilon(obsIdx), log_pdf] =...
+                update_cluster_new_na(Y_train_tmp(obsIdx,:),THETA{g-1}(j),THETA{g}(j),...
+                prior, Ntmp, T, p, obsIdx, true, false, OPTDC(obsIdx), Y_train_tmp);
+        end
+        
+        if(g == burnIn)
+            for k = 1:Ntmp
+                OPTDC{k}.Madapt=0;OPTDC{k}.epsilon = epsilon(k);
+            end
+        end
+        
+        % test-llhd-spk
+        fitMFR = zeros(Ntmp, T);
+        for k  = 1:nClus
+            N_tmp = sum(Lab_sing == k);
+            fitMFR(Lab_sing == k,:) = exp([ones(N_tmp,1) THETA{g}(k).C(Lab_sing == k,:)]*...
+                [THETA{g}(k).d ;THETA{g}(k).X]);
+        end
+        
+        llhd_spk_test_sing_sep(l,g) =...
+            nansum(log(poisspdf(Y_test_tmp,fitMFR)), 'all');
+    end
+    
+end
+
+llhd_spk_test_sing_clus = sum(llhd_spk_test_sing_sep, 1)./nansum(Y_test, 'all');
 
 %%
 mean(llhd_spk_test2(round(ng/2):ng))
 mean(llhd_spk_test_sing2(round(ng/2):ng))
+
+hold on
+plot(llhd_spk_test2(2:end), 'r')
+plot(llhd_spk_test_sing2(2:end), 'b')
+plot(llhd_spk_test_sing_clus(2:end), 'g')
+hold off
+
+
+
 
 
 

@@ -1,11 +1,17 @@
 function [x,fx,dfdx,xx,eoi] = newtonGH(fdf,x0,TolX,MaxIter)
 
+% to debug
+% fdf = gradHess;
+% x0 = dX_tmp(:);
+% TolX = 1e-4;
+% MaxIter = 2;
+% 
+
 TolFun=eps;
 xx(:,1) = x0;
 dh = feval(fdf, x0);
 fx = dh{1};
 % disp(norm(fx))
-warning('off');
 for k = 1:MaxIter
 %     disp(k)
     dfdx = dh{2};

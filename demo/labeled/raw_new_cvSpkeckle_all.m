@@ -369,6 +369,10 @@ plot(llhd_spk_test(1:2,50:end)')
 plot(llhd_spk_train(3:4,50:end)')
 plot(llhd_spk_test(3:4,50:end)')
 
+%% let's further select the number of latent...
+
+
+
 
 
 

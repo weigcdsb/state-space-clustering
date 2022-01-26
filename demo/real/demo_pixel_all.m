@@ -9,7 +9,7 @@ tab = readtable('719161530_units.csv'); % meta-data
 % tab.ecephys_structure_acronym % names of anatomical structures for each single-unit
 subset = find(tab.snr>3 & cellfun(@length,Tlist')>1000);
 idx50 = find(ismember(string(tab.ecephys_structure_acronym),...
-    ["VISam" "LP" "VPM"]));
+    ["LGd" "VISp" "CA1" "LP"]));
 
 % "CA1" "LGd" "POL" "VISp" "VISl"
 % VISam
@@ -42,15 +42,39 @@ lab_all_str = string(tab.ecephys_structure_acronym);
 [lab_num_sub2, clusIdx] = findgroups(lab_all_str(subset2));
 
 % spontaneous
-% Tstart = 29.8301073815904; Tend = 89.89682738;
-% Tstart =  1001.89177167499; Tend = 1290.88309738159;
+% Tstart = 29.83010738; Tend = 89.89682738; % 1
+Tstart = 1001.891772; Tend = 1290.883097; % 2
+% Tstart = 1589.382401; Tend = 1591.133857; % 3
+% Tstart = 2190.634543; Tend = 2221.660447; % 4
+% Tstart = 2822.161967; Tend = 2852.187037; % 5
+% Tstart = 3152.437777; Tend = 3182.462857; % 6
+% Tstart = 3781.963503; Tend = 4083.215117; % 7
+% Tstart = 4683.716567; Tend = 4713.741627; % 8
+% Tstart = 5397.312443; Tend = 5398.313257; % 9
+% Tstart = 5878.714467; Tend = 5908.739537; % 10
+% Tstart = 6389.157337; Tend = 6689.408117; % 11
+% Tstart = 7169.809297; Tend = 7199.834317; % 12
+% Tstart = 7680.268867; Tend = 7710.293937; % 13
+% Tstart = 8010.544677; Tend = 8040.569727; % 14
+% Tstart = 8568.51062;  Tend = 8611.046137; % 15
 
-% drifting_gratings 
-Tstart = 1591.13385738159; Tend = 2190.63454310612;
+% natural scences
+% Tstart = 5908.739537; Tend = 6389.157337;
+% Tstart = 6689.408117; Tend = 7169.809297;
+% Tstart = 8040.569727; Tend = 8568.51062;
+
+% drifting gratings
+% Tstart = 1591.133857; Tend = 2190.634543;
+% Tstart = 3182.462857; Tend = 3781.963503;
+% Tstart = 4713.741627; Tend = 5397.312443;
+
+% start from mid epoch
+% Tstart = (Tstart + Tend)/2;
 
 dt = 0.1;
-T = min(floor((Tend-Tstart)/dt), 1000);
-% T = floor((Tend-Tstart)/dt);
+T_trunc = 600;
+T = min(floor((Tend-Tstart)/dt), T_trunc);
+
 Yraw = zeros(N, T);
 for n = 1:N
     for k = 1:T
@@ -73,9 +97,9 @@ colorbar()
 
 %%
 lAbsGam = @(x) log(abs(gamma(x)));
-rng(1)
+rng(3)
 p=1;
-ng = 5000;
+ng = 1000;
 t_max = N;
 
 % this is the DP setting, replace to MFM later...
@@ -146,7 +170,7 @@ for k = 1:size(simMat, 1)
 end
 
 fitMFRTrace = zeros(N, T, ng);
-
+rep = 1;
 
 for g = 2:ng
     
@@ -158,17 +182,17 @@ for g = 2:ng
     end % fix epsilon
     
     THETA{g} = THETA{g-1};
-    for j = 1:t_fit(g-1)
-        c = actList(j);
-        obsIdx = find(Z_fit(:,g-1) == c);
-        
-        [THETA{g}(c), epsilon(obsIdx), log_pdf] =...
-            update_cluster_new(Y(obsIdx,:),THETA{g-1}(c),THETA{g}(c),...
-            prior, N, T, p, obsIdx, true, false, OPTDC(obsIdx), Y);
-%         [THETA{g}(c), epsilon(obsIdx), log_pdf] =...
-%             update_cluster_new_aug(Y(obsIdx,:),THETA{g-1}(c),THETA{g}(c),...
-%             prior, N, T, p, obsIdx, true, false, OPTDC(obsIdx), Y);
+    for re = 1:rep
+        for j = 1:t_fit(g-1)
+            c = actList(j);
+            obsIdx = find(Z_fit(:,g-1) == c);
+            
+            [THETA{g}(c), epsilon(obsIdx), log_pdf] =...
+                update_cluster_new(Y(obsIdx,:),THETA{g}(c),THETA{g}(c),...
+                prior, N, T, p, obsIdx, true, false, OPTDC(obsIdx));
+        end
     end
+    
     
     for k  = 1:N
         fitMFRTrace(k,:, g) = exp([1 THETA{g}(Z_fit(k,g-1)).C(k,:)]*...

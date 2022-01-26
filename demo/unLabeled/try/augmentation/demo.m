@@ -103,7 +103,7 @@ DPMM = false;
 alpha_random = false;
 MFMgamma = 1;
 % K ~ Geometric(r)
-r = 0.2;
+r = 0.3;
 log_pk = @(k) log(r) + (k-1)*log(1-r);
 
 a = MFMgamma;
@@ -141,25 +141,32 @@ for k = 1:t_fit(1)
 end
 
 %% MCMC
-for k = 1:N
-    optdc.M=1;
-    optdc.Madapt=0;
-    OPTDC{k} = optdc;
-end
 
 burnIn = round(ng/10);
 epsilon = 0.01*ones(N,1);
 
+for i = 1:N
+    optdc.M=1;
+    optdc.Madapt=0;
+    OPTDC{i} = optdc;
+    OPTDC{i}.epsilon = epsilon(i); % no tune of epsilon
+end
+
+simMat = zeros(N,N);
+for k = 1:size(simMat, 1)
+    simMat(k,:) = simMat(k,:) + (Z_fit(k, 1) == Z_fit(:, 1))';
+end
+fitMFRTrace = zeros(N, T, ng);
 for g = 2:ng
     
     if(g < burnIn);disp("iter " + g + ", changing"); % change epsilon
     elseif(g == burnIn) % tune epsilon
-        for(k = 1:N);OPTDC{k}.Madapt=50;end
+        %         for(k = 1:N);OPTDC{k}.Madapt=10;end
         disp("iter " + g + ", tuning");
     else;disp("iter " + g + ", tuned");
     end % fix epsilon
     
-    % (1) impute Z_fit...
+    % (1) update cluster index z_i
     Z_fit(:,g) = Z_fit(:,g-1);
     numClus_fit(:,g) = numClus_fit(:,g-1);
     t_fit(g) = t_fit(g-1);
@@ -180,12 +187,12 @@ for g = 2:ng
     
     for ii = 1:N
         
-        % (a) remove point i from its cluster
+        % (a) remove point ii from its cluster
         c = Z_fit(ii, g);
         numClus_fit(c,g) = numClus_fit(c,g) - 1;
         if(numClus_fit(c,g) > 0)
             c_prop = c_next;
-            THETA{g-1}(c_prop) = sample_prior_new(prior, N, T, p, true, Inf);
+            THETA{g-1}(c_prop) = sample_prior_new(prior, N, T, p, false, Inf);
         else
             c_prop = c;
             actList = ordered_remove(c, actList, t_fit(g));
@@ -198,13 +205,11 @@ for g = 2:ng
             cc = actList(j);
             logLike = nansum(log(poisspdf(Y(ii,:)',...
                 exp(THETA{g-1}(cc).d' + THETA{g-1}(cc).X'* THETA{g-1}(cc).C(ii,:)))));
-%             logMar = poiLogMarg(Y(ii,:)', THETA{g}(cc).X', THETA{g}(cc).d');
             log_p(j) = logNb(numClus_fit(cc,g)) + logLike;
         end
         
         logLike = nansum(log(poisspdf(Y(ii,:)',...
-                exp(THETA{g-1}(c_prop).d' + THETA{g-1}(c_prop).X'* THETA{g-1}(c_prop).C(ii,:)))));
-%         logMar = poiLogMarg(Y(ii,:)', THETA{g}(c_prop).X', THETA{g}(c_prop).d');
+            exp(THETA{g-1}(c_prop).d' + THETA{g-1}(c_prop).X'* THETA{g-1}(c_prop).C(ii,:)))));
         log_p(t_fit(g)+1) = log_v(t_fit(g)+1)-log_v(t_fit(g)) +...
             log(a) + logLike;
         
@@ -225,36 +230,99 @@ for g = 2:ng
         numClus_fit(c,g) = numClus_fit(c,g) + 1;
     end
     
-    
-    
-    % (2) impute c_i...
-    
-    
-    % (3) sample others...
+    % (2) update augmented c_i
     THETA{g} = THETA{g-1};
+    for i = 1:N
+        for j = 1:t_fit(g)
+            ctmp = actList(j);
+            X_tmpC = THETA{g}(ctmp).X';
+            lamC = @(c) exp(THETA{g}(ctmp).d' + X_tmpC*c);
+            
+            % use NUTS
+            lpdf = @(c) sum(log(poisspdf(Y(i,:)', lamC(c)))) +...
+                log(mvnpdf(c, prior.muC0, prior.SigC0));
+            glpdf = @(c) X_tmpC'*(Y(i,:)' - lamC(c)) - prior.SigC0\(c - prior.muC0);
+            
+            fg=@(dc_r) deal(lpdf(dc_r'), glpdf(dc_r')'); % log density and gradient
+            c0 = THETA{g-1}(ctmp).C(i,:)';
+            
+            [c_NUTS, ~, diagn]=hmc_nuts(fg, c0',OPTDC{i});
+            epsilon(i) = diagn.opt.epsilonbar;
+            THETA{g}(ctmp).C(i,:) = c_NUTS(end,:);
+            
+            
+            % ues MH
+%             derc = @(c) X_tmpC'*(Y(i,:)' - lamC(c)) - prior.SigC0\(c - prior.muC0);
+%             hessc = @(c) -X_tmpC'*diag(lamC(c))*X_tmpC - inv(prior.SigC0);
+%             c0 = THETA{g-1}(ctmp).C(i,:)';
+%             
+%             [muc,~,niSigc,~] = newton(derc,hessc,c0,1e-8,1000);
+%             if(sum(isnan(muc)) ~= 0)
+%                 disp('use 0')
+%                 [muc,~,niSigc,~] = newton(derc,hessc,zeros(size(c0)),1e-8,1000);
+%             end
+            
+%             R = chol(-niSigc,'lower'); % sparse
+%             z = randn(length(c0), 1) + R'*c0;
+%             cStar = R'\z;
+%             
+%             % lhr
+%             lhr = sum(log(poisspdf(Y(i,:)', lamC(cStar)))) -...
+%                 sum(log(poisspdf(Y(i,:)', lamC(c0)))) +...
+%                 log(mvnpdf(cStar, prior.muC0, prior.SigC0)) -...
+%                 log(mvnpdf(c0, prior.muC0, prior.SigC0));
+%             
+%             if(log(rand(1)) < lhr)
+%                 THETA{g-1}(ctmp).C(i,:) = cStar;
+%             else
+%                 THETA{g-1}(ctmp).C(i,:) = c0;
+%             end
+            
+            
+            % normal approximation
+%             Rc = chol(-niSigc,'lower'); % sparse
+%             zc = randn(length(muc), 1) + Rc'*muc;
+%             THETA{g}(ctmp).C(i,:) = Rc'\zc;
+            
+        end
+    end
+    
+    %     if(g == burnIn)
+    %         for i = 1:N
+    %             for j = 1:t_fit(g)
+    %                 OPTDC{i,j}.Madapt=0;OPTDC{k}.epsilon = epsilon(k);
+    %             end
+    %         end
+    %     end
+    
+    
+    % (3) upate the parameters
+    
     for j = 1:t_fit(g)
         c = actList(j);
         obsIdx = find(Z_fit(:,g) == c);
         
-        [THETA{g}(c), epsilon(obsIdx), log_pdf] =...
+        THETA{g}(c) =...
             update_cluster_new_aug(Y(obsIdx,:),THETA{g}(c),THETA{g}(c),...
-            prior, N, T, p, obsIdx, true, false, OPTDC(obsIdx), Y);
+            prior, T, p, obsIdx);
     end
     
-    if(g == burnIn)
-        for k = 1:N
-            OPTDC{k}.Madapt=0;OPTDC{k}.epsilon = epsilon(k);
-        end
-    end
-    
+    figure(1)
+    clusterPlot(Y, Z_fit(:,g)')
     
     figure(2)
-    clusterPlot(Y, Z_fit(:,g)')
+    for k = 1:size(simMat, 1)
+        simMat(k,:) = simMat(k,:) + (Z_fit(k, g) == Z_fit(:, g))';
+    end
+    
+    imagesc(simMat/g)
+    colormap(flipud(hot))
+    colorbar()
     
     
     figure(3)
     subplot(1,2,1)
-    imagesc(exp(C_trans*X + d))
+    imagesc(Y)
     cLim = caxis;
     title('true')
     colorbar()
@@ -264,10 +332,14 @@ for g = 2:ng
         fitMFR(k,:) = exp([1 THETA{g}(Z_fit(k,g)).C(k,:)]*...
             [THETA{g}(Z_fit(k,g)).d ;THETA{g}(Z_fit(k,g)).X]);
     end
+    fitMFRTrace(:,:,g) = fitMFR;
     imagesc(fitMFR)
     set(gca,'CLim',cLim)
     colorbar()
     title('fit')
+    
+    figure(4)
+    plot(t_fit(1:g))
     
 end
 
