@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.12.6)  20 JAN 2022 10:15
+This is pdfTeX, Version 3.14159265-2.6-1.40.21 (TeX Live 2020/W32TeX) (preloaded format=pdflatex 2020.12.6)  26 JAN 2022 09:58
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -35,37 +35,19 @@ Package: trimspaces 2009/09/17 v1.1 Trim spaces around a token list
 )
 \@envbody=\toks15
 )
-(e:/software/texlive/2020/texmf-dist/tex/latex/lineno/lineno.sty
-Package: lineno 2005/11/02 line numbers on paragraphs v4.41
-\linenopenalty=\count185
-\output=\toks16
-\linenoprevgraf=\count186
-\linenumbersep=\dimen139
-\linenumberwidth=\dimen140
-\c@linenumber=\count187
-\c@pagewiselinenumber=\count188
-\c@LN@truepage=\count189
-\c@internallinenumber=\count190
-\c@internallinenumbers=\count191
-\quotelinenumbersep=\dimen141
-\bframerule=\dimen142
-\bframesep=\dimen143
-\bframebox=\box47
-LaTeX Info: Redefining \\ on input line 3056.
-)
 (e:/software/texlive/2020/texmf-dist/tex/latex/natbib/natbib.sty
 Package: natbib 2010/09/13 8.31b (PWD, AO)
 \bibhang=\skip49
 \bibsep=\skip50
 LaTeX Info: Redefining \cite on input line 694.
-\c@NAT@ctr=\count192
+\c@NAT@ctr=\count185
 )
 (e:/software/texlive/2020/texmf-dist/tex/latex/geometry/geometry.sty
 Package: geometry 2020/01/02 v5.9 Page Geometry
 
 (e:/software/texlive/2020/texmf-dist/tex/latex/graphics/keyval.sty
 Package: keyval 2014/10/28 v1.15 key=value parser (DPC)
-\KV@toks@=\toks17
+\KV@toks@=\toks16
 )
 (e:/software/texlive/2020/texmf-dist/tex/generic/iftex/ifvtex.sty
 Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
@@ -73,26 +55,26 @@ Package: ifvtex 2019/10/25 v1.7 ifvtex legacy package. Use iftex instead.
 (e:/software/texlive/2020/texmf-dist/tex/generic/iftex/iftex.sty
 Package: iftex 2020/03/06 v1.0d TeX engine tests
 ))
-\Gm@cnth=\count193
-\Gm@cntv=\count194
-\c@Gm@tempcnt=\count195
-\Gm@bindingoffset=\dimen144
-\Gm@wd@mp=\dimen145
-\Gm@odd@mp=\dimen146
-\Gm@even@mp=\dimen147
-\Gm@layoutwidth=\dimen148
-\Gm@layoutheight=\dimen149
-\Gm@layouthoffset=\dimen150
-\Gm@layoutvoffset=\dimen151
-\Gm@dimlist=\toks18
+\Gm@cnth=\count186
+\Gm@cntv=\count187
+\c@Gm@tempcnt=\count188
+\Gm@bindingoffset=\dimen139
+\Gm@wd@mp=\dimen140
+\Gm@odd@mp=\dimen141
+\Gm@even@mp=\dimen142
+\Gm@layoutwidth=\dimen143
+\Gm@layoutheight=\dimen144
+\Gm@layouthoffset=\dimen145
+\Gm@layoutvoffset=\dimen146
+\Gm@dimlist=\toks17
 )
 \@neuripsabovecaptionskip=\skip51
 \@neuripsbelowcaptionskip=\skip52
 )
 (e:/software/texlive/2020/texmf-dist/tex/latex/base/inputenc.sty
 Package: inputenc 2020/08/01 v1.3d Input encoding file
-\inpenc@prehook=\toks19
-\inpenc@posthook=\toks20
+\inpenc@prehook=\toks18
+\inpenc@posthook=\toks19
 )
 (e:/software/texlive/2020/texmf-dist/tex/latex/base/fontenc.sty
 Package: fontenc 2020/08/10 v2.0s Standard LaTeX package
@@ -139,9 +121,9 @@ Package: auxhook 2019-12-17 v1.6 Hooks for auxiliary files (HO)
 (e:/software/texlive/2020/texmf-dist/tex/latex/kvoptions/kvoptions.sty
 Package: kvoptions 2020-10-07 v3.14 Key value format for package options (HO)
 )
-\@linkdim=\dimen152
-\Hy@linkcounter=\count196
-\Hy@pagecounter=\count197
+\@linkdim=\dimen147
+\Hy@linkcounter=\count189
+\Hy@pagecounter=\count190
 
 (e:/software/texlive/2020/texmf-dist/tex/latex/hyperref/pd1enc.def
 File: pd1enc.def 2020-05-15 v7.00e Hyperref: PDFDocEncoding definition (HO)
@@ -154,7 +136,7 @@ Package: intcalc 2019/12/15 v1.3 Expandable calculations with integers (HO)
 (e:/software/texlive/2020/texmf-dist/tex/generic/etexcmds/etexcmds.sty
 Package: etexcmds 2019/12/15 v1.7 Avoid name clashes with e-TeX commands (HO)
 )
-\Hy@SavedSpaceFactor=\count198
+\Hy@SavedSpaceFactor=\count191
 Package hyperref Info: Hyper figures OFF on input line 4464.
 Package hyperref Info: Link nesting OFF on input line 4469.
 Package hyperref Info: Hyper index ON on input line 4472.
@@ -162,14 +144,14 @@ Package hyperref Info: Plain pages OFF on input line 4479.
 Package hyperref Info: Backreferencing OFF on input line 4484.
 Package hyperref Info: Implicit mode ON; LaTeX internals redefined.
 Package hyperref Info: Bookmarks ON on input line 4717.
-\c@Hy@tempcnt=\count199
+\c@Hy@tempcnt=\count192
 
 (e:/software/texlive/2020/texmf-dist/tex/latex/url/url.sty
 \Urlmuskip=\muskip16
 Package: url 2013/09/16  ver 3.4  Verb mode for urls, etc.
 )
 LaTeX Info: Redefining \url on input line 5076.
-\XeTeXLinkMargin=\dimen153
+\XeTeXLinkMargin=\dimen148
 
 (e:/software/texlive/2020/texmf-dist/tex/generic/bitset/bitset.sty
 Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
@@ -178,9 +160,9 @@ Package: bitset 2019/12/09 v1.3 Handle bit-vector datatype (HO)
 Package: bigintcalc 2019/12/15 v1.5 Expandable calculations on big integers (HO
 )
 ))
-\Fld@menulength=\count266
-\Field@Width=\dimen154
-\Fld@charsize=\dimen155
+\Fld@menulength=\count193
+\Field@Width=\dimen149
+\Fld@charsize=\dimen150
 Package hyperref Info: Hyper figures OFF on input line 6347.
 Package hyperref Info: Link nesting OFF on input line 6352.
 Package hyperref Info: Hyper index ON on input line 6355.
@@ -196,9 +178,9 @@ Package: atbegshi-ltx 2020/08/17 v1.0a Emulation of the original atbegshi packa
 ge
 with kernel methods
 )
-\Hy@abspage=\count267
-\c@Item=\count268
-\c@Hfootnote=\count269
+\Hy@abspage=\count194
+\c@Item=\count195
+\c@Hfootnote=\count196
 )
 Package hyperref Info: Driver (autodetected): hpdftex.
 
@@ -210,8 +192,8 @@ Package: atveryend-ltx 2020/08/19 v1.0a Emulation of the original atvery packag
 e
 with kernel methods
 )
-\Fld@listcount=\count270
-\c@bookmark@seq@number=\count271
+\Fld@listcount=\count197
+\c@bookmark@seq@number=\count198
 
 (e:/software/texlive/2020/texmf-dist/tex/latex/rerunfilecheck/rerunfilecheck.st
 y
@@ -227,27 +209,27 @@ Package uniquecounter Info: New unique counter `rerunfilecheck' on input line 2
 \Hy@SectionHShift=\skip53
 ) (e:/software/texlive/2020/texmf-dist/tex/latex/booktabs/booktabs.sty
 Package: booktabs 2020/01/12 v1.61803398 Publication quality tables
-\heavyrulewidth=\dimen156
-\lightrulewidth=\dimen157
-\cmidrulewidth=\dimen158
-\belowrulesep=\dimen159
-\belowbottomsep=\dimen160
-\aboverulesep=\dimen161
-\abovetopsep=\dimen162
-\cmidrulesep=\dimen163
-\cmidrulekern=\dimen164
-\defaultaddspace=\dimen165
-\@cmidla=\count272
-\@cmidlb=\count273
-\@aboverulesep=\dimen166
-\@belowrulesep=\dimen167
-\@thisruleclass=\count274
-\@lastruleclass=\count275
-\@thisrulewidth=\dimen168
+\heavyrulewidth=\dimen151
+\lightrulewidth=\dimen152
+\cmidrulewidth=\dimen153
+\belowrulesep=\dimen154
+\belowbottomsep=\dimen155
+\aboverulesep=\dimen156
+\abovetopsep=\dimen157
+\cmidrulesep=\dimen158
+\cmidrulekern=\dimen159
+\defaultaddspace=\dimen160
+\@cmidla=\count199
+\@cmidlb=\count266
+\@aboverulesep=\dimen161
+\@belowrulesep=\dimen162
+\@thisruleclass=\count267
+\@lastruleclass=\count268
+\@thisrulewidth=\dimen163
 )
 (e:/software/texlive/2020/texmf-dist/tex/latex/amsfonts/amsfonts.sty
 Package: amsfonts 2013/01/14 v3.01 Basic AMSFonts support
-\@emptytoks=\toks21
+\@emptytoks=\toks20
 \symAMSa=\mathgroup4
 \symAMSb=\mathgroup5
 LaTeX Font Info:    Redeclaring math symbol \hbar on input line 98.
@@ -265,12 +247,12 @@ Package: ifthen 2014/09/29 v1.1c Standard LaTeX ifthen package (DPC)
 ))
 (e:/software/texlive/2020/texmf-dist/tex/latex/microtype/microtype.sty
 Package: microtype 2019/11/18 v2.7d Micro-typographical refinements (RS)
-\MT@toks=\toks22
-\MT@count=\count276
+\MT@toks=\toks21
+\MT@count=\count269
 LaTeX Info: Redefining \textls on input line 790.
-\MT@outer@kern=\dimen169
+\MT@outer@kern=\dimen164
 LaTeX Info: Redefining \textmicrotypecontext on input line 1354.
-\MT@listname@count=\count277
+\MT@listname@count=\count270
 
 (e:/software/texlive/2020/texmf-dist/tex/latex/microtype/microtype-pdftex.def
 File: microtype-pdftex.def 2019/11/18 v2.7d Definitions specific to pdftex (RS)
@@ -323,52 +305,52 @@ Package: amstext 2000/06/29 v2.01 AMS text
 
 (e:/software/texlive/2020/texmf-dist/tex/latex/amsmath/amsgen.sty
 File: amsgen.sty 1999/11/30 v2.0 generic functions
-\@emptytoks=\toks23
-\ex@=\dimen170
+\@emptytoks=\toks22
+\ex@=\dimen165
 ))
 (e:/software/texlive/2020/texmf-dist/tex/latex/amsmath/amsbsy.sty
 Package: amsbsy 1999/11/29 v1.2d Bold Symbols
 LaTeX Info: Redefining \boldsymbol on input line 28.
-\pmbraise@=\dimen171
+\pmbraise@=\dimen166
 )
 (e:/software/texlive/2020/texmf-dist/tex/latex/amsmath/amsopn.sty
 Package: amsopn 2016/03/08 v2.02 operator names
 )
-\inf@bad=\count278
+\inf@bad=\count271
 LaTeX Info: Redefining \frac on input line 234.
-\uproot@=\count279
-\leftroot@=\count280
+\uproot@=\count272
+\leftroot@=\count273
 LaTeX Info: Redefining \overline on input line 399.
-\classnum@=\count281
-\DOTSCASE@=\count282
+\classnum@=\count274
+\DOTSCASE@=\count275
 LaTeX Info: Redefining \ldots on input line 496.
 LaTeX Info: Redefining \dots on input line 499.
 LaTeX Info: Redefining \cdots on input line 620.
-\Mathstrutbox@=\box48
-\strutbox@=\box49
-\big@size=\dimen172
+\Mathstrutbox@=\box47
+\strutbox@=\box48
+\big@size=\dimen167
 LaTeX Font Info:    Redeclaring font encoding OML on input line 743.
 LaTeX Font Info:    Redeclaring font encoding OMS on input line 744.
-\macc@depth=\count283
-\c@MaxMatrixCols=\count284
+\macc@depth=\count276
+\c@MaxMatrixCols=\count277
 \dotsspace@=\muskip17
-\c@parentequation=\count285
-\dspbrk@lvl=\count286
-\tag@help=\toks24
-\row@=\count287
-\column@=\count288
-\maxfields@=\count289
-\andhelp@=\toks25
-\eqnshift@=\dimen173
-\alignsep@=\dimen174
-\tagshift@=\dimen175
-\tagwidth@=\dimen176
-\totwidth@=\dimen177
-\lineht@=\dimen178
-\@envbody=\toks26
+\c@parentequation=\count278
+\dspbrk@lvl=\count279
+\tag@help=\toks23
+\row@=\count280
+\column@=\count281
+\maxfields@=\count282
+\andhelp@=\toks24
+\eqnshift@=\dimen168
+\alignsep@=\dimen169
+\tagshift@=\dimen170
+\tagwidth@=\dimen171
+\totwidth@=\dimen172
+\lineht@=\dimen173
+\@envbody=\toks25
 \multlinegap=\skip59
 \multlinetaggap=\skip60
-\mathdisplay@stack=\toks27
+\mathdisplay@stack=\toks26
 LaTeX Info: Redefining \[ on input line 2923.
 LaTeX Info: Redefining \] on input line 2924.
 )
@@ -389,21 +371,21 @@ File: graphics.cfg 2016/06/04 v1.11 sample graphics configuration
 )
 Package graphics Info: Driver file: pdftex.def on input line 105.
 )
-\Gin@req@height=\dimen179
-\Gin@req@width=\dimen180
+\Gin@req@height=\dimen174
+\Gin@req@width=\dimen175
 )
 (e:/software/texlive/2020/texmf-dist/tex/latex/subfigure/subfigure.sty
 Package: subfigure 2002/03/15 v2.1.5 subfigure package
 \subfigtopskip=\skip61
 \subfigcapskip=\skip62
-\subfigcaptopadj=\dimen181
+\subfigcaptopadj=\dimen176
 \subfigbottomskip=\skip63
-\subfigcapmargin=\dimen182
+\subfigcapmargin=\dimen177
 \subfiglabelskip=\skip64
-\c@subfigure=\count290
-\c@lofdepth=\count291
-\c@subtable=\count292
-\c@lotdepth=\count293
+\c@subfigure=\count283
+\c@lofdepth=\count284
+\c@subtable=\count285
+\c@lotdepth=\count286
 
 ****************************************
 * Local config file subfigure.cfg used *
@@ -414,44 +396,46 @@ Package: subfigure 2002/03/15 v2.1.5 subfigure package
 )
 (e:/software/texlive/2020/texmf-dist/tex/latex/l3backend/l3backend-pdftex.def
 File: l3backend-pdftex.def 2020-09-24 L3 backend support: PDF output (pdfTeX)
-\l__kernel_color_stack_int=\count294
-\l__pdf_internal_box=\box50
+\l__kernel_color_stack_int=\count287
+\l__pdf_internal_box=\box49
 )
 (./draft.aux)
 \openout1 = `draft.aux'.
 
-LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
-LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 79.
-LaTeX Font Info:    ... okay on input line 79.
+LaTeX Font Info:    Checking defaults for OML/cmm/m/it on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for OMS/cmsy/m/n on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for OT1/cmr/m/n on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for T1/cmr/m/n on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for TS1/cmr/m/n on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for OMX/cmex/m/n on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for U/cmr/m/n on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
+LaTeX Font Info:    Checking defaults for PD1/pdf/m/n on input line 75.
+LaTeX Font Info:    ... okay on input line 75.
 
-*geometry* verbose mode - [ newgeometry ] result:
-* driver: 
+*geometry* driver: auto-detecting
+*geometry* detected driver: pdftex
+*geometry* verbose mode - [ preamble ] result:
+* driver: pdftex
 * paper: letterpaper
 * layout: <same size as paper>
 * layoutoffset:(h,v)=(0.0pt,0.0pt)
 * modes: 
-* h-part:(L,W,R)=(108.405pt, 397.48499pt, 108.40501pt)
-* v-part:(T,H,B)=(72.26999pt, 650.43pt, 72.27pt)
+* h-part:(L,W,R)=(92.14519pt, 430.00462pt, 92.14519pt)
+* v-part:(T,H,B)=(95.39737pt, 556.47656pt, 143.09605pt)
 * \paperwidth=614.295pt
 * \paperheight=794.96999pt
-* \textwidth=397.48499pt
-* \textheight=650.43pt
-* \oddsidemargin=36.13501pt
-* \evensidemargin=36.13501pt
-* \topmargin=-37.0pt
+* \textwidth=430.00462pt
+* \textheight=556.47656pt
+* \oddsidemargin=19.8752pt
+* \evensidemargin=19.8752pt
+* \topmargin=-13.87262pt
 * \headheight=12.0pt
 * \headsep=25.0pt
 * \topskip=10.0pt
@@ -469,9 +453,7 @@ LaTeX Font Info:    ... okay on input line 79.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-*geometry* driver: auto-detecting
-*geometry* detected driver: pdftex
-*geometry* verbose mode - [ preamble ] result:
+*geometry* verbose mode - [ newgeometry ] result:
 * driver: pdftex
 * paper: letterpaper
 * layout: <same size as paper>
@@ -503,7 +485,7 @@ LaTeX Font Info:    ... okay on input line 79.
 * \@reversemarginfalse
 * (1in=72.27pt=25.4mm, 1cm=28.453pt)
 
-Package hyperref Info: Link coloring OFF on input line 79.
+Package hyperref Info: Link coloring OFF on input line 75.
 (e:/software/texlive/2020/texmf-dist/tex/latex/hyperref/nameref.sty
 Package: nameref 2019/09/16 v2.46 Cross-referencing by name of section
 
@@ -514,23 +496,23 @@ Package: refcount 2019/12/15 v3.6 Data extraction from label references (HO)
 sty
 Package: gettitlestring 2019/12/15 v1.6 Cleanup title references (HO)
 )
-\c@section@level=\count295
+\c@section@level=\count288
 )
-LaTeX Info: Redefining \ref on input line 79.
-LaTeX Info: Redefining \pageref on input line 79.
-LaTeX Info: Redefining \nameref on input line 79.
+LaTeX Info: Redefining \ref on input line 75.
+LaTeX Info: Redefining \pageref on input line 75.
+LaTeX Info: Redefining \nameref on input line 75.
  (./draft.out) (./draft.out)
 \@outlinefile=\write3
 \openout3 = `draft.out'.
 
-LaTeX Info: Redefining \microtypecontext on input line 79.
+LaTeX Info: Redefining \microtypecontext on input line 75.
 Package microtype Info: Generating PDF output.
 Package microtype Info: Character protrusion enabled (level 2).
 Package microtype Info: Using default protrusion set `alltext'.
 Package microtype Info: Automatic font expansion enabled (level 2),
 (microtype)             stretch: 20, shrink: 20, step: 1, non-selected.
 Package microtype Info: Using default expansion set `basictext'.
-LaTeX Info: Redefining \showhyphens on input line 79.
+LaTeX Info: Redefining \showhyphens on input line 75.
 Package microtype Info: No adjustment of tracking.
 Package microtype Info: No adjustment of interword spacing.
 Package microtype Info: No adjustment of character kerning.
@@ -540,17 +522,17 @@ File: mt-ptm.cfg 2006/04/20 v1.7 microtype config. file: Times (RS)
 )
 (e:/software/texlive/2020/texmf-dist/tex/context/base/mkii/supp-pdf.mkii
 [Loading MPS to PDF converter (version 2006.09.02).]
-\scratchcounter=\count296
-\scratchdimen=\dimen183
-\scratchbox=\box51
-\nofMPsegments=\count297
-\nofMParguments=\count298
-\everyMPshowfont=\toks28
-\MPscratchCnt=\count299
-\MPscratchDim=\dimen184
-\MPnumerator=\count300
-\makeMPintoPDFobject=\count301
-\everyMPtoPDFconversion=\toks29
+\scratchcounter=\count289
+\scratchdimen=\dimen178
+\scratchbox=\box50
+\nofMPsegments=\count290
+\nofMParguments=\count291
+\everyMPshowfont=\toks27
+\MPscratchCnt=\count292
+\MPscratchDim=\dimen179
+\MPnumerator=\count293
+\makeMPintoPDFobject=\count294
+\everyMPtoPDFconversion=\toks28
 ) (e:/software/texlive/2020/texmf-dist/tex/latex/epstopdf-pkg/epstopdf-base.sty
 Package: epstopdf-base 2020-01-24 v2.11 Base part for package epstopdf
 Package epstopdf-base Info: Redefining graphics rule for `.eps' on input line 4
@@ -563,7 +545,7 @@ e
 File: mt-cmr.cfg 2013/05/19 v2.2 microtype config. file: Computer Modern Roman 
 (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msa on input line 82.
+LaTeX Font Info:    Trying to load font information for U+msa on input line 78.
 
 
 (e:/software/texlive/2020/texmf-dist/tex/latex/amsfonts/umsa.fd
@@ -572,7 +554,7 @@ File: umsa.fd 2013/01/14 v3.01 AMS symbols A
 (e:/software/texlive/2020/texmf-dist/tex/latex/microtype/mt-msa.cfg
 File: mt-msa.cfg 2006/02/04 v1.1 microtype config. file: AMS symbols (a) (RS)
 )
-LaTeX Font Info:    Trying to load font information for U+msb on input line 82.
+LaTeX Font Info:    Trying to load font information for U+msb on input line 78.
 
 
 (e:/software/texlive/2020/texmf-dist/tex/latex/amsfonts/umsb.fd
@@ -581,8 +563,8 @@ File: umsb.fd 2013/01/14 v3.01 AMS symbols B
 (e:/software/texlive/2020/texmf-dist/tex/latex/microtype/mt-msb.cfg
 File: mt-msb.cfg 2005/06/01 v1.0 microtype config. file: AMS symbols (b) (RS)
 )
-LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 8
-2.
+LaTeX Font Info:    Trying to load font information for T1+cmtt on input line 7
+8.
 
 (e:/software/texlive/2020/texmf-dist/tex/latex/base/t1cmtt.fd
 File: t1cmtt.fd 2019/12/16 v2.5j Standard LaTeX font definitions
@@ -591,172 +573,51 @@ Package microtype Info: Loading generic protrusion settings for font family
 (microtype)             `cmtt' (encoding: T1).
 (microtype)             For optimal results, create family-specific settings.
 (microtype)             See the microtype manual for details.
-LaTeX Font Info:    Trying to load font information for T1+phv on input line 85
-.
-
-(e:/software/texlive/2020/texmf-dist/tex/latex/psnfss/t1phv.fd
-File: t1phv.fd 2020/03/25 scalable font definitions for T1/phv.
-)
-Package microtype Info: Loading generic protrusion settings for font family
-(microtype)             `phv' (encoding: T1).
-(microtype)             For optimal results, create family-specific settings.
-(microtype)             See the microtype manual for details.
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [1
-
-
-{e:/software/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.map}] [2] [3
-]
-<2_llhd1.png, id=134, 433.62pt x 216.81pt>
-File: 2_llhd1.png Graphic file (type png)
-<use 2_llhd1.png>
-Package pdftex.def Info: 2_llhd1.png  used on input line 175.
-(pdftex.def)             Requested size: 198.7425pt x 99.3732pt.
-<3_llhd2.png, id=135, 433.62pt x 216.81pt>
-File: 3_llhd2.png Graphic file (type png)
-<use 3_llhd2.png>
-Package pdftex.def Info: 3_llhd2.png  used on input line 176.
-(pdftex.def)             Requested size: 198.7425pt x 99.3732pt.
-<image001.jpg, id=136, 205.5178pt x 162.6075pt>
-File: image001.jpg Graphic file (type jpg)
-<use image001.jpg>
-Package pdftex.def Info: image001.jpg  used on input line 178.
-(pdftex.def)             Requested size: 198.7425pt x 157.24773pt.
-<LF.png, id=137, 236.5638pt x 239.2137pt>
-File: LF.png Graphic file (type png)
-<use LF.png>
-Package pdftex.def Info: LF.png  used on input line 179.
-(pdftex.def)             Requested size: 198.7425pt x 200.96733pt.
-<image003.jpg, id=138, 205.1414pt x 162.6075pt>
-File: image003.jpg Graphic file (type jpg)
-<use image003.jpg>
-Package pdftex.def Info: image003.jpg  used on input line 181.
-(pdftex.def)             Requested size: 198.7425pt x 157.53307pt.
-<image004.jpg, id=139, 205.1414pt x 162.6075pt>
-File: image004.jpg Graphic file (type jpg)
-<use image004.jpg>
-Package pdftex.def Info: image004.jpg  used on input line 182.
-(pdftex.def)             Requested size: 198.7425pt x 157.53307pt.
+<figure1.png, id=52, 602.25pt x 259.3439pt>
+File: figure1.png Graphic file (type png)
+<use figure1.png>
+Package pdftex.def Info: figure1.png  used on input line 89.
+(pdftex.def)             Requested size: 397.48499pt x 171.17542pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-<image005.jpg, id=141, 205.1414pt x 153.95015pt>
-File: image005.jpg Graphic file (type jpg)
-<use image005.jpg>
-Package pdftex.def Info: image005.jpg  used on input line 191.
-(pdftex.def)             Requested size: 158.99156pt x 119.31482pt.
-<image006.jpg, id=142, 205.1414pt x 205.1414pt>
-File: image006.jpg Graphic file (type jpg)
-<use image006.jpg>
-Package pdftex.def Info: image006.jpg  used on input line 192.
-(pdftex.def)             Requested size: 158.99156pt x 158.9892pt.
-<image007.jpg, id=143, 205.1414pt x 153.95015pt>
-File: image007.jpg Graphic file (type jpg)
-<use image007.jpg>
-Package pdftex.def Info: image007.jpg  used on input line 193.
-(pdftex.def)             Requested size: 158.99156pt x 119.31482pt.
+[1
 
-Overfull \hbox (79.4897pt too wide) in paragraph at lines 191--194
- [][][][][][] 
- []
+
+{e:/software/texlive/2020/texmf-var/fonts/map/pdftex/updmap/pdftex.map}]
+[2 <./figure1.png>] [3]
+<figure2.jpg, id=117, 1163.34625pt x 622.325pt>
+File: figure2.jpg Graphic file (type jpg)
+<use figure2.jpg>
+Package pdftex.def Info: figure2.jpg  used on input line 168.
+(pdftex.def)             Requested size: 397.48499pt x 212.63225pt.
+<figure3.jpg, id=118, 1698.345pt x 948.54375pt>
+File: figure3.jpg Graphic file (type jpg)
+<use figure3.jpg>
+Package pdftex.def Info: figure3.jpg  used on input line 200.
+(pdftex.def)             Requested size: 397.48499pt x 221.99597pt.
 
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [4]
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [5 <./2_llhd1.png (PNG copy)> <./3_llhd2.png (PNG copy)> <./image001.jpg> <./L
-F.png> <./image003.jpg> <./image004.jpg>]
-<image008.jpg, id=176, 205.1414pt x 153.95015pt>
-File: image008.jpg Graphic file (type jpg)
-<use image008.jpg>
-Package pdftex.def Info: image008.jpg  used on input line 219.
-(pdftex.def)             Requested size: 198.7425pt x 149.14587pt.
-<image009.jpg, id=177, 205.1414pt x 205.1414pt>
-File: image009.jpg Graphic file (type jpg)
-<use image009.jpg>
-Package pdftex.def Info: image009.jpg  used on input line 220.
-(pdftex.def)             Requested size: 139.12216pt x 139.12181pt.
-<image010.jpg, id=178, 205.1414pt x 205.1414pt>
-File: image010.jpg Graphic file (type jpg)
-<use image010.jpg>
-Package pdftex.def Info: image010.jpg  used on input line 221.
-(pdftex.def)             Requested size: 139.12216pt x 139.12181pt.
-
-Overfull \hbox (79.50183pt too wide) in paragraph at lines 219--222
- [][][][][][] 
- []
-
-<image001.png, id=179, 421.1986pt x 315.42844pt>
-File: image001.png Graphic file (type png)
-<use image001.png>
-Package pdftex.def Info: image001.png  used on input line 223.
-(pdftex.def)             Requested size: 119.2467pt x 89.30121pt.
-<image002.png, id=181, 421.1986pt x 315.42844pt>
-File: image002.png Graphic file (type png)
-<use image002.png>
-Package pdftex.def Info: image002.png  used on input line 224.
-(pdftex.def)             Requested size: 119.2467pt x 89.30121pt.
-<image011.jpg, id=182, 205.1414pt x 153.95015pt>
-File: image011.jpg Graphic file (type jpg)
-<use image011.jpg>
-Package pdftex.def Info: image011.jpg  used on input line 225.
-(pdftex.def)             Requested size: 119.2467pt x 89.48846pt.
-<image012.jpg, id=183, 205.1414pt x 153.95015pt>
-File: image012.jpg Graphic file (type jpg)
-<use image012.jpg>
-Package pdftex.def Info: image012.jpg  used on input line 226.
-(pdftex.def)             Requested size: 119.2467pt x 89.48846pt.
-
-Overfull \hbox (79.50183pt too wide) in paragraph at lines 223--227
- [][][][][][][][] 
- []
-
-<12_numTrace.png, id=184, 216.81pt x 216.81pt>
-File: 12_numTrace.png Graphic file (type png)
-<use 12_numTrace.png>
-Package pdftex.def Info: 12_numTrace.png  used on input line 228.
-(pdftex.def)             Requested size: 158.99156pt x 158.99779pt.
-<16_fitFR.png, id=185, 289.08pt x 216.81pt>
-File: 16_fitFR.png Graphic file (type png)
-<use 16_fitFR.png>
-Package pdftex.def Info: 16_fitFR.png  used on input line 229.
-(pdftex.def)             Requested size: 158.99156pt x 119.24255pt.
-<14_simPixel.png, id=186, 289.08pt x 216.81pt>
-File: 14_simPixel.png Graphic file (type png)
-<use 14_simPixel.png>
-Package pdftex.def Info: 14_simPixel.png  used on input line 230.
-(pdftex.def)             Requested size: 158.99156pt x 119.24255pt.
-
-Overfull \hbox (79.4897pt too wide) in paragraph at lines 228--231
- [][][][][][] 
- []
-
+<figure4.jpg, id=119, 944.52875pt x 589.20125pt>
+File: figure4.jpg Graphic file (type jpg)
+<use figure4.jpg>
+Package pdftex.def Info: figure4.jpg  used on input line 221.
+(pdftex.def)             Requested size: 397.48499pt x 247.9573pt.
 
 LaTeX Warning: `!h' float specifier changed to `!ht'.
 
-
-Underfull \vbox (badness 10000) has occurred while \output is active []
-
- [6 <./image005.jpg> <./image006.jpg> <./image007.jpg>] [7 <./image008.jpg> <./
-image009.jpg> <./image010.jpg> <./image001.png> <./image002.png> <./image011.jp
-g> <./image012.jpg> <./12_numTrace.png (PNG copy)> <./16_fitFR.png (PNG copy)> 
-<./14_simPixel.png (PNG copy)>] [8] (./draft.bbl)
-Underfull \hbox (badness 1221) in paragraph at lines 265--267
+[4 <./figure2.jpg>] [5 <./figure3.jpg>] (./draft.bbl [6 <./figure4.jpg>])
+Underfull \hbox (badness 1221) in paragraph at lines 286--288
 \OML/cmm/m/it/10 P\OT1/cmr/m/n/10 ([]\OMS/cmsy/m/n/10 jf[]g[]\OML/cmm/m/it/10 ;
  []; []; []; []\OT1/cmr/m/n/10 )$ \T1/ptm/m/n/10 (+20) is ap-prox-i-mated by a 
 global Laplace ap-prox-i-ma-tion,
  []
 
-[9]
-Underfull \hbox (badness 1521) in paragraph at lines 280--281
+[7]
+Underfull \hbox (badness 1521) in paragraph at lines 301--302
 \T1/ptm/m/n/10 (+20) and $[][] \OMS/cmsy/m/n/10 j [] ^^X \OML/cmm/m/it/10 N\OT1
 /cmr/m/n/10 (\OML/cmm/b/it/10 ^^V[]\OML/cmm/m/it/10 ; ^^[[]\OT1/cmr/bx/n/10 ^^C
 []\OT1/cmr/m/n/10 )$\T1/ptm/m/n/10 (+20) , with $\OT1/cmr/bx/n/10 ^^C[] \OT1/cm
@@ -764,18 +625,18 @@ r/m/n/10 = \OML/cmm/b/it/10 X[]X[] \OT1/cmr/m/n/10 + \OT1/cmr/bx/n/10 ^^C[]$ \T
 1/ptm/m/n/10 (+20) and $\OML/cmm/b/it/10 ^^V[] \OT1/cmr/m/n/10 =
  []
 
-[10] [11] (./draft.aux)
+[8] (./draft.aux)
 Package rerunfilecheck Info: File `draft.out' has not changed.
-(rerunfilecheck)             Checksum: E3BCA27B08CA3CF2F38E5AF522AA7AC6;850.
+(rerunfilecheck)             Checksum: BBB80EBD652BDF705C834ECC15C7F131;737.
  ) 
 Here is how much of TeX's memory you used:
- 10612 strings out of 479383
- 158980 string characters out of 5868871
- 531265 words of memory out of 5000000
- 27213 multiletter control sequences out of 15000+600000
- 454856 words of font info for 214 fonts, out of 8000000 for 9000
+ 10160 strings out of 479383
+ 152550 string characters out of 5868871
+ 534096 words of memory out of 5000000
+ 26811 multiletter control sequences out of 15000+600000
+ 450192 words of font info for 209 fonts, out of 8000000 for 9000
  1141 hyphenation exceptions out of 8191
- 80i,12n,85p,1983b,427s stack positions out of 5000i,500n,10000p,200000b,80000s
+ 80i,12n,85p,1983b,497s stack positions out of 5000i,500n,10000p,200000b,80000s
 {e:/software/texlive/2020/texmf-dist/fonts/enc/dvips/cm-super/cm-super-t1.enc
 }{e:/software/texlive/2020/texmf-dist/fonts/enc/dvips/base/8r.enc}<e:/software/
 texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmbx10.pfb><e:/software/
@@ -797,14 +658,13 @@ tware/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/cm/cmsy7.pfb><e:/soft
 ware/texlive/2020/texmf-dist/fonts/type1/public/amsfonts/symbols/msbm10.pfb><e:
 /software/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sftt0900.pfb><e:/
 software/texlive/2020/texmf-dist/fonts/type1/public/cm-super/sftt1000.pfb><e:/s
-oftware/texlive/2020/texmf-dist/fonts/type1/urw/helvetic/uhvr8a.pfb><e:/softwar
-e/texlive/2020/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><e:/software/texlive
-/2020/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><e:/software/texlive/2020/tex
-mf-dist/fonts/type1/urw/times/utmri8a.pfb>
-Output written on draft.pdf (11 pages, 899275 bytes).
+oftware/texlive/2020/texmf-dist/fonts/type1/urw/times/utmb8a.pfb><e:/software/t
+exlive/2020/texmf-dist/fonts/type1/urw/times/utmr8a.pfb><e:/software/texlive/20
+20/texmf-dist/fonts/type1/urw/times/utmri8a.pfb>
+Output written on draft.pdf (8 pages, 1802546 bytes).
 PDF statistics:
- 355 PDF objects out of 1000 (max. 8388607)
- 295 compressed objects within 3 object streams
- 67 named destinations out of 1000 (max. 500000)
- 28880 words of extra memory for PDF output out of 29859 (max. 10000000)
+ 268 PDF objects out of 1000 (max. 8388607)
+ 229 compressed objects within 3 object streams
+ 44 named destinations out of 1000 (max. 500000)
+ 27765 words of extra memory for PDF output out of 29859 (max. 10000000)
 

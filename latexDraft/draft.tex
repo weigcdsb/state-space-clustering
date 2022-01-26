@@ -5,11 +5,11 @@
 % before loading neurips_2021
 
 % ready for submission
-\usepackage{neurips_2021}
+%\usepackage{neurips_2021}
 
 % to compile a preprint version, e.g., for submission to arXiv, add add the
 % [preprint] option:
-%     \usepackage[preprint]{neurips_2021}
+\usepackage[preprint]{neurips_2021}
 
 % to compile a camera-ready version, add the [final] option, e.g.:
 %     \usepackage[final]{neurips_2021}
@@ -35,7 +35,7 @@
 \DeclareMathOperator*{\argmax}{arg\,max}
 \DeclareMathOperator*{\argmin}{arg\,min}
 
-\title{Clustering Neural Populations by Poisson Dynamic Factor Model}
+\title{Clustering Neural Populations with a Poisson Dynamic Factor Model}
 
 % The \author macro works with any number of authors. There are two commands
 % used to separate the names and addresses of multiple authors: \And and \AND.
@@ -46,24 +46,20 @@
 % \AND instead of \And before the third author name.
 
 \author{%
-	David S.~Hippocampus\thanks{Use footnote for providing further information
-		about author (webpage, alternative address)---\emph{not} for acknowledging
-		funding agencies.} \\
-	Department of Computer Science\\
-	Cranberry-Lemon University\\
-	Pittsburgh, PA 15213 \\
-	\texttt{hippo@cs.cranberry-lemon.edu} \\
-	% examples of more authors
-	% \And
-	% Coauthor \\
-	% Affiliation \\
-	% Address \\
-	% \texttt{email} \\
-	% \AND
-	% Coauthor \\
-	% Affiliation \\
-	% Address \\
-	% \texttt{email} \\
+	Ganchao Wei\\
+	Department of Statistics\\
+	University of Connecticut\\
+	\texttt{ganchao.wei@uconn.edu}\\
+	\And
+	Ian. H. Stevenson\\
+	Department of Psychological Sciences\\
+	University of Connecticut\\
+	\texttt{ian.stevenson@uconn.edu} \\
+	\And
+	Xiaojing Wang\\
+	Department of Statistics\\
+	University of Connecticut\\
+	\texttt{xiaojing.wang@uconn.edu} \\
 	% \And
 	% Coauthor \\
 	% Affiliation \\
@@ -81,28 +77,34 @@
 	\maketitle
 	
 	\begin{abstract}
-	Modern recording techniques allow neuroscientists to study multiple neural populations over extended time periods in a large-scale, and the relationships within and between populations are summarized by low-dimensional latent vectors. When the neural activities are globally nonlinear, using single population analysis is inappropriate. However, defining the populations is usually difficult and  wrong cluster assignments will lead to bias in latent structure inferences. To tackle this challenge, we develop a clustering method based mixture of Poisson dynamic factor model. The number of cluster is treated as a parameter in mixture of finite mixtures (MFM) model, and the posteriors are sampled by a MCMC algorithm. To sample the posteriors efficiently, we approximate the full conditional distribution of latent state by Gaussian and approximate the marginal likelihood by making use of the Poisson-Gamma conjugacy. We further apply our method to neuropixel data (and hippocampus data) for illustration.
+	Modern neural recording techniques allow neuroscientists to observe the spiking activity of many neurons simultaneously. Although previous work has illustrated how activity within and between known populations of neurons can be summarized by low-dimensional latent vectors, in many cases what determines a discrete population may be unclear. Neurons differ in their anatomical location, but, also, in their cell types and response properties. When the neural activities are globally nonlinear, using single population analysis is inappropriate. However, defining the populations is usually difficult and  wrong cluster assignments will lead to bias in latent structure inferences. To tackle this challenge, here we develop a clustering method based on a mixture of Poisson dynamic factor model with the number of cluster is treated as a parameter in mixture of finite mixtures (MFM) model. To sample efficiently from the posteriors, we approximate the full conditional distribution of latent state by Gaussian and approximate the marginal likelihood by making use of the Poisson-Gamma conjugacy. We apply our method to multi-region recordings, neuropixels recordings for illustration. This approach may be a useful tool for clustering neurons based on function.
 	\end{abstract}
 	
 	\section{Introduction}
 	\label{intro}
 	\answerTODO{}
 	
+	\begin{figure}[h!]
+		\centering
+		\includegraphics[width=1\textwidth]{figure1.png}
+		\caption{\textbf{Overview of the model. A.} Briefly describe the neuroscience motivation. \textbf{B.} The graphical model}
+	\end{figure}
+	
 	\section{Method}
 	\label{method}
 	
-	\subsection{Poisson Dynmic Factor Model}
+	\subsection{Poisson Dynamic Factor Model}
 	Denote the observed spike-count of neuron $i \in \{ 1,\ldots,N\}$ at
 	time bin $t \in \{ 1,\ldots,T\}$ as
 	$y_{it} \in \mathbb{Z}_{\geq 0}$, and let
 	$\bm{y}_{i} =  (y_{i1},\ldots,y_{iT})'$.
-	Further, let $z_{i} = j$ denote the cluster indicator of neuron $i$. To facilitate clustering, we re-parametrize the regular Poisson linear dynamical system (PLDS) model \citep{Macke2011} to separate the mean log-firing-rate out. Assume neurons are independently Poisson distributed, conditional on the
+	Further, let $z_{i} = j$ denote the cluster indicator of neuron $i$. To facilitate clustering, we re-parametrize the regular Poisson linear dynamical system (PLDS) model \citep{Macke2011} to separate the mean log-firing-rate out. Assume neural responses are independently Poisson distributed, conditional on the
 	low-dimensional latent state $\bm{x}_{t}^{(j)} \in \mathbb{R}^{p}$ as follows:
 	\begin{align*}
 		y_{it} &\sim Poi(\lambda_{it})\\
 		\log\lambda_{it} &= \mu_t^{(j)} + \bm{c}'_i\bm{x}^{(j)}_t
 	\end{align*}
-	, with $\bm{c}_i\sim N(\bm{0},\bm{I}_p)$. We further assume the intercept $\mu_t^{(j)}$ and the latent state $\bm{x}^{(j)}_t$ progress linearly with Gaussian noise as
+	, with $\bm{c}_i\sim N(\bm{0},\bm{I}_p)$. We further assume the intercept $\mu_t^{(j)}$ and the latent state $\bm{x}^{(j)}_t$ evolve linearly over time with Gaussian noise as
 	\begin{align*}
 		\mu_1^{(j)} &\sim N(\mu_0, \Sigma_0)\\
 		\mu_{t+1}^{(j)} &\sim N(f^{(j)}\mu_t^{(j)} + g^{(j)}, \sigma^{2(j)})\\
@@ -110,7 +112,7 @@
 		\bm{x}_{t+1}^{(j)} &\sim N(\bm{A}^{(j)}\bm{x}_t^{(j)} + \bm{b}^{(j)}, \bm{Q}^{(j)})
 	\end{align*}
 	
-	The bias term ($\bm{b}^{(j)}$) in the latent state is constant across time, unlike ind PLDS, which is  $\bm{b}_t^{(j)}$. When the bias term changes across the time, the update order of $\bm{A}^{(j)}$ and $\bm{b}_t^{(j)}$ will influence the results (usually, the $\bm{A}^{(j)}$ is updated first). When ignoring the updating order, the linear dynamics will have infinite solutions. If the $\bm{A}^{(j)}$ is one solution, then $\bm{A}^{*(j)} = \bm{A}^{(j)} + \bm{M}$ and $\bm{b}_t^{*(j)} = \bm{b}_t^{(j)} - \bm{M}\bm{x}^{(j)}_t$ will be another set of solution, for any $\bm{M} \in \mathbb{R}^{p\times p}$. This causes some inconvenience for inference. The same reason for using the time-constant $g^{(j)}$.
+	The bias term $\bm{b}^{(j)}$ in the latent state is constant across time, unlike ind PLDS, which is  $\bm{b}_t^{(j)}$. When the bias term changes across the time, the update order of $\bm{A}^{(j)}$ and $\bm{b}_t^{(j)}$ will influence the results (usually, the $\bm{A}^{(j)}$ is updated first). When ignoring the updating order, the linear dynamics will have infinite solutions. If the $\bm{A}^{(j)}$ is one solution, then $\bm{A}^{*(j)} = \bm{A}^{(j)} + \bm{M}$ and $\bm{b}_t^{*(j)} = \bm{b}_t^{(j)} - \bm{M}\bm{x}^{(j)}_t$ will be another set of solution, for any $\bm{M} \in \mathbb{R}^{p\times p}$. This causes some inconvenience for inference. The same reason for using the time-constant $g^{(j)}$.
 	
 	If we denote $\bm{\lambda}_{i} =  (\lambda_{i1},\ldots,\lambda_{iT})'$, $\bm{\mu}^{(j)} = (\mu^{(j)}_1,\ldots,\mu^{(j)}_T)'$ and $\bm{X}^{(j)} = (\bm{x}^{(j)}_1,\ldots,\bm{x}^{(j)}_T)'$, the model can be equivalently written as regular Poisson factor model as
 	\begin{align*}
@@ -160,80 +162,99 @@
 	\label{sim}
 	
 	\subsection{Model Global Non-linearity by Clustering}
-	There were a rich research results for single PLDS model, but it provides only a global linear model to represent the data in a lower dimensional subspace, which makes the application scope limited. When the input space is nonhomogeneous, a large dimension of latent state is needed and this may lead to the overfitting and poor performance. Mixture of PLDS/ PDFM models allow us to partition the input space into clusters and can therefore capture global nonlinearity by combining local linear models.
-	
-	To show the connection between the proposed model and PLDS parametrization, we simulate the data using the PLDS model, although these two are equivalent after some algebra. Denote the common PLDS model as $\log \lambda_i = \delta_i\bm{1}_T + \bm{G}^{(j)}\bm{d}_i$, where $d_i\in \mathbb{R}^q$. In PLDS parametrization, the latent state has one more dimension, i.e. $p=q+1$.
-	
-	We first simulated three neural populations, with 10 neurons in each. We set $q=2$ for each cluster and the recording length is T=1000. The $\delta_i = 1$ for $i=1,\ldots, 10$ and is $0$ for the remaining neurons. The $\bm{G}^{(j)}$ is $0.1(1,\ldots,10)'\otimes\bm{1}'_2 + \bm{1}_{10}\otimes(-1, 2)$ to set up a gradient for the loading in each cluster and to differ the contribution of two latent vectors. We allow $\bm{A}^{(j)}$ be non-diagonal and possible interactions between clusters, which is used in single population PLDS model. The diagonal element is generated from $N(0.92, 0.1^2)$. The bias terms are $\bm{b}^{(j)}$ is $10^{-3}\bm{1}_2$ for the first 2 clusters and $10^{-4}\bm{1}_2$ for the last cluster. The $\bm{Q}^{(j)}$ are $10^{-3}\bm{I}_2$, $10^{-4}\bm{I}_2$ and $10^{-5}\bm{I}_2$.
-	
-	The Figure \ref{fig:1a} shows the trace plot for the log-likelihood per spike, up to 10,000 iterations. The plot shows (Figure \ref{fig:1b}) that the convergence achieved after several steps. Therefore, we show the results by averaging iteration 500 to 1000. Figure \ref{fig:1c} shows the posterior mean of the mean firing rate, while Figure \ref{fig:1d} shows the fitted latent state. The latent vectors are transformed to PLDS parametrization for comparison. Notice that the PLDS parametrization also doesn't have the unique solution, we let $\bm{G}^{(j)}$ has mean zeros columns and is orthogonal.
-	
-	Then we held out $1/4$ and $1/2$ data as test set in a “speckled” pattern, i.e. randomly select subset of data for each neuron as held-out dataset. The "speckled" cross-validation was previously used in \cite{Williams2020}. We then fit the model with and without clusters, keeping the same latent dimension, i.e. (1) 3 clusters with $p=1$ for each and (2) 1 cluster with $p=2\cdot 3 - 1 = 5$. The procedure is replicated for 100 times for two proportions, and the difference of held-out likelihood per spike between 2 fittings are shown in Figure \ref{fig:1e}. The difference between (1) and (2) are always positive, and this shows doing the mixture of PDFM performs better than single PDFM. Moreover, as the proportion of training decrease (less data), the benefit of clustering becomes more significant. This suggests that doing clustering is necessary.
 	
 	\begin{figure}[h!]
 		\centering
-		\subfigure[Trace plot of  log-likelihood per spike]{\label{fig:1a}\includegraphics[width=0.5\textwidth]{2_llhd1.png}}%
-		\subfigure[Trace plot of  log-likelihood per spike, truncated (1000)]{\label{fig:1b}\includegraphics[width=0.5\textwidth]{3_llhd2.png}}%
-		
-		\subfigure[true vs. fitted firing rate]{\label{fig:1c}\includegraphics[width=0.5\textwidth]{image001.jpg}}%
-		\subfigure[true vs. fitted latent vectors]{\label{fig:1d}\includegraphics[width=0.5\textwidth]{LF.png}}%
-		
-		\subfigure[cross-validation: clustered vs. single population]{\label{fig:1e}\includegraphics[width=0.5\textwidth]{image003.jpg}}%
-		\subfigure[trace plot for non-labeled case]{\label{fig:1f}\includegraphics[width=0.5\textwidth]{image004.jpg}}%
-		\caption{Simple case}
+		\includegraphics[width=1\textwidth]{figure2.jpg}
+		\caption{\textbf{Global non-linearity by multiple clusters} \textcolor{red}{(The labels are known now. The purpose is to check MCMC do fit well.)}Simulate 10 clusters without specifying linear dynamics, with 5 neurons each. The dimension in each cluster is $p=1 (q=2)$. All the fitted posteriors are averages from iteration 500 to 1000. \textbf{A.} The trace plot of log-likelihood per spike. \textbf{B.} The fitted mean firing rate. \textbf{C.} The fitted latent vectors in the first 3 clusters.\textbf{D.} and \textbf{E.} Select 3/4 and 1/2 of the data as training in a speckled pattern, and replicate the sampling 50 times in each case. With each training sample, fit two models: 1) 10-cluster model: fit every single model for each, with $p=1$ (true value) in each and 2) 1-cluster model: fit a single model for all neurons, with $p$ selected by cross-validation. \textbf{D.} The held-out log-likelihood per spike decrease for less training samples. With the same training sample, 10-cluster model performs better than 1-cluster model. The selected $p$ for 1-cluster model is shown at the top. \textbf{E.} The differences of the held-out log-likelihood per spike between 10-cluster model and 1-cluster model. The less the training data, the more significant the improvement by fitting model cluster-wise.}
 	\end{figure}
+	
+	
+%	There were a rich research results for single PLDS model, but it provides only a global linear model to represent the data in a lower dimensional subspace, which makes the application scope limited. When the input space is nonhomogeneous, a large dimension of latent state is needed and this may lead to the overfitting and poor performance. Mixture of PLDS/ PDFM models allow us to partition the input space into clusters and can therefore capture global nonlinearity by combining local linear models.
+%	
+%	To show the connection between the proposed model and PLDS parametrization, we simulate the data using the PLDS model, although these two are equivalent after some algebra. Denote the common PLDS model as $\log \lambda_i = \delta_i\bm{1}_T + \bm{G}^{(j)}\bm{d}_i$, where $d_i\in \mathbb{R}^q$. In PLDS parametrization, the latent state has one more dimension, i.e. $p=q+1$.
+%	
+%	We first simulated three neural populations, with 10 neurons in each. We set $q=2$ for each cluster and the recording length is T=1000. The $\delta_i = 1$ for $i=1,\ldots, 10$ and is $0$ for the remaining neurons. The $\bm{G}^{(j)}$ is $0.1(1,\ldots,10)'\otimes\bm{1}'_2 + \bm{1}_{10}\otimes(-1, 2)$ to set up a gradient for the loading in each cluster and to differ the contribution of two latent vectors. We allow $\bm{A}^{(j)}$ be non-diagonal and possible interactions between clusters, which is used in single population PLDS model. The diagonal element is generated from $N(0.92, 0.1^2)$. The bias terms are $\bm{b}^{(j)}$ is $10^{-3}\bm{1}_2$ for the first 2 clusters and $10^{-4}\bm{1}_2$ for the last cluster. The $\bm{Q}^{(j)}$ are $10^{-3}\bm{I}_2$, $10^{-4}\bm{I}_2$ and $10^{-5}\bm{I}_2$.
+%	
+%	The Figure \ref{fig:1a} shows the trace plot for the log-likelihood per spike, up to 10,000 iterations. The plot shows (Figure \ref{fig:1b}) that the convergence achieved after several steps. Therefore, we show the results by averaging iteration 500 to 1000. Figure \ref{fig:1c} shows the posterior mean of the mean firing rate, while Figure \ref{fig:1d} shows the fitted latent state. The latent vectors are transformed to PLDS parametrization for comparison. Notice that the PLDS parametrization also doesn't have the unique solution, we let $\bm{G}^{(j)}$ has mean zeros columns and is orthogonal.
+%	
+%	Then we held out $1/4$ and $1/2$ data as test set in a “speckled” pattern, i.e. randomly select subset of data for each neuron as held-out dataset. The "speckled" cross-validation was previously used in \cite{Williams2020}. We then fit the model with and without clusters, keeping the same latent dimension, i.e. (1) 3 clusters with $p=1$ for each and (2) 1 cluster with $p=2\cdot 3 - 1 = 5$. The procedure is replicated for 100 times for two proportions, and the difference of held-out likelihood per spike between 2 fittings are shown in Figure \ref{fig:1e}. The difference between (1) and (2) are always positive, and this shows doing the mixture of PDFM performs better than single PDFM. Moreover, as the proportion of training decrease (less data), the benefit of clustering becomes more significant. This suggests that doing clustering is necessary.
+%	
+%	\begin{figure}[h!]
+%		\centering
+%		\subfigure[Trace plot of  log-likelihood per spike]{\label{fig:1a}\includegraphics[width=0.5\textwidth]{2_llhd1.png}}%
+%		\subfigure[Trace plot of  log-likelihood per spike, truncated (1000)]{\label{fig:1b}\includegraphics[width=0.5\textwidth]{3_llhd2.png}}%
+%		
+%		\subfigure[true vs. fitted firing rate]{\label{fig:1c}\includegraphics[width=0.5\textwidth]{image001.jpg}}%
+%		\subfigure[true vs. fitted latent vectors]{\label{fig:1d}\includegraphics[width=0.5\textwidth]{LF.png}}%
+%		
+%		\subfigure[cross-validation: clustered vs. single population]{\label{fig:1e}\includegraphics[width=0.5\textwidth]{image003.jpg}}%
+%		\subfigure[trace plot for non-labeled case]{\label{fig:1f}\includegraphics[width=0.5\textwidth]{image004.jpg}}%
+%		\caption{Simple case}
+%	\end{figure}
 	
 	\subsubsection{Clustering}
-	Then use the same setting, we remove the label and use the mixture model to do the clustering by MFM. The prior of the cluster number is $K\sim Geometric(0.2)$. Figure \ref{fig:1f} shows the trace of label $z_i$ for each neuron for the first 100 iterations.
 	
 	\begin{figure}[h!]
 		\centering
-		\subfigure[Firing rate]{\label{fig:2a}\includegraphics[width=0.4\textwidth]{image005.jpg}}%
-		\subfigure[trace plot for cluster number]{\label{fig:2b}\includegraphics[width=0.4\textwidth]{image006.jpg}}%
-		\subfigure[similarity matrix]{\label{fig:2c}\includegraphics[width=0.4\textwidth]{image007.jpg}}%
-		\caption{More complicated case: more variety of amplitude \& weaker signal}
+		\includegraphics[width=1\textwidth]{figure3.jpg}
+		\caption{\textbf{Clustering} The same simulation setting as in Figure 2, but remove the labels. \textcolor{red}{(The cluster 3 and 5 have nearly the same spiking patterns, because of the "bad luck"... May resample with another seed)}. The fitting is conducted using all and half data as training. \textbf{A.} The trace plot of training log-likelihood per spike and number of cluster. All the posterior results are averages from iteration 500 to 1000. \textbf{B.} The fitted firing rate. \textcolor{red}{(This is different from figure 2, because the labels are removed)} \textbf{C.} The similarity matrix. \textbf{D.} and \textbf{E.} Compare the held-out (1/2 data) likelihood for 3 fittings: 1) 10-cluster model: use the true labels and fit the model in each cluster with $p=1$; 2) cluster-on model: unknown labels but turn on the clustering, with $p=1$ (CV) and 3) 1-cluster model: single population model, with $p=8$ (CV). \textbf{D.} The trace plot of held-out log-likelihood per spike. The traces for 10-cluster and cluster-on are close, but more variation (occasional "drop-down") in cluster-on due to estimation of unknown labels. \textbf{E.} The histograms of posterior held-out log-likelihood per spike for 3 models. 10-cluster and cluster-on models are close, and they perform better than 1-cluster model.}
 	\end{figure}
 	
-	In this toy simulation example, the signal is strong and the spiking amplitudes of neurons in each population are similar. This might be too simplified for real situation. In practice, the neural activity is usually sparse and can be recorded in high resolution. Moreover, the spiking amplitudes for neuron in one nominated population vary a lot, and hence may form a few subpopulations. Therefore, we then simulate another more realistic example. In this simulation, there are 3 clusters and the dimension of latent state is $p=1$ for each. However, there are 20 neurons with wider range but smaller value of loading $c_i$, corresponding to potential subpopulations and weak signal. The simulated firing rate is shown in Figure \ref{fig:2a}. The trace plot of number of cluster (Figure \ref{fig:2b}) shows that the model tend to further split some clusters into sub-population, based on the spiking amplitude. This is more clearly shown in the posterior similarity matrix ((Figure \ref{fig:2c}), averaging from iteration 500 to 1000. In similarity matrix, the entry $(i,j)$ is the posterior probability that data points $i$ and $j$ belong to the same cluster. The rows and columns are ordered according to the ground truth. The similarity matrix shows that the model tend to split cluster 1 and 3 into two sub-clusters.
+%	Then use the same setting, we remove the label and use the mixture model to do the clustering by MFM. The prior of the cluster number is $K\sim Geometric(0.2)$. Figure \ref{fig:1f} shows the trace of label $z_i$ for each neuron for the first 100 iterations.
+%	
+%	\begin{figure}[h!]
+%		\centering
+%		\subfigure[Firing rate]{\label{fig:2a}\includegraphics[width=0.4\textwidth]{image005.jpg}}%
+%		\subfigure[trace plot for cluster number]{\label{fig:2b}\includegraphics[width=0.4\textwidth]{image006.jpg}}%
+%		\subfigure[similarity matrix]{\label{fig:2c}\includegraphics[width=0.4\textwidth]{image007.jpg}}%
+%		\caption{More complicated case: more variety of amplitude \& weaker signal}
+%	\end{figure}
+%	
+%	In this toy simulation example, the signal is strong and the spiking amplitudes of neurons in each population are similar. This might be too simplified for real situation. In practice, the neural activity is usually sparse and can be recorded in high resolution. Moreover, the spiking amplitudes for neuron in one nominated population vary a lot, and hence may form a few subpopulations. Therefore, we then simulate another more realistic example. In this simulation, there are 3 clusters and the dimension of latent state is $p=1$ for each. However, there are 20 neurons with wider range but smaller value of loading $c_i$, corresponding to potential subpopulations and weak signal. The simulated firing rate is shown in Figure \ref{fig:2a}. The trace plot of number of cluster (Figure \ref{fig:2b}) shows that the model tend to further split some clusters into sub-population, based on the spiking amplitude. This is more clearly shown in the posterior similarity matrix ((Figure \ref{fig:2c}), averaging from iteration 500 to 1000. In similarity matrix, the entry $(i,j)$ is the posterior probability that data points $i$ and $j$ belong to the same cluster. The rows and columns are ordered according to the ground truth. The similarity matrix shows that the model tend to split cluster 1 and 3 into two sub-clusters.
 	
-	\section{Application}
+	\section{Application: Neuropixels data}
 	\label{app}
 	
-	\subsection{Neuropixels data}
-	\answerTODO{}: brief introduction of Neuropixels dataset.
-	
-	The Neuropixels dataset contains recording of neural activities in different brain regions of mouse. Here, we only consider neurons with SNR > 3 and the spiking counts > 1000. Then, we first use the recording activity from Lateral posterior nucleus of the thalamus (LP, 20 neurons), anteromedial visual area (VISam, 12 neurons) and ventral posteromedial nucleus of the thalamus (VPM, 14 neurons) during the spontaneous period. The bin size is 0.1s and truncate the data up to 1000 steps (100s recording) for convenience. 
-	
-	Figure \ref{fig:3a} shows the spiking counts of these 46 neurons. Here we first fit model using all data, with $p=1$ and $K\sim Geometric(0.3)$. For the number of clusters, Figure \ref{fig:3b} shows the trace plot for the first 5000 iterations. All the following results are from averaging samples from iteration 2500 to 5000. The Figure \ref{fig:3c} shows the histogram of the posterior samples. These plots show that these neurons are quite non-homogeneous and they tend to form many sub-populations. These 3 nominated populations by anatomy tend to form around 10 (sub)-clusters.
-	
-	The Figure \ref{fig:3d} and Figure \ref{fig:3e} show the trace of log-likelihood per spike. The fitted mean firing rate is shown in Figure \ref{fig:3f}. When investigating the similarity matrix in Figure \ref{fig:3g} (sorted according to the anatomical population, such that 1-20 are LP, 21-32 are VISam and 33-46 are VPM), there are several subpopulations in each anatomical cluster. Generally, the clustering results are consistent with the anatomical assignment, although there are some tiny confusions between VISam and VPM.
-	
-	However, this is not the case when the mouse is in the experiment. We choose the same set of neurons but use recordings when the mouse are watching drift gratings. The Figure \ref{fig:3h} shows the trace plot of cluster number. The Figure \ref{fig:3i} and Figure \ref{fig:3j} show the fitted firing rate and similarity matrix, again averaging from iteration 2500 to 5000.
-	
-	When comparing the observed spiking activities, it's fairly hard to see differences when the mouse is exposed to the stimuli and not. However, the posterior similarity matrix in the experiment shows that there's more confusion between LP and VISam, compared to the spontaneous response. This suggests that the functional connection pattern between neurons in different areas when the stimuli are changed.
-	
-	\textcolor{red}{\textbf{I tried to held-out half of the data in a speckled pattern and fit the model with clustering on and off (single population). The dimension is selected by held-out likelihood, which is p=1 for clustering on and p=2 for single population analysis. The trace plots of the held-out log-likelihood per spike (starting from iteration 2) shows that doing clustering doesn’t improve things (although they are very close)… Maybe because “turning clustering on” introduce too much variance… The benefit of clustering will pop out if we use the deterministic algorithm, such as VB mentioned.}}
-	
 	\begin{figure}[h!]
 		\centering
-		\subfigure[spontaneous: spike counts]{\label{fig:3a}\includegraphics[width=0.5\textwidth]{image008.jpg}}%
-		\subfigure[spontaneous: cluster number trace]{\label{fig:3b}\includegraphics[width=0.35\textwidth]{image009.jpg}}%
-		\subfigure[spontaneous: cluster number histogram]{\label{fig:3c}\includegraphics[width=0.35\textwidth]{image010.jpg}}%
-		
-		\subfigure[spontaneous: llhd/spk trace]{\label{fig:3d}\includegraphics[width=0.3\textwidth]{image001.png}}%
-		\subfigure[spontaneous: llhd/spk trace, truncated]{\label{fig:3e}\includegraphics[width=0.3\textwidth]{image002.png}}%
-		\subfigure[spontaneous: true vs. fitted firing rate]{\label{fig:3f}\includegraphics[width=0.3\textwidth]{image011.jpg}}%
-		\subfigure[spontaneous: similarity matrix]{\label{fig:3g}\includegraphics[width=0.3\textwidth]{image012.jpg}}%
-		
-		\subfigure[drift-grating: cluster number trace]{\label{fig:3h}\includegraphics[width=0.4\textwidth]{12_numTrace.png}}%
-		\subfigure[drift-grating: true vs. fitted firing rate]{\label{fig:3i}\includegraphics[width=0.4\textwidth]{16_fitFR.png}}%
-		\subfigure[drift-grating: similarity matrix]{\label{fig:3j}\includegraphics[width=0.4\textwidth]{14_simPixel.png}}%
-		\caption{Neuropixel}
+		\includegraphics[width=1\textwidth]{figure4.jpg}
+		\caption{\textbf{Application in Neuropixels data.} We first choose a one minute recordings from spontaneous, with bin size in $0.1s$ \textcolor{red}{(29.8 to 89.8)}.\textbf{A.} The trace plots of log-likelihood per spike and number of cluster \textcolor{red}{(Maybe again overlaid by 1/2-training results?)}. All the following results are averages from iteration 500 to 1000. \textbf{B} The fitted firing rate. \textbf{C.} The histogram of posterior cluster number. \textbf{D.} We then hold out 1/2 of data in the speckled pattern and fit 3 models: 1) cluster-on model: turn on clustering with $p=1$ (CV); 2) 1-cluster: single population with $p=2$ (CV) and 3) anatomy-cluster: fit models each based on 4 anatomical labels, with $p=(1,1,1,3)$ (CV). Doing clustering is the best. Anatomical labels give the "wrong" labels, in terms of the spiking pattern, which make things even worse. \textbf{E.} The similarity matrices when fitting four 1-min epochs: 1) spontaneous 1: 29.8s to 89.8s; 2) spontaneous 2: 1001.9s to 1061.9s; 3) natural movie: 2221.7s to 2281.7s and 4) drift grating: 1890.9s to 1950.9s. All are sorted by mode of posterior cluster index within each anatomical region. The patterns found in spontaneous are robust and there are a large confusion between VISp and CA1. The confusion between VISp and CA1 also exists in natural movie, but decrease a lot. However, the overall confusions become larger. When exposing to the drift grating movie, the confusions among all four regions decrease even more.}
 	\end{figure}
 	
-	\subsection{Hippocampus data}
 	
-	\textcolor{red}{\textbf{I prefer just give one application.} Because 1) there's a page limit (9 pages excluding ref \& appendix in 2021, and now it seems we will exceed the limit), and 2) the V1 data is enough to illustrate the idea If we really need to add the second example, we should tell the story in another angle}.
+	
+%	\answerTODO{}: brief introduction of Neuropixels dataset.
+%	
+%	The Neuropixels dataset contains recording of neural activities in different brain regions of mouse. Here, we only consider neurons with SNR > 3 and the spiking counts > 1000. Then, we first use the recording activity from Lateral posterior nucleus of the thalamus (LP, 20 neurons), anteromedial visual area (VISam, 12 neurons) and ventral posteromedial nucleus of the thalamus (VPM, 14 neurons) during the spontaneous period. The bin size is 0.1s and truncate the data up to 1000 steps (100s recording) for convenience. 
+%	
+%	Figure \ref{fig:3a} shows the spiking counts of these 46 neurons. Here we first fit model using all data, with $p=1$ and $K\sim Geometric(0.3)$. For the number of clusters, Figure \ref{fig:3b} shows the trace plot for the first 5000 iterations. All the following results are from averaging samples from iteration 2500 to 5000. The Figure \ref{fig:3c} shows the histogram of the posterior samples. These plots show that these neurons are quite non-homogeneous and they tend to form many sub-populations. These 3 nominated populations by anatomy tend to form around 10 (sub)-clusters.
+%	
+%	The Figure \ref{fig:3d} and Figure \ref{fig:3e} show the trace of log-likelihood per spike. The fitted mean firing rate is shown in Figure \ref{fig:3f}. When investigating the similarity matrix in Figure \ref{fig:3g} (sorted according to the anatomical population, such that 1-20 are LP, 21-32 are VISam and 33-46 are VPM), there are several subpopulations in each anatomical cluster. Generally, the clustering results are consistent with the anatomical assignment, although there are some tiny confusions between VISam and VPM.
+%	
+%	However, this is not the case when the mouse is in the experiment. We choose the same set of neurons but use recordings when the mouse are watching drift gratings. The Figure \ref{fig:3h} shows the trace plot of cluster number. The Figure \ref{fig:3i} and Figure \ref{fig:3j} show the fitted firing rate and similarity matrix, again averaging from iteration 2500 to 5000.
+%	
+%	When comparing the observed spiking activities, it's fairly hard to see differences when the mouse is exposed to the stimuli and not. However, the posterior similarity matrix in the experiment shows that there's more confusion between LP and VISam, compared to the spontaneous response. This suggests that the functional connection pattern between neurons in different areas when the stimuli are changed.
+%	
+%	\textcolor{red}{\textbf{I tried to held-out half of the data in a speckled pattern and fit the model with clustering on and off (single population). The dimension is selected by held-out likelihood, which is p=1 for clustering on and p=2 for single population analysis. The trace plots of the held-out log-likelihood per spike (starting from iteration 2) shows that doing clustering doesn’t improve things (although they are very close)… Maybe because “turning clustering on” introduce too much variance… The benefit of clustering will pop out if we use the deterministic algorithm, such as VB mentioned.}}
+%	
+%	\begin{figure}[h!]
+%		\centering
+%		\subfigure[spontaneous: spike counts]{\label{fig:3a}\includegraphics[width=0.5\textwidth]{image008.jpg}}%
+%		\subfigure[spontaneous: cluster number trace]{\label{fig:3b}\includegraphics[width=0.35\textwidth]{image009.jpg}}%
+%		\subfigure[spontaneous: cluster number histogram]{\label{fig:3c}\includegraphics[width=0.35\textwidth]{image010.jpg}}%
+%		
+%		\subfigure[spontaneous: llhd/spk trace]{\label{fig:3d}\includegraphics[width=0.3\textwidth]{image001.png}}%
+%		\subfigure[spontaneous: llhd/spk trace, truncated]{\label{fig:3e}\includegraphics[width=0.3\textwidth]{image002.png}}%
+%		\subfigure[spontaneous: true vs. fitted firing rate]{\label{fig:3f}\includegraphics[width=0.3\textwidth]{image011.jpg}}%
+%		\subfigure[spontaneous: similarity matrix]{\label{fig:3g}\includegraphics[width=0.3\textwidth]{image012.jpg}}%
+%		
+%		\subfigure[drift-grating: cluster number trace]{\label{fig:3h}\includegraphics[width=0.4\textwidth]{12_numTrace.png}}%
+%		\subfigure[drift-grating: true vs. fitted firing rate]{\label{fig:3i}\includegraphics[width=0.4\textwidth]{16_fitFR.png}}%
+%		\subfigure[drift-grating: similarity matrix]{\label{fig:3j}\includegraphics[width=0.4\textwidth]{14_simPixel.png}}%
+%		\caption{Neuropixel}
+%	\end{figure}
+	
 	
 	\section{Discussion}
 	
